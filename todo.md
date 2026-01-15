@@ -1,19 +1,17 @@
 # TODO
 
 ## Completed
-- ✅ Session character name display
-- ✅ Flight path tracking (start/land)
-- ✅ Quest turn-in name detection
-- ✅ Combat-session aggregation
-- ✅ Loot merge window with quest flush
-- ✅ Zone change tracking with subzones and from/to zones
-- ✅ Hearthstone detection and logging
-- ✅ Flight origin node names (instead of zone names)
+
+Completed tasks are tracked in [changes.md](changes.md).
 
 ## Pending
+
 - Money loot logging
     - Goal: Log copper/silver/gold looted from mobs with readable formatting.
     - Success: Killing a mob that drops coin adds a `Looted: Xg Ys Zc` entry that matches chat text.
+- Money income
+    - Goal: Track money income from quests and other sources.
+    - Success: Money income is logged as a separate entry.
 - Item equip logging (upgrades)
     - Goal: Detect when the player equips an item and log the change.
     - Success: Equipping an item logs `Equipped: <item>` with slot info and old item if replaced.
@@ -53,4 +51,5 @@
 - When setting a new Hearthstone location, log the new location in the journal.
     - Goal: Ensure the new Hearthstone location is logged in the journal.
     - Success: Hearthstone location is logged in the journal: "Set Hearthstone to [location]"
-
+    - Notes:
+        - Look for "<Inn> is now your home" in the system chat messages.
