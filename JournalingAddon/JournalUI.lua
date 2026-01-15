@@ -32,6 +32,15 @@ function Journal:InitUI()
   UIDropDownMenu_SetText(dropdown, "Current session")
   frame.sessionDropdown = dropdown
 
+  local exportButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+  exportButton:SetSize(80, 22)
+  exportButton:SetPoint("LEFT", dropdown, "RIGHT", 10, 0)
+  exportButton:SetText("Export")
+  exportButton:SetScript("OnClick", function()
+    Journal:ExportSession()
+  end)
+  frame.exportButton = exportButton
+
   local scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
   scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -70)
   scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 12)
@@ -133,6 +142,105 @@ function Journal:RefreshUI()
   end
 
   self.uiFrame.content:SetHeight(math.max(1, #entries * lineHeight))
+end
+
+function Journal:ExportSession()
+  if not self.db and JournalDB then
+    self.db = JournalDB
+  end
+
+  local sessions = self.db and self.db.sessions or {}
+  if #sessions == 0 then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No sessions to export.")
+    end
+    return
+  end
+
+  local sessionIndex = self.uiFrame and self.uiFrame.selectedSessionIndex or #sessions
+  if sessionIndex > #sessions then
+    sessionIndex = #sessions
+  end
+
+  local session = sessions[sessionIndex]
+  if not session or not session.entries or #session.entries == 0 then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Selected session has no entries.")
+    end
+    return
+  end
+
+  local lines = {}
+  local who = session.characterKey and (session.characterKey .. " - ") or ""
+  local startText = date("%Y-%m-%d %H:%M", session.startTime)
+  local endText = session.endTime and date("%H:%M", session.endTime) or "current"
+  table.insert(lines, who .. startText .. " - " .. endText)
+  table.insert(lines, "")
+
+  for _, entry in ipairs(session.entries) do
+    local timeText = date("%H:%M:%S", entry.ts)
+    table.insert(lines, timeText .. "  " .. entry.text)
+  end
+
+  local text = table.concat(lines, "\n")
+  self:ShowExportDialog(text)
+end
+
+function Journal:ShowExportDialog(text)
+  if self.exportFrame then
+    self.exportFrame:Show()
+    self.exportFrame:Raise()
+    self.exportFrame.editBox:SetText(text)
+    self.exportFrame.editBox:HighlightText()
+    self.exportFrame.editBox:SetFocus()
+    return
+  end
+
+  local frame = CreateFrame("Frame", "JournalExportFrame", UIParent, "BasicFrameTemplateWithInset")
+  frame:SetSize(600, 500)
+  frame:SetPoint("CENTER")
+  frame:SetFrameStrata("DIALOG")
+  frame:EnableMouse(true)
+  frame:SetMovable(true)
+  frame:RegisterForDrag("LeftButton")
+  frame:SetScript("OnDragStart", frame.StartMoving)
+  frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
+  frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  frame.title:SetPoint("LEFT", frame.TitleBg, "LEFT", 6, 0)
+  frame.title:SetText("Export Session")
+
+  local scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+  scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -30)
+  scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -30, 40)
+
+  local editBox = CreateFrame("EditBox", nil, scrollFrame)
+  editBox:SetMultiLine(true)
+  editBox:SetFontObject("ChatFontNormal")
+  editBox:SetWidth(scrollFrame:GetWidth() - 20)
+  editBox:SetAutoFocus(true)
+  editBox:EnableMouse(true)
+  editBox:SetScript("OnEscapePressed", function()
+    frame:Hide()
+  end)
+  editBox:SetScript("OnEditFocusGained", function(self)
+    self:HighlightText()
+  end)
+  scrollFrame:SetScrollChild(editBox)
+  frame.editBox = editBox
+
+  local closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+  closeButton:SetSize(100, 22)
+  closeButton:SetPoint("BOTTOM", frame, "BOTTOM", 0, 10)
+  closeButton:SetText("Close")
+  closeButton:SetScript("OnClick", function()
+    frame:Hide()
+  end)
+
+  editBox:SetText(text)
+  editBox:HighlightText()
+  editBox:SetFocus()
+
+  self.exportFrame = frame
 end
 
 function Journal:ToggleUI()

@@ -21,9 +21,6 @@ Completed tasks are tracked in [changes.md](changes.md).
 - Testing checklist
     - Goal: Verify core MVP flows in-game.
     - Success: Sessions, quest accept/turn-in, kills/XP, loot, death, `/journal` UI all log correctly.
-- Export session as text
-    - Goal: Export selected session entries to plain text.
-    - Success: Button copies full session text to clipboard or saves to a file.
 - Settings page
     - Goal: Provide a settings UI for common preferences.
     - Success: Settings can change logging options and persist across reloads.

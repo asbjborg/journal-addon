@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.2] - 2026-01-15
+
+### Added
+- Export session functionality
+  - Export button in journal UI to export selected session as plain text
+  - Opens a scrollable dialog with formatted session text (character name, time range, all entries with timestamps)
+  - Text is pre-selected and copyable via Cmd+C/Ctrl+C
+  - Dialog is movable and can be closed with Escape or Close button
+
 ## [0.3.1] - 2026-01-15
 
 ### Added
