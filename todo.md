@@ -65,3 +65,16 @@ Completed tasks are tracked in [changes.md](changes.md).
     - Notes:
         - Use `MAIL_SEND_SUCCESS` event or hook `SendMail()` function.
         - Capture items and recipient before sending.
+- Track when consuming food or drink
+    - Goal: Log when food or drink is consumed with item name and quantity.
+    - Success: Consuming food or drink logs "Consumed: [item] x[count]" entry in the journal.
+    - Notes:
+        - Track consumption via `UNIT_SPELLCAST_SUCCEEDED` for food/drink spells.
+        - Parse buffs like "Well fed" if the food or drink provided a buff and append to the entry.
+- Manual target capture
+    - Goal: Allow manual capture of targets (mobs, NPCs, players) with a slash command.
+    - Success: Running `/journal-capture-target` (or similar) with a target selected creates an entry: "Came across: [name], lvl [X], [reaction], [race]/[class]" and optionally takes a screenshot.
+    - Notes:
+        - Use `UnitName("target")`, `UnitLevel("target")`, `UnitReaction("player", "target")`, `UnitRace("target")`, `UnitClass("target")`.
+        - Show an input dialog to add a custom note to the entry.
+        - Optionally call `TakeScreenshot()` if available.
