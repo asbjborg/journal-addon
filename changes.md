@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.3] - 2026-01-15
+
+### Added
+- Reputation gain tracking
+  - Detects reputation changes via `CHAT_MSG_COMBAT_FACTION_CHANGE` event
+  - Logs "Reputation with [Faction] increased by [amount]" for specific gains
+  - Logs "Reputation with [Faction] increased" for vague increases
+  - Tracks tier changes: "Reputation tier: [Tier] with [Faction]" when reaching new standing
+
 ## [0.3.2] - 2026-01-15
 
 ### Added

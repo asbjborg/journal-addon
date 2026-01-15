@@ -42,9 +42,6 @@ Completed tasks are tracked in [changes.md](changes.md).
 - Session split
     - Goal: Split a session at a timestamp into two.
     - Success: Entries before/after split are separated and timestamps preserved.
-- Track reputation gain
-    - Goal: Track reputation gain from quests and other sources.
-    - Success: Reputation gain is logged as a separate entry and if the amount results in a new reputation tier, log the new tier.
 - When setting a new Hearthstone location, log the new location in the journal.
     - Goal: Ensure the new Hearthstone location is logged in the journal.
     - Success: Hearthstone location is logged in the journal: "Set Hearthstone to [location]"

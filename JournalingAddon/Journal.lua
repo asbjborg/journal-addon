@@ -539,6 +539,28 @@ function Journal:DetectTravelType()
   return nil
 end
 
+function Journal:HandleReputationChange(msg)
+  local cleaned = msg:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+  
+  local faction, amount = cleaned:match("Your reputation with (.+) has increased by (%d+)")
+  if faction and amount then
+    amount = tonumber(amount)
+    self:AddEntry("reputation", "Reputation with " .. faction .. " increased by " .. amount, {
+      faction = faction,
+      amount = amount,
+    })
+    return
+  end
+  
+  faction = cleaned:match("Your reputation with (.+) has .* increased")
+  if faction then
+    self:AddEntry("reputation", "Reputation with " .. faction .. " increased", {
+      faction = faction,
+      amount = nil,
+    })
+  end
+end
+
 function Journal:GetScreenshotName()
   local now = date("*t")
   local month = string.format("%02d", now.month)
@@ -610,6 +632,21 @@ function Journal:OnEvent(event, ...)
           self:HandleFlightStart()
         end
       end
+      local repTier = cleaned:match("^You are now (.+) with (.+)%.$")
+      if repTier then
+        local tier, faction = repTier:match("^(.+) with (.+)$")
+        if tier and faction then
+          self:AddEntry("reputation", "Reputation tier: " .. tier .. " with " .. faction, {
+            faction = faction,
+            tier = tier,
+          })
+        end
+      end
+    end
+  elseif event == "CHAT_MSG_COMBAT_FACTION_CHANGE" then
+    local msg = ...
+    if msg and msg ~= "" then
+      self:HandleReputationChange(msg)
     end
   elseif event == "PLAYER_XP_UPDATE" then
     self:RecordXP()
@@ -713,3 +750,4 @@ frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("PLAYER_LEVEL_UP")
 frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 frame:RegisterEvent("SCREENSHOT_SUCCEEDED")
+frame:RegisterEvent("CHAT_MSG_COMBAT_FACTION_CHANGE")
