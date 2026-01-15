@@ -1,0 +1,15 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# WoW addon files (deployed)
+# Note: We keep source files, but ignore any deployed copies if they exist
+
+# Logs
+*.log

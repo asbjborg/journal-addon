@@ -1,0 +1,9 @@
+## Interface: 20505
+## Title: JournalingAddon
+## Notes: Session-based journal log.
+## Author: asbjborg
+## Version: 0.2.0
+## SavedVariables: JournalDB
+
+Journal.lua
+JournalUI.lua
