@@ -572,6 +572,135 @@ function Journal:GetScreenshotName()
   return "WoWScrnShot_" .. month .. day .. year .. "_" .. hour .. min .. sec .. ".jpg"
 end
 
+function Journal:CaptureTarget(note)
+  if not UnitExists("target") then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No target selected.")
+    end
+    return
+  end
+
+  local name = UnitName("target")
+  if not name or name == "" then
+    return
+  end
+
+  local parts = {}
+  table.insert(parts, "Spotted: " .. name)
+
+  local level = UnitLevel("target")
+  if level and level > 0 then
+    table.insert(parts, "(lvl " .. level .. ")")
+  end
+
+  local reaction = UnitReaction("player", "target")
+  local reactionText = nil
+  if reaction then
+    if reaction >= 5 then
+      reactionText = "friendly"
+    elseif reaction >= 4 then
+      reactionText = "neutral"
+    else
+      reactionText = "hostile"
+    end
+    table.insert(parts, "[" .. reactionText .. "]")
+  end
+
+  local screenshotName = self.pendingScreenshotName
+  self.pendingScreenshotName = nil
+
+  local text = table.concat(parts, " ")
+  if note and note ~= "" then
+    text = text .. " note=\"" .. note .. "\""
+  end
+  if screenshotName then
+    text = text .. " screenshot=" .. screenshotName
+  end
+
+  self:AddEntry("target", text, {
+    name = name,
+    level = level,
+    reaction = reactionText,
+    note = note,
+    screenshot = screenshotName,
+  })
+end
+
+function Journal:ShowTargetCaptureDialog()
+  if not UnitExists("target") then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No target selected.")
+    end
+    return
+  end
+
+  if TakeScreenshot then
+    TakeScreenshot()
+  end
+  self.pendingScreenshotName = self:GetScreenshotName()
+
+  if self.targetCaptureFrame then
+    self.targetCaptureFrame:Show()
+    self.targetCaptureFrame:Raise()
+    self.targetCaptureFrame.editBox:SetText("")
+    self.targetCaptureFrame.editBox:SetFocus()
+    return
+  end
+
+  local frame = CreateFrame("Frame", "JournalTargetCaptureFrame", UIParent, "BasicFrameTemplateWithInset")
+  frame:SetSize(400, 120)
+  frame:SetPoint("CENTER")
+  frame:SetFrameStrata("DIALOG")
+  frame:EnableMouse(true)
+  frame:SetMovable(true)
+  frame:RegisterForDrag("LeftButton")
+  frame:SetScript("OnDragStart", frame.StartMoving)
+  frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
+  frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  frame.title:SetPoint("LEFT", frame.TitleBg, "LEFT", 6, 0)
+  frame.title:SetText("Capture Target - Add Note")
+
+  local label = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  label:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -30)
+  label:SetText("Note (optional):")
+
+  local editBox = CreateFrame("EditBox", nil, frame, "InputBoxTemplate")
+  editBox:SetSize(360, 32)
+  editBox:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -8)
+  editBox:SetAutoFocus(true)
+  editBox:SetScript("OnEnterPressed", function(self)
+    local note = self:GetText()
+    Journal:CaptureTarget(note)
+    frame:Hide()
+  end)
+  editBox:SetScript("OnEscapePressed", function()
+    frame:Hide()
+  end)
+  frame.editBox = editBox
+
+  local captureButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+  captureButton:SetSize(100, 22)
+  captureButton:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 12, 10)
+  captureButton:SetText("Capture")
+  captureButton:SetScript("OnClick", function()
+    local note = editBox:GetText()
+    Journal:CaptureTarget(note)
+    frame:Hide()
+  end)
+
+  local cancelButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+  cancelButton:SetSize(100, 22)
+  cancelButton:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -12, 10)
+  cancelButton:SetText("Cancel")
+  cancelButton:SetScript("OnClick", function()
+    frame:Hide()
+  end)
+
+  self.targetCaptureFrame = frame
+  frame:Show()
+  editBox:SetFocus()
+end
+
 function Journal:OnCombatLog()
   local timestamp, subevent, _, _, srcName, _, _, destGUID, destName, destFlags, _, _, spellName, _, amount =
     CombatLogGetCurrentEventInfo()

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.4] - 2026-01-15
+
+### Added
+- Manual target capture
+  - Slash command `/journal capture` or `/journal capture-target` to manually document targets
+  - Captures target info: name, level, reaction (friendly/neutral/hostile)
+  - Takes screenshot immediately when command is run
+  - Shows input dialog to add optional note
+  - Entry format: "Spotted: [name] (lvl [X]) [reaction] note=\"[note]\" screenshot=[filename]"
+  - Useful for documenting rare mobs, NPCs, or interesting encounters
+
 ## [0.3.3] - 2026-01-15
 
 ### Added

@@ -265,6 +265,9 @@ SlashCmdList["JOURNAL"] = function(msg)
       DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r debug " .. state)
     end
     return
+  elseif arg == "capture" or arg == "capture-target" then
+    Journal:ShowTargetCaptureDialog()
+    return
   end
   Journal:ToggleUI()
 end
