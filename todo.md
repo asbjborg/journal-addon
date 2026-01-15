@@ -50,3 +50,21 @@ Completed tasks are tracked in [changes.md](changes.md).
     - Success: Hearthstone location is logged in the journal: "Set Hearthstone to [location]"
     - Notes:
         - Look for "<Inn> is now your home" in the system chat messages.
+- Crafting item logging
+    - Goal: Log when items are crafted with item name and quantity.
+    - Success: Crafting an item logs "Crafted: [item] x[count]" entry in the journal.
+    - Notes:
+        - Track crafting via `CHAT_MSG_SKILL` or `UNIT_SPELLCAST_SUCCEEDED` for crafting spells.
+        - Parse chat messages like "You create [item]." or similar.
+- Mail received logging
+    - Goal: Log when mail is received with sender name and items/content.
+    - Success: Receiving mail logs "Received mail from [sender]: [items/content]" entry.
+    - Notes:
+        - Use `MAIL_SHOW` or `MAIL_INBOX_UPDATE` events.
+        - Parse mail items from `GetInboxItem()` or chat messages.
+- Mail sent logging
+    - Goal: Log when mail is sent with recipient name and items/content.
+    - Success: Sending mail logs "Sent mail to [recipient]: [items/content]" entry.
+    - Notes:
+        - Use `MAIL_SEND_SUCCESS` event or hook `SendMail()` function.
+        - Capture items and recipient before sending.
