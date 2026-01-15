@@ -573,43 +573,67 @@ function Journal:GetScreenshotName()
 end
 
 function Journal:CaptureTarget(note)
-  if not UnitExists("target") then
-    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
-      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No target selected.")
-    end
-    return
-  end
-
-  local name = UnitName("target")
-  if not name or name == "" then
-    return
-  end
-
-  local parts = {}
-  table.insert(parts, "Spotted: " .. name)
-
-  local level = UnitLevel("target")
-  if level and level > 0 then
-    table.insert(parts, "(lvl " .. level .. ")")
-  end
-
-  local reaction = UnitReaction("player", "target")
-  local reactionText = nil
-  if reaction then
-    if reaction >= 5 then
-      reactionText = "friendly"
-    elseif reaction >= 4 then
-      reactionText = "neutral"
-    else
-      reactionText = "hostile"
-    end
-    table.insert(parts, "[" .. reactionText .. "]")
-  end
-
   local screenshotName = self.pendingScreenshotName
   self.pendingScreenshotName = nil
+  local hasTarget = self.pendingHasTarget
+  self.pendingHasTarget = nil
 
-  local text = table.concat(parts, " ")
+  local parts = {}
+  
+  if hasTarget and UnitExists("target") then
+    local name = UnitName("target")
+    if name and name ~= "" then
+      table.insert(parts, "Spotted: " .. name)
+
+      local level = UnitLevel("target")
+      if level and level > 0 then
+        table.insert(parts, "(lvl " .. level .. ")")
+      end
+
+      local reaction = UnitReaction("player", "target")
+      local reactionText = nil
+      if reaction then
+        if reaction >= 5 then
+          reactionText = "friendly"
+        elseif reaction >= 4 then
+          reactionText = "neutral"
+        else
+          reactionText = "hostile"
+        end
+        table.insert(parts, "[" .. reactionText .. "]")
+      end
+
+      local race = UnitRace("target")
+      local class = UnitClass("target")
+      if race and race ~= "" then
+        table.insert(parts, race)
+      end
+      if class and class ~= "" then
+        table.insert(parts, class)
+      end
+
+      local text = table.concat(parts, " ")
+      if note and note ~= "" then
+        text = text .. " note=\"" .. note .. "\""
+      end
+      if screenshotName then
+        text = text .. " screenshot=" .. screenshotName
+      end
+
+      self:AddEntry("target", text, {
+        name = name,
+        level = level,
+        reaction = reactionText,
+        race = race,
+        class = class,
+        note = note,
+        screenshot = screenshotName,
+      })
+      return
+    end
+  end
+
+  local text = "Screenshot"
   if note and note ~= "" then
     text = text .. " note=\"" .. note .. "\""
   end
@@ -617,33 +641,41 @@ function Journal:CaptureTarget(note)
     text = text .. " screenshot=" .. screenshotName
   end
 
-  self:AddEntry("target", text, {
-    name = name,
-    level = level,
-    reaction = reactionText,
+  self:AddEntry("screenshot", text, {
     note = note,
     screenshot = screenshotName,
   })
 end
 
 function Journal:ShowTargetCaptureDialog()
-  if not UnitExists("target") then
-    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
-      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No target selected.")
-    end
-    return
-  end
-
-  if TakeScreenshot then
-    TakeScreenshot()
-  end
   self.pendingScreenshotName = self:GetScreenshotName()
+  self.pendingHasTarget = UnitExists("target")
+  
+  if Screenshot then
+    Screenshot()
+  end
 
+  local function ShowDialog()
+    if not Journal.targetCaptureFrame then
+      Journal:CreateTargetCaptureDialog()
+    end
+    if Journal.targetCaptureFrame then
+      Journal.targetCaptureFrame:Show()
+      Journal.targetCaptureFrame:Raise()
+      Journal.targetCaptureFrame.editBox:SetText("")
+      Journal.targetCaptureFrame.editBox:SetFocus()
+    end
+  end
+
+  if C_Timer and C_Timer.After then
+    C_Timer.After(2.5, ShowDialog)
+  else
+    ShowDialog()
+  end
+end
+
+function Journal:CreateTargetCaptureDialog()
   if self.targetCaptureFrame then
-    self.targetCaptureFrame:Show()
-    self.targetCaptureFrame:Raise()
-    self.targetCaptureFrame.editBox:SetText("")
-    self.targetCaptureFrame.editBox:SetFocus()
     return
   end
 
@@ -658,7 +690,7 @@ function Journal:ShowTargetCaptureDialog()
   frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
   frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   frame.title:SetPoint("LEFT", frame.TitleBg, "LEFT", 6, 0)
-  frame.title:SetText("Capture Target - Add Note")
+  frame.title:SetText("Capture - Add Note")
 
   local label = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   label:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -30)
@@ -697,8 +729,6 @@ function Journal:ShowTargetCaptureDialog()
   end)
 
   self.targetCaptureFrame = frame
-  frame:Show()
-  editBox:SetFocus()
 end
 
 function Journal:OnCombatLog()
