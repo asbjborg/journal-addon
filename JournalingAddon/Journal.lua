@@ -52,15 +52,21 @@ function Journal:InitAggregates()
     damage = { events = {} },
   }
   self.lastZone = GetRealZoneText()
+  self.lastSubZone = GetSubZoneText()
   self.inCombat = UnitAffectingCombat("player") or false
   self:ResetCombatAgg()
   self.pendingLoot = {}
   self.lastQuestCompleted = nil
+  self.lastHearthCastAt = nil
+  self.lastHearthFrom = nil
   self.flightState = {
     onTaxi = false,
     originZone = nil,
+    originName = nil,
     destinationName = nil,
+    destinationZone = nil,
     startedAt = nil,
+    hops = nil,
   }
 end
 
@@ -404,20 +410,42 @@ function Journal:HandleFlightStart()
     return
   end
   self.flightState.onTaxi = true
-  self.flightState.originZone = GetRealZoneText()
+  if not self.flightState.originZone then
+    self.flightState.originZone = GetRealZoneText()
+  end
   self.flightState.startedAt = time()
   local dest = self.flightState.destinationName
+  local origin = self.flightState.originName or self.flightState.originZone
   local text = "Started flying"
   if dest then
     text = text .. " to " .. dest
   end
-  if self.flightState.originZone then
-    text = text .. " from " .. self.flightState.originZone
+  if origin then
+    text = text .. " from " .. origin
   end
   self:AddEntry("travel", text .. ".", {
-    origin = self.flightState.originZone,
+    origin = origin,
     destination = dest,
   })
+end
+
+function Journal:CaptureTaxiOrigin()
+  if not NumTaxiNodes then
+    return
+  end
+  for i = 1, NumTaxiNodes() do
+    if TaxiNodeGetType(i) == "CURRENT" then
+      local nodeName = TaxiNodeName(i)
+      if nodeName and nodeName ~= "" then
+        local location, zone = nodeName:match("^([^,]+),?%s*(.*)$")
+        self.flightState.originName = location or nodeName
+        if zone and zone ~= "" then
+          self.flightState.originZone = zone
+        end
+      end
+      return
+    end
+  end
 end
 
 function Journal:CaptureTaxiDestination(index)
@@ -464,19 +492,51 @@ function Journal:HandleFlightEnd()
   self.flightState.originZone = nil
   self.flightState.destinationName = nil
   self.flightState.destinationZone = nil
+  self.flightState.originName = nil
   self.flightState.startedAt = nil
   self.flightState.hops = nil
 end
 
 function Journal:HandleZoneChanged()
   local zone = GetRealZoneText()
-  if zone and zone ~= "" and self.lastZone and zone ~= self.lastZone then
+  local subZone = GetSubZoneText()
+  if not zone or zone == "" then
+    return
+  end
+  
+  if self.lastZone and zone ~= self.lastZone then
     if not self.flightState.onTaxi then
-      local text = "Traveled to " .. zone
-      self:AddEntry("travel", text .. ".", { zone = zone })
+      local fromZone = self.lastZone
+      local fromSub = self.lastSubZone
+      local toZone = zone
+      local toSub = subZone
+      local toText = toSub and toSub ~= "" and (toZone .. " - " .. toSub) or toZone
+      local fromText = fromSub and fromSub ~= "" and (fromZone .. " - " .. fromSub) or fromZone
+      local text = "Traveled to " .. toText .. " from " .. fromText
+
+      if self.lastHearthCastAt and (time() - self.lastHearthCastAt) <= 90 then
+        text = "Hearth to " .. toText .. " from " .. (self.lastHearthFrom or fromText)
+        self.lastHearthCastAt = nil
+        self.lastHearthFrom = nil
+      end
+
+      self:AddEntry("travel", text .. ".", {
+        zone = toZone,
+        subZone = toSub,
+        fromZone = fromZone,
+        fromSubZone = fromSub,
+      })
     end
   end
-  self.lastZone = zone
+  
+  if not self.lastZone or zone ~= self.lastZone then
+    self.lastZone = zone
+  end
+  self.lastSubZone = subZone
+end
+
+function Journal:DetectTravelType()
+  return nil
 end
 
 function Journal:OnCombatLog()
@@ -549,16 +609,33 @@ function Journal:OnEvent(event, ...)
     self:RecordLoot(msg)
   elseif event == "PLAYER_CONTROL_LOST" then
     if UnitOnTaxi("player") and not self.flightState.onTaxi then
+      if not self.flightState.originName then
+        self:CaptureTaxiOrigin()
+      end
       if not self.flightState.destinationName then
         self.flightState.originZone = GetRealZoneText()
       end
       self:HandleFlightStart()
     end
   elseif event == "PLAYER_CONTROL_GAINED" then
+    if self.flightState.onTaxi then
+      if C_Timer and C_Timer.After then
+        C_Timer.After(0.5, function()
+          if Journal.flightState.onTaxi and not UnitOnTaxi("player") then
+            Journal:HandleFlightEnd()
+          end
+        end)
+      else
+        if not UnitOnTaxi("player") then
+          self:HandleFlightEnd()
+        end
+      end
+    end
+    -- no-op for transports
+  elseif event == "ZONE_CHANGED_NEW_AREA" then
     if self.flightState.onTaxi and not UnitOnTaxi("player") then
       self:HandleFlightEnd()
     end
-  elseif event == "ZONE_CHANGED_NEW_AREA" then
     self:HandleZoneChanged()
   elseif event == "PLAYER_DEAD" then
     self:RecordDeath()
@@ -571,6 +648,25 @@ function Journal:OnEvent(event, ...)
   elseif event == "PLAYER_LEVEL_UP" then
     local level = ...
     self:AddEntry("level", "Leveled up to " .. level .. "!", { level = level })
+  elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
+    local unit, spellName = ...
+    if unit == "player" and spellName then
+      local hearthNames = {
+        "Hearthstone",
+        "Innkeeper's Daughter",
+        "Astral Recall",
+        "Home",
+      }
+      for _, name in ipairs(hearthNames) do
+        if spellName:find(name, 1, true) then
+          self.lastHearthCastAt = time()
+          local zone = GetRealZoneText()
+          local subZone = GetSubZoneText()
+          self.lastHearthFrom = (subZone and subZone ~= "" and (zone .. " - " .. subZone)) or zone
+          break
+        end
+      end
+    end
   end
 end
 
@@ -592,6 +688,7 @@ frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 
 hooksecurefunc("TakeTaxiNode", function(index)
   if not Journal.flightState.onTaxi then
+    Journal:CaptureTaxiOrigin()
     Journal:CaptureTaxiDestination(index)
     Journal:HandleFlightStart()
   end
@@ -600,3 +697,4 @@ frame:RegisterEvent("PLAYER_DEAD")
 frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("PLAYER_LEVEL_UP")
+frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0] - 2026-01-15
+
+### Added
+- Zone change tracking with subzones
+  - Travel entries now show "Traveled to [Zone - Subzone] from [Zone - Subzone]"
+  - Includes subzone information when available (e.g., "Thousand Needles - Freewind Post")
+- Hearthstone detection and logging
+  - Detects hearthstone casts via `UNIT_SPELLCAST_SUCCEEDED`
+  - Logs "Hearth to [Zone - Subzone] from [Zone - Subzone]" when zone changes within 90s of cast
+- Flight origin node names
+  - Flight start entries now show actual node name (e.g., "Ratchet") instead of zone name (e.g., "The Barrens")
+  - Example: "Started flying to Orgrimmar from Ratchet" instead of "Started flying to Orgrimmar from The Barrens"
+
+### Fixed
+- Flight landing detection now works reliably with delayed checks and zone change fallback
+
 ## [0.2.0] - 2026-01-15
 
 ### Added

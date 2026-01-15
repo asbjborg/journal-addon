@@ -6,6 +6,9 @@
 - ✅ Quest turn-in name detection
 - ✅ Combat-session aggregation
 - ✅ Loot merge window with quest flush
+- ✅ Zone change tracking with subzones and from/to zones
+- ✅ Hearthstone detection and logging
+- ✅ Flight origin node names (instead of zone names)
 
 ## Pending
 - Money loot logging
@@ -47,3 +50,7 @@
 - Track reputation gain
     - Goal: Track reputation gain from quests and other sources.
     - Success: Reputation gain is logged as a separate entry and if the amount results in a new reputation tier, log the new tier.
+- When setting a new Hearthstone location, log the new location in the journal.
+    - Goal: Ensure the new Hearthstone location is logged in the journal.
+    - Success: Hearthstone location is logged in the journal: "Set Hearthstone to [location]"
+
