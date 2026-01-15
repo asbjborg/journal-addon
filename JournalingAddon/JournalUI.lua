@@ -118,30 +118,51 @@ function Journal:RefreshUI()
   if self.debug then
     self:DebugLog("RefreshUI: sessions=" .. #sessions .. " entries=" .. #entries)
   end
-  local lineHeight = 16
   local contentWidth = (self.uiFrame.content:GetWidth() or 1) - 4
+  local entrySpacing = 4
 
+  local currentY = 0
   for i, entry in ipairs(entries) do
     local line = self.uiFrame.entryLines[i]
     if not line then
       line = self.uiFrame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
       self.uiFrame.entryLines[i] = line
-      line:SetPoint("TOPLEFT", self.uiFrame.content, "TOPLEFT", 0, -((i - 1) * lineHeight))
-      line:SetPoint("TOPRIGHT", self.uiFrame.content, "TOPRIGHT", 0, -((i - 1) * lineHeight))
       line:SetJustifyH("LEFT")
       line:SetWordWrap(true)
     end
     line:SetWidth(contentWidth)
+    line:ClearAllPoints()
+    line:SetPoint("TOPLEFT", self.uiFrame.content, "TOPLEFT", 0, -currentY)
+    line:SetPoint("TOPRIGHT", self.uiFrame.content, "TOPRIGHT", 0, -currentY)
     local timeText = date("%H:%M:%S", entry.ts)
     line:SetText(timeText .. "  " .. entry.text)
     line:Show()
+    
+    local lineHeight = line:GetHeight() or 16
+    currentY = currentY + lineHeight + entrySpacing
   end
 
   for i = #entries + 1, #self.uiFrame.entryLines do
     self.uiFrame.entryLines[i]:Hide()
   end
 
-  self.uiFrame.content:SetHeight(math.max(1, #entries * lineHeight))
+  self.uiFrame.content:SetHeight(math.max(1, currentY))
+  
+  -- Auto-scroll to bottom (with delay to ensure layout is complete)
+  local scrollFrame = self.uiFrame.scrollFrame
+  if scrollFrame then
+    local function ScrollToBottom()
+      local maxScroll = scrollFrame:GetVerticalScrollRange()
+      if maxScroll and maxScroll > 0 then
+        scrollFrame:SetVerticalScroll(maxScroll)
+      end
+    end
+    if C_Timer and C_Timer.After then
+      C_Timer.After(0.1, ScrollToBottom)
+    else
+      ScrollToBottom()
+    end
+  end
 end
 
 function Journal:ExportSession()

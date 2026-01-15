@@ -633,7 +633,7 @@ function Journal:CaptureTarget(note)
     end
   end
 
-  local text = "Screenshot"
+  local text = "Scene:"
   if note and note ~= "" then
     text = text .. " note=\"" .. note .. "\""
   end

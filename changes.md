@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.6] - 2026-01-15
+
+### Fixed
+
+- Auto-scroll to bottom now works on first open after UI reload
+- Multi-line entries no longer overlap with subsequent entries (dynamic height calculation)
+
+### Changed
+
+- Added spacing between journal entries for better readability (4px gap)
+- Non-target screenshot entries now use "Scene:" prefix instead of "Screenshot"
+
 ## [0.3.5] - 2026-01-15
 
 ### Changed
@@ -7,7 +19,7 @@
 - Manual capture command now works without a target
     - `/journal capture` can be used to take a screenshot with a note even when no target is selected
     - With target: logs "Spotted: [name] (lvl X) [reaction] [race] [class] note=\"...\" screenshot=..."
-    - Without target: logs "Screenshot note=\"...\" screenshot=..."
+    - Without target: logs "Scene: note=\"...\" screenshot=..."
     - Useful for documenting locations, views, or any moment without needing a target
 
 ## [0.3.4] - 2026-01-15
