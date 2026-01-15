@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1] - 2026-01-15
+
+### Added
+- Screenshot logging
+  - Detects screenshots via `SCREENSHOT_SUCCEEDED` event
+  - Logs screenshot filename in standard WoW format: "Screenshot: WoWScrnShot_MMDDYY_HHMMSS.jpg"
+  - Helps locate screenshots later by matching journal entries to screenshot files
+
 ## [0.3.0] - 2026-01-15
 
 ### Added

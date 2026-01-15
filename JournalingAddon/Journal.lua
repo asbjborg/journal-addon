@@ -539,6 +539,17 @@ function Journal:DetectTravelType()
   return nil
 end
 
+function Journal:GetScreenshotName()
+  local now = date("*t")
+  local month = string.format("%02d", now.month)
+  local day = string.format("%02d", now.day)
+  local year = string.format("%02d", now.year % 100)
+  local hour = string.format("%02d", now.hour)
+  local min = string.format("%02d", now.min)
+  local sec = string.format("%02d", now.sec)
+  return "WoWScrnShot_" .. month .. day .. year .. "_" .. hour .. min .. sec .. ".jpg"
+end
+
 function Journal:OnCombatLog()
   local timestamp, subevent, _, _, srcName, _, _, destGUID, destName, destFlags, _, _, spellName, _, amount =
     CombatLogGetCurrentEventInfo()
@@ -667,6 +678,9 @@ function Journal:OnEvent(event, ...)
         end
       end
     end
+  elseif event == "SCREENSHOT_SUCCEEDED" then
+    local screenshotName = self:GetScreenshotName()
+    self:AddEntry("screenshot", "Screenshot: " .. screenshotName, { filename = screenshotName })
   end
 end
 
@@ -698,3 +712,4 @@ frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 frame:RegisterEvent("PLAYER_REGEN_DISABLED")
 frame:RegisterEvent("PLAYER_LEVEL_UP")
 frame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
+frame:RegisterEvent("SCREENSHOT_SUCCEEDED")
