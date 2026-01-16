@@ -54,6 +54,7 @@ A World of Warcraft addon for creating a personal journal of your adventures. Au
 - `/journal undo` - Remove the last entry
 - `/journal clear` - Clear all entries from current session
 - `/journal reset` - End current session and start a fresh one
+- `/journal wipe` - Wipe all journal data and start fresh
 - `/journal help` - Show all available commands
 - `/journal debug` - Toggle debug logging
 
@@ -88,9 +89,12 @@ Journal data is stored in `SavedVariables/JournalDB.lua` in your WTF folder. Thi
 ```
 JournalingAddon/
 ├── JournalingAddon.toc    # Addon manifest
-├── Journal.lua            # Core logic and event handling
+├── core/                  # Namespace, storage, renderers, event bus
+├── features/              # Feature modules (quest, combat, travel, etc.)
 └── JournalUI.lua          # UI components and interaction
 ```
+
+See `ARCHITECTURE.md` for the module layout and event flow.
 
 ### Deployment
 A `deploy.sh` script is included for macOS to sync the addon to the WoW AddOns directory. Modify the path in the script to match your installation.
