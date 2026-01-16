@@ -7,7 +7,7 @@
 - **Event-first storage model** (breaking change to SavedVariables format)
     - All journal entries are now stored as structured Lua tables with schema versioning
     - Entry format: `{ v, ts, type, msg, data }` where:
-        - `v` = schema version (currently 1)
+        - `v` = schema version (currently 2)
         - `ts` = ISO 8601 timestamp (e.g., "2026-01-16T19:16:12Z")
         - `type` = event type (quest, loot, death, travel, etc.)
         - `msg` = human-readable message (derived from data)
@@ -20,6 +20,11 @@
     - Each line is a complete, self-contained event object
 - Message renderers for all event types ensure consistent text output from structured data
 - **Quest location tracking**: Quest accept/turn-in events now include zone and subZone
+- **Debug/testing commands**:
+    - `/journal undo` - Remove the last entry
+    - `/journal clear` - Clear all entries from current session
+    - `/journal reset` - End current session and start a fresh one
+    - `/journal help` - Show all available commands
 
 ### Changed
 

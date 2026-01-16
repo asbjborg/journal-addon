@@ -22,7 +22,7 @@ A World of Warcraft addon for creating a personal journal of your adventures. Au
 - Sessions are automatically organized by character and day
 - Sessions persist across reloads and relogs (same character + same day = same session)
 - Character name visible in session labels
-- Export sessions as plain text for easy sharing or backup
+- Export sessions as plain text or NDJSON (machine-readable) for easy sharing, backup, or automation
 
 ## Requirements
 
@@ -44,12 +44,17 @@ A World of Warcraft addon for creating a personal journal of your adventures. Au
 ### Opening the Journal
 - Type `/journal` in chat to open/close the journal UI
 - Use the dropdown to select different sessions
-- Click "Export" to copy a session as text
+- Click "Export" to copy a session as plain text
+- Click "JSON" to export as NDJSON (one JSON object per line) for automation tools
 
 ### Commands
 - `/journal` - Toggle the journal UI
 - `/journal note` - Open dialog to add a standalone note
 - `/journal capture` or `/journal capture-target` - Capture target (or scene) with screenshot and note
+- `/journal undo` - Remove the last entry
+- `/journal clear` - Clear all entries from current session
+- `/journal reset` - End current session and start a fresh one
+- `/journal help` - Show all available commands
 - `/journal debug` - Toggle debug logging
 
 ### Entry Types
