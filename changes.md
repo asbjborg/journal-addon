@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.5] - 2026-01-16
+
+### Added
+
+- **Track reputation decreases** (#28)
+    - Now logs reputation losses (e.g., "Reputation with Magram Clan Centaur decreased by 100")
+    - Uses `change` field: positive for gains, negative for losses
+    - Patterns: "decreased by X" and vague "decreased" messages
+    - Legacy `amount` field still supported for old entries
+
 ## [0.5.4] - 2026-01-16
 
 ### Fixed
