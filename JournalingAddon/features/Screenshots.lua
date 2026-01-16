@@ -13,15 +13,48 @@ function Journal:GetScreenshotName()
 end
 
 function Journal:CaptureTarget(note)
-  local screenshotName = self.pendingScreenshotName
-  self.pendingScreenshotName = nil
-  local hasTarget = self.pendingHasTarget
-  self.pendingHasTarget = nil
+  local pending = self.pendingCapture
+  self.pendingCapture = nil
 
+  if not pending then
+    return
+  end
+
+  if pending.target then
+    -- Target capture
+    self:AddEvent("screenshot", {
+      action = "capture_target",
+      filename = pending.filename,
+      note = (note and note ~= "") and note or nil,
+      zone = pending.zone,
+      subZone = pending.subZone,
+      target = pending.target,
+    })
+  else
+    -- Scene capture (no target)
+    self:AddEvent("screenshot", {
+      action = "capture_scene",
+      filename = pending.filename,
+      note = (note and note ~= "") and note or nil,
+      zone = pending.zone,
+      subZone = pending.subZone,
+    })
+  end
+end
+
+function Journal:ShowTargetCaptureDialog()
+  -- Capture everything upfront so target info isn't lost if target disappears
   local zone = GetRealZoneText()
   local subZone = GetSubZoneText()
 
-  if hasTarget and UnitExists("target") then
+  local pending = {
+    filename = self:GetScreenshotName(),
+    zone = zone,
+    subZone = (subZone and subZone ~= "") and subZone or nil,
+    target = nil,
+  }
+
+  if UnitExists("target") then
     local name = UnitName("target")
     if name and name ~= "" then
       local level = UnitLevel("target")
@@ -44,38 +77,17 @@ function Journal:CaptureTarget(note)
       local race = UnitIsPlayer("target") and UnitRace("target") or nil
       local class = UnitIsPlayer("target") and UnitClass("target") or nil
 
-      -- Target capture - all in one screenshot event
-      self:AddEvent("screenshot", {
-        action = "capture_target",
-        filename = screenshotName,
-        note = (note and note ~= "") and note or nil,
-        zone = zone,
-        subZone = (subZone and subZone ~= "") and subZone or nil,
-        target = {
-          name = name,
-          level = level,
-          reaction = reactionText,
-          race = (race and race ~= "") and race or nil,
-          class = (class and class ~= "") and class or nil,
-        },
-      })
-      return
+      pending.target = {
+        name = name,
+        level = level,
+        reaction = reactionText,
+        race = (race and race ~= "") and race or nil,
+        class = (class and class ~= "") and class or nil,
+      }
     end
   end
 
-  -- Scene capture (no target)
-  self:AddEvent("screenshot", {
-    action = "capture_scene",
-    filename = screenshotName,
-    note = (note and note ~= "") and note or nil,
-    zone = zone,
-    subZone = (subZone and subZone ~= "") and subZone or nil,
-  })
-end
-
-function Journal:ShowTargetCaptureDialog()
-  self.pendingScreenshotName = self:GetScreenshotName()
-  self.pendingHasTarget = UnitExists("target")
+  self.pendingCapture = pending
 
   if Screenshot then
     Screenshot()
@@ -202,7 +214,7 @@ end)
 
 Journal.On("SCREENSHOT_SUCCEEDED", function()
   -- Skip if we're in a pending capture (will be handled by CaptureTarget)
-  if Journal.pendingScreenshotName then
+  if Journal.pendingCapture then
     return
   end
   local screenshotName = Journal:GetScreenshotName()

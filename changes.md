@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.4] - 2026-01-16
+
+### Fixed
+
+- **Target info now captured immediately when command is run** (#27)
+    - Previously, target info was read when note was submitted
+    - If target died/despawned while writing note, info was lost
+    - Now captures name, level, reaction, race, class, and location upfront
+    - Target can disappear after command is run and info is still preserved
+
 ## [0.5.3] - 2026-01-16
 
 ### Fixed
