@@ -19,6 +19,30 @@ local function ISOTimestamp()
   return date("!%Y-%m-%dT%H:%M:%SZ")
 end
 
+-- Format copper amount as "Xg Ys Zc" string
+local function FormatMoney(copper)
+  if not copper or copper <= 0 then
+    return "0c"
+  end
+  
+  local gold = math.floor(copper / 10000)
+  local silver = math.floor((copper % 10000) / 100)
+  local remainingCopper = copper % 100
+  
+  local parts = {}
+  if gold > 0 then
+    table.insert(parts, gold .. "g")
+  end
+  if silver > 0 then
+    table.insert(parts, silver .. "s")
+  end
+  if remainingCopper > 0 or #parts == 0 then
+    table.insert(parts, remainingCopper .. "c")
+  end
+  
+  return table.concat(parts, " ")
+end
+
 -- Simple JSON encoder for export
 local function EncodeJSON(val, indent)
   indent = indent or 0
@@ -257,6 +281,10 @@ local MessageRenderers = {
   
   note = function(data)
     return "Note: " .. (data.text or data.note or "")
+  end,
+  
+  money = function(data)
+    return "Looted: " .. FormatMoney(data.copper or 0)
   end,
 }
 
@@ -515,6 +543,7 @@ function Journal:InitAggregates()
   self.inCombat = UnitAffectingCombat("player") or false
   self:ResetCombatAgg()
   self.pendingLoot = {}
+  self.pendingMoney = nil
   self.lastQuestCompleted = nil
   self.lastHearthCastAt = nil
   self.lastHearthFrom = nil
@@ -580,6 +609,7 @@ function Journal:EndSession()
   if self.currentSession and not self.currentSession.endTime then
     self:FlushCombatAgg()
     self:FlushPendingLoot()
+    self:FlushPendingMoney()
     self.currentSession.endTime = time()
   end
 end
@@ -627,6 +657,7 @@ function Journal:ResetCombatAgg()
     kills = {},
     xp = 0,
     loot = { counts = {}, raw = {}, action = nil },
+    money = 0,
   }
 end
 
@@ -671,6 +702,11 @@ function Journal:FlushCombatAgg()
       counts = CopyTable(lootCounts),
       raw = CopyTable(self.combatAgg.loot.raw),
     })
+  end
+
+  local money = self.combatAgg.money
+  if money and money > 0 then
+    self:AddEvent("money", { copper = money })
   end
 
   self:ResetCombatAgg()
@@ -827,6 +863,91 @@ function Journal:FlushPendingLoot(itemName)
     })
   end
   self.pendingLoot = {}
+end
+
+function Journal:ParseMoneyFromMessage(msg)
+  if not msg then
+    return 0
+  end
+  
+  local copper = 0
+  
+  -- Parse gold, silver, copper from message
+  -- Patterns: "You loot X Gold", "You loot X Silver", "You loot X Copper"
+  -- Also handles combined: "You loot X Gold, Y Silver, Z Copper"
+  local gold = msg:match("(%d+) Gold")
+  local silver = msg:match("(%d+) Silver")
+  local copperMatch = msg:match("(%d+) Copper")
+  
+  if gold then
+    copper = copper + (tonumber(gold) * 10000)
+  end
+  if silver then
+    copper = copper + (tonumber(silver) * 100)
+  end
+  if copperMatch then
+    copper = copper + tonumber(copperMatch)
+  end
+  
+  return copper
+end
+
+function Journal:RecordMoney(msg)
+  if not msg or msg == "" then
+    return
+  end
+  
+  local copper = self:ParseMoneyFromMessage(msg)
+  if copper <= 0 then
+    return
+  end
+  
+  if self.inCombat then
+    self.combatAgg.money = self.combatAgg.money + copper
+  else
+    local now = time()
+    local pending = self.pendingMoney
+    if pending and (now - pending.lastTs) <= LOOT_MERGE_WINDOW then
+      pending.copper = pending.copper + copper
+      pending.lastTs = now
+    else
+      if pending then
+        self:FlushPendingMoney()
+      end
+      pending = {
+        copper = copper,
+        lastTs = now,
+        timer = nil,
+      }
+      self.pendingMoney = pending
+    end
+
+    if C_Timer and C_Timer.NewTimer then
+      if pending.timer then
+        pending.timer:Cancel()
+      end
+      pending.timer = C_Timer.NewTimer(LOOT_MERGE_WINDOW, function()
+        self:FlushPendingMoney()
+      end)
+    end
+  end
+end
+
+function Journal:FlushPendingMoney()
+  if not self.pendingMoney then
+    return
+  end
+  
+  local pending = self.pendingMoney
+  if pending.timer then
+    pending.timer:Cancel()
+  end
+  
+  if pending.copper and pending.copper > 0 then
+    self:AddEvent("money", { copper = pending.copper })
+  end
+  
+  self.pendingMoney = nil
 end
 
 function Journal:RecordDamage(eventTime, sourceName, spellName, amount)
@@ -1354,12 +1475,14 @@ function Journal:OnEvent(event, ...)
       self:LogQuestAccepted(questLogIndex, questID)
     end
     self:FlushPendingLoot()
+    self:FlushPendingMoney()
   elseif event == "QUEST_TURNED_IN" then
     local questID, xpReward, moneyReward = ...
     if questID then
       self:LogQuestTurnedIn(questID, xpReward, moneyReward)
     end
     self:FlushPendingLoot()
+    self:FlushPendingMoney()
   elseif event == "CHAT_MSG_SYSTEM" then
     local msg = ...
     if msg and msg ~= "" then
@@ -1434,9 +1557,13 @@ function Journal:OnEvent(event, ...)
   elseif event == "PLAYER_REGEN_ENABLED" then
     self.inCombat = false
     self:FlushCombatAgg()
+  elseif event == "CHAT_MSG_MONEY" then
+    local msg = ...
+    self:RecordMoney(msg)
   elseif event == "PLAYER_REGEN_DISABLED" then
     self.inCombat = true
     self:FlushPendingLoot()
+    self:FlushPendingMoney()
   elseif event == "PLAYER_LEVEL_UP" then
     local level = ...
     self:AddEvent("level", { level = level })
@@ -1488,6 +1615,7 @@ frame:RegisterEvent("CHAT_MSG_SYSTEM")
 frame:RegisterEvent("PLAYER_XP_UPDATE")
 frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 frame:RegisterEvent("CHAT_MSG_LOOT")
+frame:RegisterEvent("CHAT_MSG_MONEY")
 frame:RegisterEvent("PLAYER_CONTROL_LOST")
 frame:RegisterEvent("PLAYER_CONTROL_GAINED")
 frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")

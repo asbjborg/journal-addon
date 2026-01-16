@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.1] - 2026-01-16
+
+### Added
+
+- **Money loot logging** (#1)
+    - Logs copper/silver/gold looted from mobs with readable formatting
+    - New `money` event type with `copper` amount in data
+    - Display format: `Looted: Xg Ys Zc` (e.g., "Looted: 1g 5s 32c")
+    - Money merges within 10-second window (same as item loot)
+    - Aggregated during combat and flushed on combat end
+
 ## [0.4.0] - 2026-01-16
 
 ### Added
