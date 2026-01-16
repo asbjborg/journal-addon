@@ -200,19 +200,38 @@ function Journal:RecordLoot(msg)
   end
 end
 
+local function MoneyAmountPattern(formatString)
+  if not formatString or formatString == "" then
+    return nil
+  end
+  local placeholder = "__NUM__"
+  local pattern = formatString:gsub("%%d", placeholder)
+  pattern = pattern:gsub("([%(%)%.%+%-%*%?%[%]%^%$%%])", "%%%1")
+  pattern = pattern:gsub(placeholder, "(%%d+)")
+  return pattern
+end
+
 function Journal:ParseMoneyFromMessage(msg)
   if not msg then
     return 0
   end
 
+  local cleaned = msg:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
   local copper = 0
 
   -- Parse gold, silver, copper from message
   -- Patterns: "You loot X Gold", "You loot X Silver", "You loot X Copper"
   -- Also handles combined: "You loot X Gold, Y Silver, Z Copper"
-  local gold = msg:match("(%d+) Gold")
-  local silver = msg:match("(%d+) Silver")
-  local copperMatch = msg:match("(%d+) Copper")
+  local goldAmount = rawget(_G, "GOLD_AMOUNT") or "%d Gold"
+  local silverAmount = rawget(_G, "SILVER_AMOUNT") or "%d Silver"
+  local copperAmount = rawget(_G, "COPPER_AMOUNT") or "%d Copper"
+  local goldPattern = MoneyAmountPattern(goldAmount) or "(%d+)%s*Gold"
+  local silverPattern = MoneyAmountPattern(silverAmount) or "(%d+)%s*Silver"
+  local copperPattern = MoneyAmountPattern(copperAmount) or "(%d+)%s*Copper"
+
+  local gold = cleaned:match(goldPattern) or cleaned:match("(%d+)%s*gold")
+  local silver = cleaned:match(silverPattern) or cleaned:match("(%d+)%s*silver")
+  local copperMatch = cleaned:match(copperPattern) or cleaned:match("(%d+)%s*copper")
 
   if gold then
     copper = copper + (tonumber(gold) * 10000)
@@ -233,6 +252,9 @@ function Journal:RecordMoney(msg)
   end
 
   local copper = self:ParseMoneyFromMessage(msg)
+  if self.debug then
+    self:DebugLog("Money msg: " .. msg .. " -> " .. tostring(copper) .. "c")
+  end
   if copper <= 0 then
     return
   end
