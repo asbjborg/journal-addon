@@ -9,7 +9,7 @@
     - New `money` event type with `copper` amount in data
     - Display format: `Looted: Xg Ys Zc` (e.g., "Looted: 1g 5s 32c")
     - Money merges within 10-second window (same as item loot)
-    - Aggregated during combat and flushed on combat end
+    - Pending money flushed when combat starts
 
 ## [0.4.0] - 2026-01-16
 
