@@ -2,6 +2,39 @@ local addonName, Journal = ...
 Journal = Journal or _G.Journal or {}
 _G.Journal = Journal
 
+-- Parse ISO 8601 timestamp to Unix time (for display formatting)
+local function ParseISOTimestamp(isoStr)
+  if type(isoStr) == "number" then
+    return isoStr  -- Already Unix timestamp (legacy)
+  end
+  if type(isoStr) ~= "string" then
+    return time()
+  end
+  -- Parse "2026-01-15T19:16:12Z" format
+  local year, month, day, hour, min, sec = isoStr:match("^(%d+)-(%d+)-(%d+)T(%d+):(%d+):(%d+)")
+  if year then
+    return time({
+      year = tonumber(year),
+      month = tonumber(month),
+      day = tonumber(day),
+      hour = tonumber(hour),
+      min = tonumber(min),
+      sec = tonumber(sec),
+    })
+  end
+  return time()
+end
+
+-- Get display text from entry (handles both old and new formats)
+local function GetEntryText(entry)
+  return entry.msg or entry.text or ""
+end
+
+-- Get timestamp from entry (handles both formats)
+local function GetEntryTimestamp(entry)
+  return ParseISOTimestamp(entry.ts)
+end
+
 local function FormatSessionLabel(session)
   if not session then
     return "No sessions"
@@ -40,6 +73,15 @@ function Journal:InitUI()
     Journal:ExportSession()
   end)
   frame.exportButton = exportButton
+
+  local jsonExportButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+  jsonExportButton:SetSize(80, 22)
+  jsonExportButton:SetPoint("LEFT", exportButton, "RIGHT", 4, 0)
+  jsonExportButton:SetText("JSON")
+  jsonExportButton:SetScript("OnClick", function()
+    Journal:ExportSessionJSON()
+  end)
+  frame.jsonExportButton = jsonExportButton
 
   local scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
   scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -70)
@@ -134,8 +176,10 @@ function Journal:RefreshUI()
     line:ClearAllPoints()
     line:SetPoint("TOPLEFT", self.uiFrame.content, "TOPLEFT", 0, -currentY)
     line:SetPoint("TOPRIGHT", self.uiFrame.content, "TOPRIGHT", 0, -currentY)
-    local timeText = date("%H:%M:%S", entry.ts)
-    line:SetText(timeText .. "  " .. entry.text)
+    local timestamp = GetEntryTimestamp(entry)
+    local timeText = date("%H:%M:%S", timestamp)
+    local displayText = GetEntryText(entry)
+    line:SetText(timeText .. "  " .. displayText)
     line:Show()
     
     local lineHeight = line:GetHeight() or 16
@@ -199,16 +243,65 @@ function Journal:ExportSession()
   table.insert(lines, "")
 
   for _, entry in ipairs(session.entries) do
-    local timeText = date("%H:%M:%S", entry.ts)
-    table.insert(lines, timeText .. "  " .. entry.text)
+    local timestamp = GetEntryTimestamp(entry)
+    local timeText = date("%H:%M:%S", timestamp)
+    local displayText = GetEntryText(entry)
+    table.insert(lines, timeText .. "  " .. displayText)
   end
 
   local text = table.concat(lines, "\n")
-  self:ShowExportDialog(text)
+  self:ShowExportDialog(text, "text")
 end
 
-function Journal:ShowExportDialog(text)
+function Journal:ExportSessionJSON()
+  if not self.db and JournalDB then
+    self.db = JournalDB
+  end
+
+  local sessions = self.db and self.db.sessions or {}
+  if #sessions == 0 then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No sessions to export.")
+    end
+    return
+  end
+
+  local sessionIndex = self.uiFrame and self.uiFrame.selectedSessionIndex or #sessions
+  if sessionIndex > #sessions then
+    sessionIndex = #sessions
+  end
+
+  local session = sessions[sessionIndex]
+  if not session or not session.entries or #session.entries == 0 then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Selected session has no entries.")
+    end
+    return
+  end
+
+  -- Export as NDJSON (one JSON object per line)
+  local lines = {}
+  for _, entry in ipairs(session.entries) do
+    -- Build clean export object with only the event fields
+    local exportEntry = {
+      v = entry.v or 1,
+      ts = entry.ts,
+      type = entry.type,
+      msg = entry.msg or entry.text,
+      data = entry.data or entry.meta or {},
+    }
+    table.insert(lines, self.EncodeJSON(exportEntry))
+  end
+
+  local text = table.concat(lines, "\n")
+  self:ShowExportDialog(text, "json")
+end
+
+function Journal:ShowExportDialog(text, exportType)
+  local title = exportType == "json" and "Export Session (NDJSON)" or "Export Session"
+  
   if self.exportFrame then
+    self.exportFrame.title:SetText(title)
     self.exportFrame:Show()
     self.exportFrame:Raise()
     self.exportFrame.editBox:SetText(text)
@@ -228,7 +321,7 @@ function Journal:ShowExportDialog(text)
   frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
   frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   frame.title:SetPoint("LEFT", frame.TitleBg, "LEFT", 6, 0)
-  frame.title:SetText("Export Session")
+  frame.title:SetText(title)
 
   local scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
   scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 12, -30)
@@ -291,6 +384,75 @@ SlashCmdList["JOURNAL"] = function(msg)
     return
   elseif arg == "note" then
     Journal:ShowNoteCaptureDialog()
+    return
+  elseif arg == "undo" then
+    -- Delete last entry
+    if Journal.currentSession and Journal.currentSession.entries then
+      local entries = Journal.currentSession.entries
+      if #entries > 0 then
+        local removed = table.remove(entries)
+        local msg = removed.msg or removed.text or "entry"
+        if DEFAULT_CHAT_FRAME then
+          DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Removed: " .. msg:sub(1, 50))
+        end
+        if Journal.uiFrame and Journal.uiFrame:IsShown() then
+          Journal:RefreshUI()
+        end
+      else
+        if DEFAULT_CHAT_FRAME then
+          DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No entries to remove.")
+        end
+      end
+    end
+    return
+  elseif arg == "clear" then
+    -- Clear current session entries
+    if Journal.currentSession then
+      local count = Journal.currentSession.entries and #Journal.currentSession.entries or 0
+      Journal.currentSession.entries = {}
+      if DEFAULT_CHAT_FRAME then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Cleared " .. count .. " entries from current session.")
+      end
+      if Journal.uiFrame and Journal.uiFrame:IsShown() then
+        Journal:RefreshUI()
+      end
+    end
+    return
+  elseif arg == "reset" then
+    -- Start fresh session (ends current, starts new)
+    if Journal.currentSession then
+      Journal.currentSession.endTime = time()
+    end
+    local characterKey = Journal:GetCharacterKey()
+    local dayKey = Journal:GetDayKey()
+    local session = {
+      startTime = time(),
+      endTime = nil,
+      entries = {},
+      characterKey = characterKey,
+      dayKey = dayKey,
+    }
+    table.insert(Journal.db.sessions, session)
+    Journal.currentSession = session
+    Journal:AddEvent("system", { message = "Session started (manual reset)." })
+    if DEFAULT_CHAT_FRAME then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r New session started.")
+    end
+    if Journal.uiFrame and Journal.uiFrame:IsShown() then
+      Journal:RefreshUI()
+    end
+    return
+  elseif arg == "help" then
+    if DEFAULT_CHAT_FRAME then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal commands:|r")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal - Toggle UI")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal capture - Screenshot + note dialog")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal note - Add a note")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal undo - Remove last entry")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal clear - Clear current session")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal reset - Start new session")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal debug - Toggle debug mode")
+    end
     return
   end
   Journal:ToggleUI()

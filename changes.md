@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.4.0] - 2026-01-16
+
+### Added
+
+- **Event-first storage model** (breaking change to SavedVariables format)
+    - All journal entries are now stored as structured Lua tables with schema versioning
+    - Entry format: `{ v, ts, type, msg, data }` where:
+        - `v` = schema version (currently 1)
+        - `ts` = ISO 8601 timestamp (e.g., "2026-01-16T19:16:12Z")
+        - `type` = event type (quest, loot, death, travel, etc.)
+        - `msg` = human-readable message (derived from data)
+        - `data` = structured event data (type-specific fields)
+    - Message text is now derived from structured data, not the other way around
+    - Automatic migration of existing entries on addon load
+- **JSON export**
+    - New "JSON" button in journal UI exports session as NDJSON (one JSON object per line)
+    - Machine-readable format enables automation (n8n, agents, storytelling tools)
+    - Each line is a complete, self-contained event object
+- Message renderers for all event types ensure consistent text output from structured data
+- **Quest location tracking**: Quest accept/turn-in events now include zone and subZone
+
+### Changed
+
+- Internal `AddEntry` replaced with `AddEvent` for new structured format
+- Legacy `AddEntry` preserved as wrapper for backward compatibility
+- Event types now use `action` field for sub-types:
+    - `quest.action`: "accepted" | "turned_in"
+    - `travel.action`: "flight_start" | "flight_end" | "hearth" | "zone_change"
+    - `screenshot.action`: "taken" | "scene_note"
+    - `loot.action`: "loot" | "create" | "craft" | "receive"
+- Screenshot events unified: `target` event merged into `screenshot` with `action: "capture_target"`
+- Screenshot actions: `manual` (hotkey), `capture_scene` (no target), `capture_target` (with target)
+- Target info now nested: `data.target: { name, level, reaction, race, class }`
+- All screenshot events include `zone`/`subZone` for panel-level location context
+- Screenshot/target entries normalized to use `data.filename` (previously mixed `screenshot`/`filename`)
+- Activity events now use `target`/`count` for single-target kills (cleaner than `kills` map)
+- Loot events differentiate item sources: looting vs crafting vs creating vs receiving
+
+### Technical
+
+- Schema version field (`v`) enables future migrations
+- ISO 8601 timestamps for interoperability
+- Event data is authoritative; display text is derived
+- Extensible pattern for adding new event types
+- Migration backfills action fields and normalizes legacy field names
+
 ## [0.3.7] - 2026-01-15
 
 ### Added

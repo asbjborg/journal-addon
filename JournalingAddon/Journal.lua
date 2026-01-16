@@ -11,6 +11,276 @@ local TAXI_WINDOW = 120
 local LOOT_MERGE_WINDOW = 10
 Journal.debug = false
 
+-- Event schema version
+local SCHEMA_VERSION = 2
+
+-- ISO 8601 timestamp generator
+local function ISOTimestamp()
+  return date("!%Y-%m-%dT%H:%M:%SZ")
+end
+
+-- Simple JSON encoder for export
+local function EncodeJSON(val, indent)
+  indent = indent or 0
+  local t = type(val)
+  
+  if val == nil then
+    return "null"
+  elseif t == "boolean" then
+    return val and "true" or "false"
+  elseif t == "number" then
+    return tostring(val)
+  elseif t == "string" then
+    -- Escape special characters
+    local escaped = val:gsub('\\', '\\\\')
+      :gsub('"', '\\"')
+      :gsub('\n', '\\n')
+      :gsub('\r', '\\r')
+      :gsub('\t', '\\t')
+    return '"' .. escaped .. '"'
+  elseif t == "table" then
+    -- Check if array (sequential integer keys starting at 1)
+    local isArray = true
+    local maxIndex = 0
+    for k, _ in pairs(val) do
+      if type(k) ~= "number" or k < 1 or math.floor(k) ~= k then
+        isArray = false
+        break
+      end
+      if k > maxIndex then
+        maxIndex = k
+      end
+    end
+    -- Also check for gaps
+    if isArray and maxIndex > 0 then
+      for i = 1, maxIndex do
+        if val[i] == nil then
+          isArray = false
+          break
+        end
+      end
+    end
+    
+    if isArray and maxIndex > 0 then
+      -- Encode as array
+      local parts = {}
+      for i = 1, maxIndex do
+        table.insert(parts, EncodeJSON(val[i], indent))
+      end
+      return "[" .. table.concat(parts, ",") .. "]"
+    else
+      -- Encode as object
+      local parts = {}
+      local keys = {}
+      for k in pairs(val) do
+        if type(k) == "string" then
+          table.insert(keys, k)
+        end
+      end
+      table.sort(keys)
+      for _, k in ipairs(keys) do
+        local v = val[k]
+        if v ~= nil then
+          table.insert(parts, EncodeJSON(k) .. ":" .. EncodeJSON(v, indent))
+        end
+      end
+      return "{" .. table.concat(parts, ",") .. "}"
+    end
+  end
+  
+  return "null"
+end
+
+-- Export to JSON encoder globally for UI access
+Journal.EncodeJSON = EncodeJSON
+
+-- Message renderers for each event type (derive human-readable text from structured data)
+local MessageRenderers = {
+  system = function(data)
+    return data.message or "System event"
+  end,
+  
+  quest = function(data)
+    local suffix = data.questID and (" (" .. data.questID .. ")") or ""
+    if data.action == "accepted" then
+      return "Accepted: " .. (data.title or "Quest") .. suffix
+    elseif data.action == "turned_in" then
+      return "Turned in: " .. (data.title or "Quest") .. suffix
+    end
+    return "Quest: " .. (data.title or "Unknown") .. suffix
+  end,
+  
+  activity = function(data)
+    local parts = {}
+    if data.target then
+      -- Single target kill
+      local text = "Killed: " .. data.target
+      if data.count and data.count > 1 then
+        text = text .. " x" .. data.count
+      end
+      table.insert(parts, text)
+    elseif data.kills and next(data.kills) then
+      local killParts = {}
+      for name, count in pairs(data.kills) do
+        table.insert(killParts, name .. " x" .. count)
+      end
+      table.sort(killParts)
+      table.insert(parts, "Killed: " .. table.concat(killParts, ", "))
+    end
+    if data.xp and data.xp > 0 then
+      table.insert(parts, "Gained " .. data.xp .. " XP")
+    end
+    return table.concat(parts, " | ")
+  end,
+  
+  xp = function(data)
+    return "Gained " .. (data.amount or 0) .. " XP"
+  end,
+  
+  loot = function(data)
+    if data.counts and next(data.counts) then
+      local parts = {}
+      for name, count in pairs(data.counts) do
+        table.insert(parts, name .. " x" .. count)
+      end
+      table.sort(parts)
+      local prefix = "Looted"
+      if data.action == "create" then
+        prefix = "Created"
+      elseif data.action == "craft" then
+        prefix = "Crafted"
+      elseif data.action == "receive" then
+        prefix = "Received"
+      end
+      return prefix .. ": " .. table.concat(parts, ", ")
+    end
+    return "Looted items"
+  end,
+  
+  death = function(data)
+    if data.source then
+      local text = "Died to " .. data.source
+      if data.spell then
+        text = text .. " (" .. data.spell .. ")"
+      end
+      if data.level then
+        text = text .. " (lvl " .. data.level .. ")"
+      end
+      return text
+    end
+    return "Died."
+  end,
+  
+  travel = function(data)
+    if data.action == "flight_start" then
+      local text = "Started flying"
+      if data.destination then
+        text = text .. " to " .. data.destination
+      end
+      if data.origin then
+        text = text .. " from " .. data.origin
+      end
+      return text .. "."
+    elseif data.action == "flight_end" then
+      return "Landed in " .. (data.zone or "unknown") .. "."
+    elseif data.action == "hearth" then
+      local toText = data.subZone and data.subZone ~= "" 
+        and (data.zone .. " - " .. data.subZone) or data.zone
+      local fromText = data.fromSubZone and data.fromSubZone ~= ""
+        and (data.fromZone .. " - " .. data.fromSubZone) or data.fromZone
+      return "Hearth to " .. (toText or "unknown") .. " from " .. (fromText or "unknown") .. "."
+    else
+      local toText = data.subZone and data.subZone ~= ""
+        and (data.zone .. " - " .. data.subZone) or data.zone
+      local fromText = data.fromSubZone and data.fromSubZone ~= ""
+        and (data.fromZone .. " - " .. data.fromSubZone) or data.fromZone
+      return "Traveled to " .. (toText or "unknown") .. " from " .. (fromText or "unknown") .. "."
+    end
+  end,
+  
+  reputation = function(data)
+    if data.tier then
+      return "Reputation tier: " .. data.tier .. " with " .. (data.faction or "Unknown")
+    elseif data.amount then
+      return "Reputation with " .. (data.faction or "Unknown") .. " increased by " .. data.amount
+    else
+      return "Reputation with " .. (data.faction or "Unknown") .. " increased"
+    end
+  end,
+  
+  level = function(data)
+    return "Leveled up to " .. (data.level or "?") .. "!"
+  end,
+  
+  screenshot = function(data)
+    local action = data.action or "manual"
+    
+    if action == "capture_target" and data.target then
+      -- Target capture: "Spotted: Name (lvl X) [reaction] screenshot=..."
+      local t = data.target
+      local parts = { "Spotted: " .. (t.name or "Unknown") }
+      if t.level then
+        table.insert(parts, "(lvl " .. t.level .. ")")
+      end
+      if t.reaction then
+        table.insert(parts, "[" .. t.reaction .. "]")
+      end
+      if t.race then
+        table.insert(parts, t.race)
+      end
+      if t.class then
+        table.insert(parts, t.class)
+      end
+      local text = table.concat(parts, " ")
+      if data.note and data.note ~= "" then
+        text = text .. " note=\"" .. data.note .. "\""
+      end
+      if data.filename then
+        text = text .. " screenshot=" .. data.filename
+      end
+      return text
+    elseif action == "capture_scene" then
+      -- Scene capture: "Scene: note=\"...\" screenshot=..."
+      local text = "Scene:"
+      if data.note and data.note ~= "" then
+        text = text .. " note=\"" .. data.note .. "\""
+      end
+      if data.filename then
+        text = text .. " screenshot=" .. data.filename
+      end
+      return text
+    else
+      -- Manual screenshot: "Screenshot: filename"
+      return "Screenshot: " .. (data.filename or "unknown")
+    end
+  end,
+  
+  note = function(data)
+    return "Note: " .. (data.text or data.note or "")
+  end,
+}
+
+-- Render message from structured event data
+function Journal:RenderMessage(eventType, data)
+  local renderer = MessageRenderers[eventType]
+  if renderer then
+    return renderer(data)
+  end
+  -- Fallback for unknown types
+  return eventType .. " event"
+end
+
+-- Create a structured event
+function Journal:CreateEvent(eventType, data)
+  return {
+    v = SCHEMA_VERSION,
+    ts = ISOTimestamp(),
+    type = eventType,
+    data = data,
+    msg = self:RenderMessage(eventType, data),
+  }
+end
+
 local function CopyTable(src)
   local dst = {}
   for k, v in pairs(src) do
@@ -44,7 +314,196 @@ function Journal:InitDB()
     JournalDB.sessions = {}
   end
   self.db = JournalDB
+  self:MigrateDB()
 end
+
+-- Migrate old entries to new event-first schema
+function Journal:MigrateDB()
+  if not self.db or not self.db.sessions then
+    return
+  end
+  
+  for _, session in ipairs(self.db.sessions) do
+    if session.entries then
+      for _, entry in ipairs(session.entries) do
+        local currentVersion = entry.v or 0
+        
+        -- Migrate from no version (v0) to v1
+        if currentVersion < 1 then
+          -- Convert Unix timestamp to ISO 8601
+          if entry.ts and type(entry.ts) == "number" then
+            entry.ts = date("!%Y-%m-%dT%H:%M:%SZ", entry.ts)
+          end
+          
+          -- Move meta to data, preserve text as msg
+          if entry.meta then
+            entry.data = entry.meta
+            entry.meta = nil
+          else
+            entry.data = {}
+          end
+          
+          -- Preserve original text as msg
+          if entry.text then
+            entry.msg = entry.text
+            entry.text = nil
+          end
+          
+          currentVersion = 1
+        end
+        
+        -- Migrate from v1 to v2
+        if currentVersion < 2 then
+          self:MigrateV1ToV2(entry)
+          currentVersion = 2
+        end
+        
+        entry.v = SCHEMA_VERSION
+      end
+    end
+  end
+end
+
+-- Migrate v1 entries to v2 schema
+function Journal:MigrateV1ToV2(entry)
+  local entryType = entry.type
+  local data = entry.data or {}
+  
+  -- Migrate target events to screenshot with capture_target action
+  if entryType == "target" then
+    entry.type = "screenshot"
+    data.action = "capture_target"
+    -- Normalize screenshot field to filename
+    if data.screenshot and not data.filename then
+      data.filename = data.screenshot
+      data.screenshot = nil
+    end
+    -- Move flat target fields to nested object
+    data.target = {
+      name = data.name,
+      level = data.level,
+      reaction = data.reaction,
+      race = data.race,
+      class = data.class,
+    }
+    data.name = nil
+    data.level = nil
+    data.reaction = nil
+    data.race = nil
+    data.class = nil
+  
+  -- Migrate screenshot events
+  elseif entryType == "screenshot" then
+    -- Normalize screenshot field to filename
+    if data.screenshot and not data.filename then
+      data.filename = data.screenshot
+      data.screenshot = nil
+    end
+    -- Add action if missing
+    if not data.action then
+      if data.note and data.note ~= "" then
+        data.action = "capture_scene"
+      else
+        data.action = "manual"
+      end
+    -- Migrate old action names
+    elseif data.action == "taken" then
+      data.action = "manual"
+    elseif data.action == "scene_note" then
+      data.action = "capture_scene"
+    end
+  
+  -- Migrate loot events
+  elseif entryType == "loot" then
+    if not data.action then
+      -- Try to detect from raw messages
+      local raw = data.raw
+      if raw and type(raw) == "table" and #raw > 0 then
+        local firstRaw = raw[1] or ""
+        if firstRaw:match("You create:") then
+          data.action = "create"
+        elseif firstRaw:match("You craft:") then
+          data.action = "craft"
+        elseif firstRaw:match("You receive item:") then
+          data.action = "receive"
+        else
+          data.action = "loot"
+        end
+      else
+        data.action = "loot"
+      end
+    end
+  
+  -- Migrate activity events - convert single-target counts to target/count
+  elseif entryType == "activity" then
+    if data.counts and not data.target and not data.kills then
+      local targetCount = 0
+      local singleTarget = nil
+      local singleCount = 0
+      for name, count in pairs(data.counts) do
+        targetCount = targetCount + 1
+        singleTarget = name
+        singleCount = count
+      end
+      if targetCount == 1 then
+        data.target = singleTarget
+        data.count = singleCount
+        data.counts = nil
+      elseif targetCount > 1 then
+        data.kills = data.counts
+        data.counts = nil
+      end
+    end
+    -- Rename amount to xp for consistency
+    if data.amount and not data.xp then
+      data.xp = data.amount
+      data.amount = nil
+    end
+  
+  -- Migrate other event types
+  elseif entryType == "quest" then
+    -- Add action if missing
+    if not data.action then
+      local msg = entry.msg or ""
+      if msg:match("^Accepted:") then
+        data.action = "accepted"
+      elseif msg:match("^Turned in:") then
+        data.action = "turned_in"
+      end
+    end
+  
+  elseif entryType == "travel" then
+    if not data.action then
+      local msg = entry.msg or ""
+      if msg:match("^Started flying") then
+        data.action = "flight_start"
+      elseif msg:match("^Landed") then
+        data.action = "flight_end"
+      elseif msg:match("^Hearth") then
+        data.action = "hearth"
+      elseif msg:match("^Flew to") then
+        data.action = "zone_change"
+        data.flew = true
+      else
+        data.action = "zone_change"
+      end
+    end
+  
+  elseif entryType == "system" then
+    if not data.message then
+      data.message = entry.msg or ""
+    end
+  
+  elseif entryType == "note" then
+    if not data.text then
+      local msg = entry.msg or ""
+      data.text = msg:gsub("^Note: ", "")
+    end
+  end
+  
+  entry.data = data
+end
+
 
 function Journal:InitAggregates()
   self.agg = {
@@ -114,7 +573,7 @@ function Journal:StartSession()
   }
   table.insert(self.db.sessions, session)
   self.currentSession = session
-  self:AddEntry("system", "Session started.", nil)
+  self:AddEvent("system", { message = "Session started." })
 end
 
 function Journal:EndSession()
@@ -125,17 +584,36 @@ function Journal:EndSession()
   end
 end
 
+-- New event-first entry creation
+function Journal:AddEvent(eventType, data)
+  if not self.currentSession then
+    return
+  end
+  local event = self:CreateEvent(eventType, data)
+  table.insert(self.currentSession.entries, event)
+  if self.debug then
+    self:DebugLog("Event added: " .. eventType .. " - " .. event.msg)
+  end
+  if self.uiFrame and self.uiFrame:IsShown() and self.RefreshUI then
+    self:RefreshUI()
+  end
+end
+
+-- Legacy wrapper for backwards compatibility during transition
 function Journal:AddEntry(entryType, text, meta)
   if not self.currentSession then
     return
   end
-  local entry = {
-    ts = time(),
+  -- Convert to new event format
+  local data = meta or {}
+  local event = {
+    v = SCHEMA_VERSION,
+    ts = ISOTimestamp(),
     type = entryType,
-    text = text,
-    meta = meta,
+    data = data,
+    msg = text,
   }
-  table.insert(self.currentSession.entries, entry)
+  table.insert(self.currentSession.entries, event)
   if self.debug then
     self:DebugLog("Entry added: " .. entryType .. " - " .. text)
   end
@@ -148,7 +626,7 @@ function Journal:ResetCombatAgg()
   self.combatAgg = {
     kills = {},
     xp = 0,
-    loot = { counts = {}, raw = {} },
+    loot = { counts = {}, raw = {}, action = nil },
   }
 end
 
@@ -160,23 +638,36 @@ function Journal:FlushCombatAgg()
   local killCounts = self.combatAgg.kills
   local xpTotal = self.combatAgg.xp
   if next(killCounts) or xpTotal > 0 then
-    local parts = {}
-    local meta = {}
-    if next(killCounts) then
-      table.insert(parts, "Killed: " .. BuildCountText(killCounts))
-      meta.counts = CopyTable(killCounts)
+    -- Count unique targets
+    local targetCount = 0
+    local singleTarget = nil
+    local singleCount = 0
+    for name, count in pairs(killCounts) do
+      targetCount = targetCount + 1
+      singleTarget = name
+      singleCount = count
     end
-    if xpTotal > 0 then
-      table.insert(parts, "Gained " .. xpTotal .. " XP")
-      meta.amount = xpTotal
+    
+    local eventData = {
+      xp = xpTotal > 0 and xpTotal or nil,
+    }
+    
+    if targetCount == 1 then
+      -- Single target type - use cleaner format
+      eventData.target = singleTarget
+      eventData.count = singleCount
+    elseif targetCount > 1 then
+      -- Multiple targets - use kills map
+      eventData.kills = CopyTable(killCounts)
     end
-    self:AddEntry("activity", table.concat(parts, " | "), meta)
+    
+    self:AddEvent("activity", eventData)
   end
 
   local lootCounts = self.combatAgg.loot.counts
   if next(lootCounts) then
-    local text = BuildCountText(lootCounts)
-    self:AddEntry("loot", "Looted: " .. text, {
+    self:AddEvent("loot", {
+      action = self.combatAgg.loot.action or "loot",
       counts = CopyTable(lootCounts),
       raw = CopyTable(self.combatAgg.loot.raw),
     })
@@ -214,12 +705,24 @@ function Journal:RecordXP()
     if self.inCombat then
       self.combatAgg.xp = self.combatAgg.xp + delta
     else
-      self:AddEntry("xp", "Gained " .. delta .. " XP", { amount = delta })
+      self:AddEvent("xp", { amount = delta })
     end
   end
 
   self.agg.xp.lastXP = currentXP
   self.agg.xp.lastMaxXP = currentMax
+end
+
+function Journal:DetectLootAction(msg)
+  if msg:match("You create:") then
+    return "create"
+  elseif msg:match("You craft:") then
+    return "craft"
+  elseif msg:match("You receive item:") then
+    return "receive"
+  else
+    return "loot"
+  end
 end
 
 function Journal:RecordLoot(msg)
@@ -238,18 +741,32 @@ function Journal:RecordLoot(msg)
     itemName = msg:match("You receive item: (.+)")
   end
   if not itemName then
+    itemName = msg:match("You create: (.+)")
+  end
+  if not itemName then
+    itemName = msg:match("You craft: (.+)")
+  end
+  if not itemName then
     return
   end
+  
+  -- Clean item name (remove quantity suffix if present)
+  itemName = itemName:gsub("x%d+$", ""):gsub("%s+$", "")
 
+  local action = self:DetectLootAction(msg)
   local count = tonumber(msg:match("x(%d+)")) or 1
   if self.inCombat then
     local counts = self.combatAgg.loot.counts
     counts[itemName] = (counts[itemName] or 0) + count
     table.insert(self.combatAgg.loot.raw, msg)
+    -- Store action for combat loot (use first seen action)
+    if not self.combatAgg.loot.action then
+      self.combatAgg.loot.action = action
+    end
   else
     local now = time()
     local pending = self.pendingLoot[itemName]
-    if pending and (now - pending.lastTs) <= LOOT_MERGE_WINDOW then
+    if pending and (now - pending.lastTs) <= LOOT_MERGE_WINDOW and pending.action == action then
       pending.count = pending.count + count
       table.insert(pending.raw, msg)
       pending.lastTs = now
@@ -262,6 +779,7 @@ function Journal:RecordLoot(msg)
         raw = { msg },
         lastTs = now,
         timer = nil,
+        action = action,
       }
       self.pendingLoot[itemName] = pending
     end
@@ -289,7 +807,8 @@ function Journal:FlushPendingLoot(itemName)
     if pending.timer then
       pending.timer:Cancel()
     end
-    self:AddEntry("loot", "Looted: " .. itemName .. " x" .. pending.count, {
+    self:AddEvent("loot", {
+      action = pending.action or "loot",
       counts = { [itemName] = pending.count },
       raw = CopyTable(pending.raw),
     })
@@ -301,7 +820,8 @@ function Journal:FlushPendingLoot(itemName)
     if pending.timer then
       pending.timer:Cancel()
     end
-    self:AddEntry("loot", "Looted: " .. name .. " x" .. pending.count, {
+    self:AddEvent("loot", {
+      action = pending.action or "loot",
       counts = { [name] = pending.count },
       raw = CopyTable(pending.raw),
     })
@@ -343,17 +863,14 @@ function Journal:RecordDeath()
   local events = self.agg.damage.events
   local last = events[#events]
   if last then
-    local text = "Died to " .. last.source
-    if last.spell then
-      text = text .. " (" .. last.spell .. ")"
-    end
     local level = self:GetSourceLevel(last.source)
-    if level then
-      text = text .. " (lvl " .. level .. ")"
-    end
-    self:AddEntry("death", text, { source = last.source, spell = last.spell })
+    self:AddEvent("death", {
+      source = last.source,
+      spell = last.spell,
+      level = level,
+    })
   else
-    self:AddEntry("death", "Died.", nil)
+    self:AddEvent("death", {})
   end
   self.agg.damage.events = {}
 end
@@ -364,14 +881,15 @@ function Journal:LogQuestAccepted(questLogIndex, questID)
   if not title or title == "" then
     title = questID and ("Quest " .. questID) or "Quest"
   end
-  local suffix = questID and (" (" .. questID .. ")") or ""
-  self:AddEntry("quest", "Accepted: " .. title .. suffix, {
+  local zone = GetRealZoneText()
+  local subZone = GetSubZoneText()
+  self:AddEvent("quest", {
+    action = "accepted",
     questID = questID,
     title = title,
+    zone = zone,
+    subZone = (subZone and subZone ~= "") and subZone or nil,
   })
-  if title and title ~= "" then
-    -- no-op; kept for future filtering if needed
-  end
 end
 
 function Journal:LogQuestTurnedIn(questID, xpReward, moneyReward)
@@ -386,12 +904,16 @@ function Journal:LogQuestTurnedIn(questID, xpReward, moneyReward)
   if not title or title == "" or title == ("Quest " .. questID) then
     title = fallbackTitle or ("Quest " .. questID)
   end
-  local suffix = questID and (" (" .. questID .. ")") or ""
-  self:AddEntry("quest", "Turned in: " .. title .. suffix, {
+  local zone = GetRealZoneText()
+  local subZone = GetSubZoneText()
+  self:AddEvent("quest", {
+    action = "turned_in",
     questID = questID,
     title = title,
     xp = xpReward,
     money = moneyReward,
+    zone = zone,
+    subZone = (subZone and subZone ~= "") and subZone or nil,
   })
   self.lastQuestCompleted = nil
 end
@@ -416,16 +938,11 @@ function Journal:HandleFlightStart()
   self.flightState.startedAt = time()
   local dest = self.flightState.destinationName
   local origin = self.flightState.originName or self.flightState.originZone
-  local text = "Started flying"
-  if dest then
-    text = text .. " to " .. dest
-  end
-  if origin then
-    text = text .. " from " .. origin
-  end
-  self:AddEntry("travel", text .. ".", {
+  self:AddEvent("travel", {
+    action = "flight_start",
     origin = origin,
     destination = dest,
+    hops = self.flightState.hops,
   })
 end
 
@@ -487,8 +1004,12 @@ function Journal:HandleFlightEnd()
   end
   self.flightState.onTaxi = false
   local zone = GetRealZoneText()
-  local text = "Landed in " .. zone
-  self:AddEntry("travel", text .. ".", { zone = zone })
+  local subZone = GetSubZoneText()
+  self:AddEvent("travel", {
+    action = "flight_end",
+    zone = zone,
+    subZone = subZone,
+  })
   self.flightState.originZone = nil
   self.flightState.destinationName = nil
   self.flightState.destinationZone = nil
@@ -508,24 +1029,20 @@ function Journal:HandleZoneChanged()
     if not self.flightState.onTaxi then
       local fromZone = self.lastZone
       local fromSub = self.lastSubZone
-      local toZone = zone
-      local toSub = subZone
-      local toText = toSub and toSub ~= "" and (toZone .. " - " .. toSub) or toZone
-      local fromText = fromSub and fromSub ~= "" and (fromZone .. " - " .. fromSub) or fromZone
-      local text = "Traveled to " .. toText .. " from " .. fromText
+      local isHearth = self.lastHearthCastAt and (time() - self.lastHearthCastAt) <= 90
 
-      if self.lastHearthCastAt and (time() - self.lastHearthCastAt) <= 90 then
-        text = "Hearth to " .. toText .. " from " .. (self.lastHearthFrom or fromText)
-        self.lastHearthCastAt = nil
-        self.lastHearthFrom = nil
-      end
-
-      self:AddEntry("travel", text .. ".", {
-        zone = toZone,
-        subZone = toSub,
+      self:AddEvent("travel", {
+        action = isHearth and "hearth" or "zone_change",
+        zone = zone,
+        subZone = subZone,
         fromZone = fromZone,
         fromSubZone = fromSub,
       })
+
+      if isHearth then
+        self.lastHearthCastAt = nil
+        self.lastHearthFrom = nil
+      end
     end
   end
   
@@ -545,7 +1062,7 @@ function Journal:HandleReputationChange(msg)
   local faction, amount = cleaned:match("Your reputation with (.+) has increased by (%d+)")
   if faction and amount then
     amount = tonumber(amount)
-    self:AddEntry("reputation", "Reputation with " .. faction .. " increased by " .. amount, {
+    self:AddEvent("reputation", {
       faction = faction,
       amount = amount,
     })
@@ -554,9 +1071,8 @@ function Journal:HandleReputationChange(msg)
   
   faction = cleaned:match("Your reputation with (.+) has .* increased")
   if faction then
-    self:AddEntry("reputation", "Reputation with " .. faction .. " increased", {
+    self:AddEvent("reputation", {
       faction = faction,
-      amount = nil,
     })
   end
 end
@@ -577,17 +1093,16 @@ function Journal:CaptureTarget(note)
   self.pendingScreenshotName = nil
   local hasTarget = self.pendingHasTarget
   self.pendingHasTarget = nil
-
-  local parts = {}
   
+  local zone = GetRealZoneText()
+  local subZone = GetSubZoneText()
+
   if hasTarget and UnitExists("target") then
     local name = UnitName("target")
     if name and name ~= "" then
-      table.insert(parts, "Spotted: " .. name)
-
       local level = UnitLevel("target")
-      if level and level > 0 then
-        table.insert(parts, "(lvl " .. level .. ")")
+      if level and level <= 0 then
+        level = nil
       end
 
       local reaction = UnitReaction("player", "target")
@@ -600,50 +1115,37 @@ function Journal:CaptureTarget(note)
         else
           reactionText = "hostile"
         end
-        table.insert(parts, "[" .. reactionText .. "]")
       end
 
       local race = UnitRace("target")
       local class = UnitClass("target")
-      if race and race ~= "" then
-        table.insert(parts, race)
-      end
-      if class and class ~= "" then
-        table.insert(parts, class)
-      end
 
-      local text = table.concat(parts, " ")
-      if note and note ~= "" then
-        text = text .. " note=\"" .. note .. "\""
-      end
-      if screenshotName then
-        text = text .. " screenshot=" .. screenshotName
-      end
-
-      self:AddEntry("target", text, {
-        name = name,
-        level = level,
-        reaction = reactionText,
-        race = race,
-        class = class,
-        note = note,
-        screenshot = screenshotName,
+      -- Target capture - all in one screenshot event
+      self:AddEvent("screenshot", {
+        action = "capture_target",
+        filename = screenshotName,
+        note = (note and note ~= "") and note or nil,
+        zone = zone,
+        subZone = (subZone and subZone ~= "") and subZone or nil,
+        target = {
+          name = name,
+          level = level,
+          reaction = reactionText,
+          race = (race and race ~= "") and race or nil,
+          class = (class and class ~= "") and class or nil,
+        },
       })
       return
     end
   end
 
-  local text = "Scene:"
-  if note and note ~= "" then
-    text = text .. " note=\"" .. note .. "\""
-  end
-  if screenshotName then
-    text = text .. " screenshot=" .. screenshotName
-  end
-
-  self:AddEntry("screenshot", text, {
-    note = note,
-    screenshot = screenshotName,
+  -- Scene capture (no target)
+  self:AddEvent("screenshot", {
+    action = "capture_scene",
+    filename = screenshotName,
+    note = (note and note ~= "") and note or nil,
+    zone = zone,
+    subZone = (subZone and subZone ~= "") and subZone or nil,
   })
 end
 
@@ -736,9 +1238,8 @@ function Journal:CaptureNote(note)
     return
   end
   
-  local text = "Note: " .. note
-  self:AddEntry("note", text, {
-    note = note,
+  self:AddEvent("note", {
+    text = note,
   })
 end
 
@@ -879,7 +1380,7 @@ function Journal:OnEvent(event, ...)
       if repTier then
         local tier, faction = repTier:match("^(.+) with (.+)$")
         if tier and faction then
-          self:AddEntry("reputation", "Reputation tier: " .. tier .. " with " .. faction, {
+          self:AddEvent("reputation", {
             faction = faction,
             tier = tier,
           })
@@ -938,7 +1439,7 @@ function Journal:OnEvent(event, ...)
     self:FlushPendingLoot()
   elseif event == "PLAYER_LEVEL_UP" then
     local level = ...
-    self:AddEntry("level", "Leveled up to " .. level .. "!", { level = level })
+    self:AddEvent("level", { level = level })
   elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
     local unit, spellName = ...
     if unit == "player" and spellName then
@@ -959,8 +1460,19 @@ function Journal:OnEvent(event, ...)
       end
     end
   elseif event == "SCREENSHOT_SUCCEEDED" then
+    -- Skip if we're in a pending capture (will be handled by CaptureTarget)
+    if self.pendingScreenshotName then
+      return
+    end
     local screenshotName = self:GetScreenshotName()
-    self:AddEntry("screenshot", "Screenshot: " .. screenshotName, { filename = screenshotName })
+    local zone = GetRealZoneText()
+    local subZone = GetSubZoneText()
+    self:AddEvent("screenshot", {
+      action = "manual",
+      filename = screenshotName,
+      zone = zone,
+      subZone = (subZone and subZone ~= "") and subZone or nil,
+    })
   end
 end
 
