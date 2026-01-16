@@ -41,8 +41,8 @@ function Journal:CaptureTarget(note)
         end
       end
 
-      local race = UnitRace("target")
-      local class = UnitClass("target")
+      local race = UnitIsPlayer("target") and UnitRace("target") or nil
+      local class = UnitIsPlayer("target") and UnitClass("target") or nil
 
       -- Target capture - all in one screenshot event
       self:AddEvent("screenshot", {

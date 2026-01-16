@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.3] - 2026-01-16
+
+### Fixed
+
+- **Incorrect target.class for NPCs in capture_target** (#26)
+    - `UnitClass()` was returning mob name for NPCs
+    - Now only sets `class` and `race` for player targets
+    - NPCs/mobs will have `class` and `race` omitted from data
+
 ## [0.5.2] - 2026-01-16
 
 ### Fixed
@@ -93,7 +102,7 @@
 - Event types now use `action` field for sub-types:
     - `quest.action`: "accepted" | "turned_in"
     - `travel.action`: "flight_start" | "flight_end" | "hearth" | "zone_change"
-    - `screenshot.action`: "taken" | "scene_note"
+    - `screenshot.action`: "manual" | "capture_scene" | "capture_target"
     - `loot.action`: "loot" | "create" | "craft" | "receive"
 - Screenshot events unified: `target` event merged into `screenshot` with `action: "capture_target"`
 - Screenshot actions: `manual` (hotkey), `capture_scene` (no target), `capture_target` (with target)
