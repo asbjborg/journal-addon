@@ -28,6 +28,7 @@ local events = {
   "UNIT_SPELLCAST_SUCCEEDED",
   "SCREENSHOT_SUCCEEDED",
   "CHAT_MSG_COMBAT_FACTION_CHANGE",
+  "CHAT_MSG_SKILL",
 }
 
 for _, eventName in ipairs(events) do

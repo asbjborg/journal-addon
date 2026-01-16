@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.0] - 2026-01-16
+
+### Added
+
+- **Profession skill tracking** (#23)
+    - Logs skill increases when gathering or crafting
+    - New `profession` event type with `skill` and `level` in data
+    - Display format: "[Skill] skill increased to [level]" (e.g., "Mining skill increased to 42")
+    - Listens to `CHAT_MSG_SKILL` event
+
 ## [0.4.3] - 2026-01-16
 
 ### Fixed
