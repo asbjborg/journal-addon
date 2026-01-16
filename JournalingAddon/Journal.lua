@@ -541,9 +541,9 @@ function Journal:InitAggregates()
   self.lastZone = GetRealZoneText()
   self.lastSubZone = GetSubZoneText()
   self.inCombat = UnitAffectingCombat("player") or false
+  self.inAggWindow = self.inCombat  -- Aggregation window: combat + 10s post-combat
+  self.aggWindowTimer = nil
   self:ResetCombatAgg()
-  self.pendingLoot = {}
-  self.pendingMoney = nil
   self.lastQuestCompleted = nil
   self.lastHearthCastAt = nil
   self.lastHearthFrom = nil
@@ -607,9 +607,9 @@ end
 
 function Journal:EndSession()
   if self.currentSession and not self.currentSession.endTime then
-    self:FlushCombatAgg()
-    self:FlushPendingLoot()
-    self:FlushPendingMoney()
+    if self.inAggWindow then
+      self:CloseAggWindow()
+    end
     self.currentSession.endTime = time()
   end
 end
@@ -659,6 +659,36 @@ function Journal:ResetCombatAgg()
     loot = { counts = {}, raw = {}, action = nil },
     money = 0,
   }
+end
+
+function Journal:StartAggWindowTimer()
+  -- Cancel existing timer if any
+  if self.aggWindowTimer then
+    self.aggWindowTimer:Cancel()
+    self.aggWindowTimer = nil
+  end
+  
+  -- Keep aggregation window open
+  self.inAggWindow = true
+  
+  -- Start 10-second timer to flush
+  if C_Timer and C_Timer.NewTimer then
+    self.aggWindowTimer = C_Timer.NewTimer(LOOT_MERGE_WINDOW, function()
+      Journal:CloseAggWindow()
+    end)
+  else
+    -- Fallback: flush immediately if no timer available
+    self:CloseAggWindow()
+  end
+end
+
+function Journal:CloseAggWindow()
+  if self.aggWindowTimer then
+    self.aggWindowTimer:Cancel()
+    self.aggWindowTimer = nil
+  end
+  self.inAggWindow = false
+  self:FlushCombatAgg()
 end
 
 function Journal:FlushCombatAgg()
@@ -716,10 +746,13 @@ function Journal:RecordKill(destName)
   if not destName or destName == "" then
     return
   end
-  local counts = self.combatAgg.kills
-  counts[destName] = (counts[destName] or 0) + 1
-  if not self.inCombat then
-    self:FlushCombatAgg()
+  
+  if self.inAggWindow then
+    local counts = self.combatAgg.kills
+    counts[destName] = (counts[destName] or 0) + 1
+  else
+    -- Kill outside aggregation window - log immediately
+    self:AddEvent("activity", { target = destName, count = 1 })
   end
 end
 
@@ -738,7 +771,7 @@ function Journal:RecordXP()
   end
 
   if delta > 0 then
-    if self.inCombat then
+    if self.inAggWindow then
       self.combatAgg.xp = self.combatAgg.xp + delta
     else
       self:AddEvent("xp", { amount = delta })
@@ -791,78 +824,28 @@ function Journal:RecordLoot(msg)
 
   local action = self:DetectLootAction(msg)
   local count = tonumber(msg:match("x(%d+)")) or 1
-  if self.inCombat then
+  
+  if self.inAggWindow then
+    -- Add to aggregation window
     local counts = self.combatAgg.loot.counts
     counts[itemName] = (counts[itemName] or 0) + count
     table.insert(self.combatAgg.loot.raw, msg)
-    -- Store action for combat loot (use first seen action)
+    -- Store action for loot (use first seen action)
     if not self.combatAgg.loot.action then
       self.combatAgg.loot.action = action
     end
+    -- Extend the timer if we're in post-combat window
+    if not self.inCombat and self.aggWindowTimer then
+      self:StartAggWindowTimer()
+    end
   else
-    local now = time()
-    local pending = self.pendingLoot[itemName]
-    if pending and (now - pending.lastTs) <= LOOT_MERGE_WINDOW and pending.action == action then
-      pending.count = pending.count + count
-      table.insert(pending.raw, msg)
-      pending.lastTs = now
-    else
-      if pending then
-        self:FlushPendingLoot(itemName)
-      end
-      pending = {
-        count = count,
-        raw = { msg },
-        lastTs = now,
-        timer = nil,
-        action = action,
-      }
-      self.pendingLoot[itemName] = pending
-    end
-
-    if C_Timer and C_Timer.NewTimer then
-      if pending.timer then
-        pending.timer:Cancel()
-      end
-      pending.timer = C_Timer.NewTimer(LOOT_MERGE_WINDOW, function()
-        self:FlushPendingLoot(itemName)
-      end)
-    end
-  end
-end
-
-function Journal:FlushPendingLoot(itemName)
-  if not self.pendingLoot then
-    return
-  end
-  if itemName then
-    local pending = self.pendingLoot[itemName]
-    if not pending then
-      return
-    end
-    if pending.timer then
-      pending.timer:Cancel()
-    end
+    -- Not in aggregation window - log immediately
     self:AddEvent("loot", {
-      action = pending.action or "loot",
-      counts = { [itemName] = pending.count },
-      raw = CopyTable(pending.raw),
-    })
-    self.pendingLoot[itemName] = nil
-    return
-  end
-
-  for name, pending in pairs(self.pendingLoot) do
-    if pending.timer then
-      pending.timer:Cancel()
-    end
-    self:AddEvent("loot", {
-      action = pending.action or "loot",
-      counts = { [name] = pending.count },
-      raw = CopyTable(pending.raw),
+      action = action,
+      counts = { [itemName] = count },
+      raw = { msg },
     })
   end
-  self.pendingLoot = {}
 end
 
 function Journal:ParseMoneyFromMessage(msg)
@@ -902,52 +885,17 @@ function Journal:RecordMoney(msg)
     return
   end
   
-  if self.inCombat then
+  if self.inAggWindow then
+    -- Add to aggregation window
     self.combatAgg.money = self.combatAgg.money + copper
+    -- Extend the timer if we're in post-combat window
+    if not self.inCombat and self.aggWindowTimer then
+      self:StartAggWindowTimer()
+    end
   else
-    local now = time()
-    local pending = self.pendingMoney
-    if pending and (now - pending.lastTs) <= LOOT_MERGE_WINDOW then
-      pending.copper = pending.copper + copper
-      pending.lastTs = now
-    else
-      if pending then
-        self:FlushPendingMoney()
-      end
-      pending = {
-        copper = copper,
-        lastTs = now,
-        timer = nil,
-      }
-      self.pendingMoney = pending
-    end
-
-    if C_Timer and C_Timer.NewTimer then
-      if pending.timer then
-        pending.timer:Cancel()
-      end
-      pending.timer = C_Timer.NewTimer(LOOT_MERGE_WINDOW, function()
-        self:FlushPendingMoney()
-      end)
-    end
+    -- Not in aggregation window - log immediately
+    self:AddEvent("money", { copper = copper })
   end
-end
-
-function Journal:FlushPendingMoney()
-  if not self.pendingMoney then
-    return
-  end
-  
-  local pending = self.pendingMoney
-  if pending.timer then
-    pending.timer:Cancel()
-  end
-  
-  if pending.copper and pending.copper > 0 then
-    self:AddEvent("money", { copper = pending.copper })
-  end
-  
-  self.pendingMoney = nil
 end
 
 function Journal:RecordDamage(eventTime, sourceName, spellName, amount)
@@ -1474,15 +1422,17 @@ function Journal:OnEvent(event, ...)
     if questLogIndex then
       self:LogQuestAccepted(questLogIndex, questID)
     end
-    self:FlushPendingLoot()
-    self:FlushPendingMoney()
+    if self.inAggWindow then
+      self:CloseAggWindow()
+    end
   elseif event == "QUEST_TURNED_IN" then
     local questID, xpReward, moneyReward = ...
     if questID then
       self:LogQuestTurnedIn(questID, xpReward, moneyReward)
     end
-    self:FlushPendingLoot()
-    self:FlushPendingMoney()
+    if self.inAggWindow then
+      self:CloseAggWindow()
+    end
   elseif event == "CHAT_MSG_SYSTEM" then
     local msg = ...
     if msg and msg ~= "" then
@@ -1556,14 +1506,18 @@ function Journal:OnEvent(event, ...)
     self:RecordDeath()
   elseif event == "PLAYER_REGEN_ENABLED" then
     self.inCombat = false
-    self:FlushCombatAgg()
+    -- Don't flush yet - start 10-second post-combat window for looting
+    self:StartAggWindowTimer()
   elseif event == "CHAT_MSG_MONEY" then
     local msg = ...
     self:RecordMoney(msg)
   elseif event == "PLAYER_REGEN_DISABLED" then
+    -- Flush previous aggregation window before starting new combat
+    if self.inAggWindow then
+      self:CloseAggWindow()
+    end
     self.inCombat = true
-    self:FlushPendingLoot()
-    self:FlushPendingMoney()
+    self.inAggWindow = true  -- Start new aggregation window
   elseif event == "PLAYER_LEVEL_UP" then
     local level = ...
     self:AddEvent("level", { level = level })
