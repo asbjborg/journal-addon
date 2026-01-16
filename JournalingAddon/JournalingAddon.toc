@@ -5,5 +5,16 @@
 ## Version: 0.4.2
 ## SavedVariables: JournalDB
 
-Journal.lua
+core/Namespace.lua
+core/Util.lua
+core/Storage.lua
+core/Renderers.lua
+core/Events.lua
+features/Combat.lua
+features/Quest.lua
+features/Travel.lua
+features/Reputation.lua
+features/Screenshots.lua
+features/Notes.lua
+features/Level.lua
 JournalUI.lua

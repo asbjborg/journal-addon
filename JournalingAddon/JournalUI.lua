@@ -387,56 +387,46 @@ SlashCmdList["JOURNAL"] = function(msg)
     return
   elseif arg == "undo" then
     -- Delete last entry
-    if Journal.currentSession and Journal.currentSession.entries then
-      local entries = Journal.currentSession.entries
-      if #entries > 0 then
-        local removed = table.remove(entries)
-        local msg = removed.msg or removed.text or "entry"
-        if DEFAULT_CHAT_FRAME then
-          DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Removed: " .. msg:sub(1, 50))
-        end
-        if Journal.uiFrame and Journal.uiFrame:IsShown() then
-          Journal:RefreshUI()
-        end
-      else
-        if DEFAULT_CHAT_FRAME then
-          DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No entries to remove.")
-        end
+    local removed = Journal:RemoveLastEntry()
+    if removed then
+      local msg = removed.msg or removed.text or "entry"
+      if DEFAULT_CHAT_FRAME then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Removed: " .. msg:sub(1, 50))
+      end
+      if Journal.uiFrame and Journal.uiFrame:IsShown() then
+        Journal:RefreshUI()
+      end
+    else
+      if DEFAULT_CHAT_FRAME then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r No entries to remove.")
       end
     end
     return
   elseif arg == "clear" then
     -- Clear current session entries
-    if Journal.currentSession then
-      local count = Journal.currentSession.entries and #Journal.currentSession.entries or 0
-      Journal.currentSession.entries = {}
-      if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Cleared " .. count .. " entries from current session.")
-      end
-      if Journal.uiFrame and Journal.uiFrame:IsShown() then
-        Journal:RefreshUI()
-      end
+    local count = Journal:ClearCurrentSession()
+    if DEFAULT_CHAT_FRAME then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Cleared " .. count .. " entries from current session.")
+    end
+    if Journal.uiFrame and Journal.uiFrame:IsShown() then
+      Journal:RefreshUI()
     end
     return
   elseif arg == "reset" then
     -- Start fresh session (ends current, starts new)
-    if Journal.currentSession then
-      Journal.currentSession.endTime = time()
-    end
-    local characterKey = Journal:GetCharacterKey()
-    local dayKey = Journal:GetDayKey()
-    local session = {
-      startTime = time(),
-      endTime = nil,
-      entries = {},
-      characterKey = characterKey,
-      dayKey = dayKey,
-    }
-    table.insert(Journal.db.sessions, session)
-    Journal.currentSession = session
-    Journal:AddEvent("system", { message = "Session started (manual reset)." })
+    Journal:StartNewSession("Session started (manual reset).")
     if DEFAULT_CHAT_FRAME then
       DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r New session started.")
+    end
+    if Journal.uiFrame and Journal.uiFrame:IsShown() then
+      Journal:RefreshUI()
+    end
+    return
+  elseif arg == "wipe" then
+    -- Wipe all data and start fresh session
+    Journal:WipeAllData()
+    if DEFAULT_CHAT_FRAME then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Journal data wiped.")
     end
     if Journal.uiFrame and Journal.uiFrame:IsShown() then
       Journal:RefreshUI()
@@ -452,6 +442,7 @@ SlashCmdList["JOURNAL"] = function(msg)
       DEFAULT_CHAT_FRAME:AddMessage("  /journal clear - Clear current session")
       DEFAULT_CHAT_FRAME:AddMessage("  /journal reset - Start new session")
       DEFAULT_CHAT_FRAME:AddMessage("  /journal debug - Toggle debug mode")
+      DEFAULT_CHAT_FRAME:AddMessage("  /journal wipe - Wipe all journal data")
     end
     return
   end
