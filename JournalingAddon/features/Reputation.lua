@@ -5,6 +5,9 @@ function Journal:HandleReputationChange(msg)
   local cleaned = msg:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
 
   local faction, amount = cleaned:match("Your reputation with (.+) has increased by (%d+)")
+  if not faction then
+    faction, amount = cleaned:match("Reputation with (.+) increased by (%d+)")
+  end
   if faction and amount then
     amount = tonumber(amount)
     self:AddEvent("reputation", {
@@ -15,6 +18,9 @@ function Journal:HandleReputationChange(msg)
   end
 
   faction = cleaned:match("Your reputation with (.+) has .* increased")
+  if not faction then
+    faction = cleaned:match("Reputation with (.+) increased")
+  end
   if faction then
     self:AddEvent("reputation", {
       faction = faction,

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.3] - 2026-01-16
+
+### Fixed
+
+- Reputation gains now log for "Reputation with X increased" chat messages (previously only matched "Your reputation with X has increased")
+
 ## [0.4.2] - 2026-01-16
 
 ### Changed
