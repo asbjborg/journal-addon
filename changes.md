@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.2] - 2026-01-16
+
+### Fixed
+
+- **Subzone change now logs when entering/leaving area with no subzone** (#25)
+    - Previously, leaving "Sar'theris Strand" for generic "Desolace" wouldn't log
+    - Now logs "Entered Desolace (from Sar'theris Strand)." when leaving a named subzone
+    - When entering a subzone from generic zone, shows "Entered Sar'theris Strand (from Desolace)."
+
+### Changed
+
+- Reduced subzone debounce from 30 seconds to 10 seconds
+
 ## [0.5.1] - 2026-01-16
 
 ### Added
