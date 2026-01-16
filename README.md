@@ -12,8 +12,6 @@ A World of Warcraft addon for creating a personal journal of your adventures. Au
 - **Reputation**: Monitors reputation gains and tier changes
 - **Screenshots**: Automatically logs when you take screenshots with filename
 - **Death Tracking**: Logs when you die
-- **Crafting**: Tracks when items are crafted
-- **Mail**: Logs received and sent mail with sender/recipient and items
 
 ### Manual Capture
 - **Target Capture** (`/journal capture`): Document targets (NPCs, players, mobs) with screenshot and note
@@ -69,9 +67,6 @@ The journal automatically creates entries for:
 - **Reputation**: Reputation gains and tier changes
 - **Screenshot**: Automatic screenshot logging
 - **Died**: Player death events
-- **Crafted**: Items crafted
-- **Received mail from**: Mail received with sender and items
-- **Sent mail to**: Mail sent with recipient and items
 
 Manual entries:
 - **Spotted**: Target capture with level, reaction, race, class, note, and screenshot
