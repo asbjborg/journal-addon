@@ -12,6 +12,7 @@ Journal.On("CHAT_MSG_SKILL", function(msg)
 
   local skill, level = msg:match("Your skill in (.+) has increased to (%d+)")
   if skill and level then
+    Journal:DebugLog("Skill up: " .. skill .. " -> " .. level)
     Journal:AddEvent("profession", {
       skill = skill,
       level = tonumber(level),

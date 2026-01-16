@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.1] - 2026-01-16
+
+### Added
+
+- **Subzone change tracking** (#24)
+    - Logs when entering a new subzone within the same major zone
+    - New `subzone_change` travel action with `subZone` and `fromSubZone` in data
+    - Display format: "Entered [Subzone] (from [Previous Subzone])."
+    - 30-second debounce per subzone to prevent spam at zone boundaries
+    - Listens to `ZONE_CHANGED` event (in addition to existing `ZONE_CHANGED_NEW_AREA`)
+
 ## [0.5.0] - 2026-01-16
 
 ### Added

@@ -126,6 +126,59 @@ function Journal:HandleZoneChanged()
   self.lastSubZone = subZone
 end
 
+function Journal:HandleSubZoneChanged()
+  local zone = GetRealZoneText()
+  local subZone = GetSubZoneText()
+  if not zone or zone == "" then
+    return
+  end
+
+  -- Only track subzone changes within the same major zone
+  if zone == self.lastZone and subZone and subZone ~= "" and subZone ~= self.lastSubZone then
+    -- Skip if on taxi
+    if self.flightState.onTaxi then
+      self.lastSubZone = subZone
+      return
+    end
+
+    -- Debounce: don't log if we just logged this subzone recently
+    local now = time()
+    self.subZoneDebounce = self.subZoneDebounce or {}
+    local key = zone .. ":" .. subZone
+    if self.subZoneDebounce[key] and (now - self.subZoneDebounce[key]) < 30 then
+      self:DebugLog("Subzone debounced: " .. subZone .. " (seen " .. (now - self.subZoneDebounce[key]) .. "s ago)")
+      self.lastSubZone = subZone
+      return
+    end
+    self.subZoneDebounce[key] = now
+
+    -- Clean old debounce entries (keep last 10)
+    local count = 0
+    for _ in pairs(self.subZoneDebounce) do count = count + 1 end
+    if count > 10 then
+      local oldest_key, oldest_time = nil, now
+      for k, t in pairs(self.subZoneDebounce) do
+        if t < oldest_time then
+          oldest_key, oldest_time = k, t
+        end
+      end
+      if oldest_key then
+        self.subZoneDebounce[oldest_key] = nil
+      end
+    end
+
+    self:DebugLog("Subzone change: " .. (self.lastSubZone or "?") .. " -> " .. subZone)
+    self:AddEvent("travel", {
+      action = "subzone_change",
+      zone = zone,
+      subZone = subZone,
+      fromSubZone = self.lastSubZone,
+    })
+  end
+
+  self.lastSubZone = subZone
+end
+
 Journal:RegisterRenderer("travel", function(data)
   if data.action == "flight_start" then
     local text = "Started flying"
@@ -144,6 +197,10 @@ Journal:RegisterRenderer("travel", function(data)
     local fromText = data.fromSubZone and data.fromSubZone ~= ""
       and (data.fromZone .. " - " .. data.fromSubZone) or data.fromZone
     return "Hearth to " .. (toText or "unknown") .. " from " .. (fromText or "unknown") .. "."
+  elseif data.action == "subzone_change" then
+    local toText = data.subZone or "unknown"
+    local fromText = data.fromSubZone or "unknown"
+    return "Entered " .. toText .. " (from " .. fromText .. ")."
   else
     local toText = data.subZone and data.subZone ~= ""
       and (data.zone .. " - " .. data.subZone) or data.zone
@@ -199,6 +256,10 @@ Journal.On("ZONE_CHANGED_NEW_AREA", function()
     Journal:HandleFlightEnd()
   end
   Journal:HandleZoneChanged()
+end)
+
+Journal.On("ZONE_CHANGED", function()
+  Journal:HandleSubZoneChanged()
 end)
 
 Journal.On("UNIT_SPELLCAST_SUCCEEDED", function(unit, spellName)
