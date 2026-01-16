@@ -289,6 +289,9 @@ SlashCmdList["JOURNAL"] = function(msg)
   elseif arg == "capture" or arg == "capture-target" then
     Journal:ShowTargetCaptureDialog()
     return
+  elseif arg == "note" then
+    Journal:ShowNoteCaptureDialog()
+    return
   end
   Journal:ToggleUI()
 end

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.7] - 2026-01-15
+
+### Added
+
+- Note capture command
+    - Slash command `/journal note` to add standalone notes to the journal
+    - Multiline text input dialog for longer notes
+    - Entry format: "Note: [your note text]"
+    - Useful for documenting thoughts, observations, or any text without requiring a target or screenshot
+
 ## [0.3.6] - 2026-01-15
 
 ### Fixed
