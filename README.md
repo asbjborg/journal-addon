@@ -104,6 +104,4 @@ asbjborg
 
 ## Version
 
-Current version: 0.3.7
-
-See [CHANGELOG.md](changes.md) for version history.
+See [changes.md](changes.md) for the current version and full version history.
