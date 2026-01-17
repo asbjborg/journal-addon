@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1] - 2026-01-17
+
+### Fixed
+
+- **Reputation tier changes now captured** (#30)
+    - Pattern matching bug fixed: greedy `.+` was consuming entire string
+    - Changed to non-greedy `.+?` to correctly parse "You are now Friendly with X"
+    - Now logs tier transitions (Friendly, Honored, Revered, Exalted)
+
 ## [0.6.0] - 2026-01-16
 
 ### Changed
