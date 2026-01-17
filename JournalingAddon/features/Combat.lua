@@ -10,6 +10,7 @@ function Journal:ResetCombatAgg()
     xp = 0,
     loot = { counts = {}, raw = {}, action = nil },
     money = 0,
+    reputation = {},  -- { [faction] = change }
   }
 end
 
@@ -89,6 +90,13 @@ function Journal:FlushCombatAgg()
   local money = self.combatAgg.money
   if money and money > 0 then
     self:AddEvent("money", { copper = money })
+  end
+
+  local reputation = self.combatAgg.reputation
+  if reputation and next(reputation) then
+    self:AddEvent("reputation", {
+      changes = Journal.CopyTable(reputation),
+    })
   end
 
   self:ResetCombatAgg()
@@ -244,6 +252,26 @@ function Journal:ParseMoneyFromMessage(msg)
   end
 
   return copper
+end
+
+function Journal:RecordReputation(faction, change)
+  if not faction or faction == "" then
+    return
+  end
+
+  if self.inAggWindow then
+    -- Add to aggregation window
+    local rep = self.combatAgg.reputation
+    rep[faction] = (rep[faction] or 0) + (change or 0)
+    self:DebugLog("Rep aggregated: " .. faction .. " " .. (change >= 0 and "+" or "") .. change)
+  else
+    -- Not in aggregation window - log immediately
+    if change then
+      self:AddEvent("reputation", { faction = faction, change = change })
+    else
+      self:AddEvent("reputation", { faction = faction })
+    end
+  end
 end
 
 function Journal:RecordMoney(msg)

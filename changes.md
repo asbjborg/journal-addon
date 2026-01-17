@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.0] - 2026-01-16
+
+### Changed
+
+- **Reputation changes now aggregate with combat** (#29)
+    - Reputation gains/losses during combat are held until the aggregation window closes
+    - Multiple rep changes to same faction are summed (e.g., 3 kills = -300 total)
+    - Aggregated format: "Reputation: Gelkis +60, Magram -300"
+    - Rep changes outside combat still log immediately
+    - Vague rep changes (no amount) always log immediately
+
 ## [0.5.5] - 2026-01-16
 
 ### Added

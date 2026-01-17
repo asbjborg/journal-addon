@@ -10,11 +10,7 @@ function Journal:HandleReputationChange(msg)
     faction, amount = cleaned:match("Reputation with (.+) increased by (%d+)")
   end
   if faction and amount then
-    self:DebugLog("Rep gain: " .. faction .. " +" .. amount)
-    self:AddEvent("reputation", {
-      faction = faction,
-      change = tonumber(amount),
-    })
+    self:RecordReputation(faction, tonumber(amount))
     return
   end
 
@@ -24,42 +20,45 @@ function Journal:HandleReputationChange(msg)
     faction, amount = cleaned:match("Reputation with (.+) decreased by (%d+)")
   end
   if faction and amount then
-    self:DebugLog("Rep loss: " .. faction .. " -" .. amount)
-    self:AddEvent("reputation", {
-      faction = faction,
-      change = -tonumber(amount),
-    })
+    self:RecordReputation(faction, -tonumber(amount))
     return
   end
 
-  -- Vague increase (no amount)
+  -- Vague increase (no amount) - log immediately (rare, not combat-related)
   faction = cleaned:match("Your reputation with (.+) has .* increased")
   if not faction then
     faction = cleaned:match("Reputation with (.+) increased")
   end
   if faction then
-    self:AddEvent("reputation", {
-      faction = faction,
-    })
+    self:AddEvent("reputation", { faction = faction })
     return
   end
 
-  -- Vague decrease (no amount)
+  -- Vague decrease (no amount) - log immediately
   faction = cleaned:match("Your reputation with (.+) has .* decreased")
   if not faction then
     faction = cleaned:match("Reputation with (.+) decreased")
   end
   if faction then
-    self:AddEvent("reputation", {
-      faction = faction,
-      decreased = true,
-    })
+    self:AddEvent("reputation", { faction = faction, decreased = true })
   end
 end
 
 Journal:RegisterRenderer("reputation", function(data)
   if data.tier then
     return "Reputation tier: " .. data.tier .. " with " .. (data.faction or "Unknown")
+  elseif data.changes then
+    -- Aggregated reputation changes from combat
+    local parts = {}
+    for faction, change in pairs(data.changes) do
+      if change >= 0 then
+        table.insert(parts, faction .. " +" .. change)
+      else
+        table.insert(parts, faction .. " " .. change)
+      end
+    end
+    table.sort(parts)
+    return "Reputation: " .. table.concat(parts, ", ")
   elseif data.change then
     if data.change >= 0 then
       return "Reputation with " .. (data.faction or "Unknown") .. " increased by " .. data.change
