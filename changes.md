@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.2] - 2026-01-17
+
+### Added
+
+- **X,Y coordinates on zone/subzone changes** (#31)
+    - Captures player map coordinates (0.0-1.0) when logging travel events
+    - Added to both major zone changes and subzone changes
+    - Stored as `x` and `y` fields in travel event data (rounded to 2 decimals)
+    - Coordinates available in JSON exports but not shown in rendered messages
+
 ## [0.6.1] - 2026-01-17
 
 ### Fixed

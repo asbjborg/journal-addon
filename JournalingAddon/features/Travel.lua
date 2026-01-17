@@ -1,6 +1,32 @@
 local _, Journal = ...
 Journal = Journal or _G.Journal or {}
 
+function Journal:GetPlayerCoords()
+  -- Try multiple methods to get coordinates
+  -- Method 1: GetPlayerMapPosition (world map fractions 0.0-1.0)
+  if GetPlayerMapPosition then
+    local x, y = GetPlayerMapPosition("player")
+    if x and y and x > 0 and y > 0 then
+      -- Convert to zone coordinates (0-100) if that's what the map shows
+      -- If map shows 37.2, and we get 0.372, multiply by 100
+      return math.floor(x * 1000 + 0.5) / 10, math.floor(y * 1000 + 0.5) / 10
+    end
+  end
+  
+  -- Method 2: Try C_Map API (if available in TBC Classic)
+  if C_Map and C_Map.GetPlayerMapPosition then
+    local mapID = C_Map.GetBestMapForUnit("player")
+    if mapID then
+      local pos = C_Map.GetPlayerMapPosition(mapID, "player")
+      if pos and pos.x and pos.y and pos.x > 0 and pos.y > 0 then
+        return math.floor(pos.x * 1000 + 0.5) / 10, math.floor(pos.y * 1000 + 0.5) / 10
+      end
+    end
+  end
+  
+  return nil, nil
+end
+
 function Journal:HandleFlightStart()
   if self.flightState.onTaxi then
     return
@@ -104,14 +130,22 @@ function Journal:HandleZoneChanged()
       local fromZone = self.lastZone
       local fromSub = self.lastSubZone
       local isHearth = self.lastHearthCastAt and (time() - self.lastHearthCastAt) <= 90
+      local x, y = self:GetPlayerCoords()
 
-      self:AddEvent("travel", {
+      local eventData = {
         action = isHearth and "hearth" or "zone_change",
         zone = zone,
         subZone = subZone,
         fromZone = fromZone,
         fromSubZone = fromSub,
-      })
+      }
+      if x and y then
+        eventData.x = x
+        eventData.y = y
+        self:DebugLog("Zone change coords: " .. x .. ", " .. y)
+      end
+
+      self:AddEvent("travel", eventData)
 
       if isHearth then
         self.lastHearthCastAt = nil
@@ -175,12 +209,26 @@ function Journal:HandleSubZoneChanged()
     local toName = subZone ~= "" and subZone or zone
     local fromName = self.lastSubZone ~= "" and self.lastSubZone or "unknown"
     self:DebugLog("Subzone change: " .. fromName .. " -> " .. toName)
-    self:AddEvent("travel", {
+    
+    local x, y = self:GetPlayerCoords()
+    if x and y then
+      self:DebugLog("Subzone change coords: " .. x .. ", " .. y)
+    else
+      self:DebugLog("Subzone change coords: unavailable")
+    end
+
+    local eventData = {
       action = "subzone_change",
       zone = zone,
       subZone = subZone,
       fromSubZone = self.lastSubZone,
-    })
+    }
+    if x and y then
+      eventData.x = x
+      eventData.y = y
+    end
+
+    self:AddEvent("travel", eventData)
   end
 
   self.lastSubZone = subZone
