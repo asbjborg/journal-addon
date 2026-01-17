@@ -5,10 +5,12 @@
 ### Added
 
 - **X,Y coordinates on zone/subzone changes** (#31)
-    - Captures player map coordinates (0.0-1.0) when logging travel events
+    - Captures player zone coordinates (0-100 range) when logging travel events
     - Added to both major zone changes and subzone changes
-    - Stored as `x` and `y` fields in travel event data (rounded to 2 decimals)
+    - Stored as `x` and `y` fields in travel event data (rounded to 1 decimal, e.g., 37.4, 78.4)
+    - Uses `GetPlayerMapPosition("player")` which returns 0.0-1.0 fractions, converted to zone coordinates
     - Coordinates available in JSON exports but not shown in rendered messages
+    - Debug logs show coordinates when debug mode is enabled
 
 ## [0.6.1] - 2026-01-17
 
