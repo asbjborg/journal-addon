@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.3] - 2026-01-17
+
+### Added
+
+- **Subzone ping-pong detection** (#32)
+    - Detects when the same two subzones flip back and forth within 5 seconds
+    - Logs first "Entered X from Y" transition normally
+    - Subsequent ping-pong transitions are suppressed and replaced with a single "Border dancing near [Zone Name]" message
+    - Reduces log spam at zone boundaries (e.g., Ethel Rethor ↔ Sar'theris Strand)
+    - Improves readability for storytelling purposes
+
 ## [0.6.2] - 2026-01-17
 
 ### Added

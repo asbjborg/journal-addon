@@ -180,8 +180,54 @@ function Journal:HandleSubZoneChanged()
       return
     end
 
-    -- Debounce: don't log if we just logged this subzone recently
+    -- Initialize ping-pong tracking
+    self.pingPongHistory = self.pingPongHistory or {}
     local now = time()
+    local fromName = self.lastSubZone ~= "" and self.lastSubZone or zone
+    local toName = subZone ~= "" and subZone or zone
+    
+    -- Check for ping-pong pattern: same two subzones flipping within 5 seconds
+    local pingPongKey = fromName < toName and (fromName .. "|" .. toName) or (toName .. "|" .. fromName)
+    local lastTransition = self.pingPongHistory[pingPongKey]
+    
+    if lastTransition and (now - lastTransition.time) < 5 then
+      -- Ping-pong detected! Check if we already logged boundary noise
+      if not lastTransition.loggedBoundaryNoise then
+        -- Log boundary noise event (first time we detect ping-pong for this pair)
+        local boundaryZone = subZone ~= "" and subZone or zone
+        local x, y = self:GetPlayerCoords()
+        local eventData = {
+          action = "boundary_noise",
+          zone = zone,
+          subZone = boundaryZone,
+        }
+        if x and y then
+          eventData.x = x
+          eventData.y = y
+        end
+        self:AddEvent("travel", eventData)
+        lastTransition.loggedBoundaryNoise = true
+        lastTransition.time = now  -- Update time to extend suppression window
+      end
+      -- Suppress this transition (either first boundary noise or subsequent ones)
+      self.lastSubZone = subZone
+      return
+    end
+    
+    -- Not ping-pong, or ping-pong window expired - reset tracking for this pair
+    self.pingPongHistory[pingPongKey] = {
+      time = now,
+      loggedBoundaryNoise = false,
+    }
+    
+    -- Clean old ping-pong entries (older than 10 seconds)
+    for k, v in pairs(self.pingPongHistory) do
+      if (now - v.time) >= 10 then
+        self.pingPongHistory[k] = nil
+      end
+    end
+
+    -- Debounce: don't log if we just logged this subzone recently
     self.subZoneDebounce = self.subZoneDebounce or {}
     local key = zone .. ":" .. subZone
     if self.subZoneDebounce[key] and (now - self.subZoneDebounce[key]) < 10 then
@@ -252,6 +298,9 @@ Journal:RegisterRenderer("travel", function(data)
     local fromText = data.fromSubZone and data.fromSubZone ~= ""
       and (data.fromZone .. " - " .. data.fromSubZone) or data.fromZone
     return "Hearth to " .. (toText or "unknown") .. " from " .. (fromText or "unknown") .. "."
+  elseif data.action == "boundary_noise" then
+    local zoneName = (data.subZone and data.subZone ~= "") and data.subZone or data.zone or "unknown"
+    return "Border dancing near " .. zoneName .. "."
   elseif data.action == "subzone_change" then
     local toText = (data.subZone and data.subZone ~= "") and data.subZone or data.zone or "unknown"
     local fromText = (data.fromSubZone and data.fromSubZone ~= "") and data.fromSubZone or data.zone or "unknown"
