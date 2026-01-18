@@ -4,6 +4,7 @@ Journal = Journal or _G.Journal or {}
 local DAMAGE_WINDOW = 10
 local LOOT_MERGE_WINDOW = 10
 local LOOT_AGG_WINDOW = 180  -- 3 minutes for loot aggregation
+local QUEST_REWARD_WINDOW = 10  -- Seconds after quest turn-in to consider loot as quest reward
 
 function Journal:ResetCombatAgg()
   self.combatAgg = {
@@ -60,18 +61,12 @@ function Journal:CloseLootAggWindow()
   
   if self.lootAgg and self.lootAgg.startTime and next(self.lootAgg.counts) then
     local duration = time() - self.lootAgg.startTime
-    local minutes = math.floor(duration / 60)
-    local seconds = duration % 60
-    
-    -- Format duration: "Xm" if >= 60s, otherwise "Xs"
-    local durationText = minutes > 0 and (minutes .. "m") or (seconds .. "s")
     
     self:AddEvent("loot", {
       action = self.lootAgg.action or "loot",
       counts = Journal.CopyTable(self.lootAgg.counts),
       raw = Journal.CopyTable(self.lootAgg.raw),
-      duration = duration,
-      durationText = durationText,
+      duration = duration,  -- Store raw duration in seconds for renderer to format
     })
   end
   
@@ -263,30 +258,47 @@ function Journal:RecordLoot(msg)
       self:StartAggWindowTimer()
     end
   else
-    -- Not in combat aggregation - check if we should use loot aggregation window
-    -- Start loot aggregation window if not already active
-    if not self.lootAgg or not self.lootAgg.startTime then
-      self:StartLootAggWindow()
+    -- Not in combat aggregation - check if this is a quest reward
+    local now = time()
+    local isQuestReward = false
+    if self.lastQuestTurnedIn and (now - self.lastQuestTurnedIn) < QUEST_REWARD_WINDOW then
+      -- Loot received within quest reward window - treat as quest reward and log immediately
+      isQuestReward = true
     end
     
-    -- Add to loot aggregation
-    local counts = self.lootAgg.counts
-    counts[itemName] = (counts[itemName] or 0) + count
-    table.insert(self.lootAgg.raw, msg)
-    -- Store action for loot (use first seen action)
-    if not self.lootAgg.action then
-      self.lootAgg.action = action
-    end
-    
-    -- Extend the timer
-    if self.lootAggTimer then
-      self.lootAggTimer:Cancel()
-      self.lootAggTimer = nil
-    end
-    if C_Timer and C_Timer.NewTimer then
-      self.lootAggTimer = C_Timer.NewTimer(LOOT_AGG_WINDOW, function()
-        Journal:CloseLootAggWindow()
-      end)
+    if isQuestReward then
+      -- Quest reward - log immediately, bypass loot aggregation
+      self:AddEvent("loot", {
+        action = action,
+        counts = { [itemName] = count },
+        raw = { msg },
+      })
+    else
+      -- Not a quest reward - check if we should use loot aggregation window
+      -- Start loot aggregation window if not already active
+      if not self.lootAgg or not self.lootAgg.startTime then
+        self:StartLootAggWindow()
+      end
+      
+      -- Add to loot aggregation
+      local counts = self.lootAgg.counts
+      counts[itemName] = (counts[itemName] or 0) + count
+      table.insert(self.lootAgg.raw, msg)
+      -- Store action for loot (use first seen action)
+      if not self.lootAgg.action then
+        self.lootAgg.action = action
+      end
+      
+      -- Extend the timer
+      if self.lootAggTimer then
+        self.lootAggTimer:Cancel()
+        self.lootAggTimer = nil
+      end
+      if C_Timer and C_Timer.NewTimer then
+        self.lootAggTimer = C_Timer.NewTimer(LOOT_AGG_WINDOW, function()
+          Journal:CloseLootAggWindow()
+        end)
+      end
     end
   end
 end
@@ -493,8 +505,12 @@ Journal:RegisterRenderer("loot", function(data)
     end
     local text = prefix .. ": " .. table.concat(parts, ", ")
     -- Add duration if this was aggregated over time
-    if data.durationText then
-      text = text .. " (over " .. data.durationText .. ")"
+    if data.duration then
+      local minutes = math.floor(data.duration / 60)
+      local seconds = data.duration % 60
+      -- Format duration: "Xm" if >= 60s, otherwise "Xs"
+      local durationText = minutes > 0 and (minutes .. "m") or (seconds .. "s")
+      text = text .. " (over " .. durationText .. ")"
     end
     return text
   end

@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.6.5] - 2026-01-17
+
+### Changed
+
+- **Loot aggregation stores raw duration** (#36)
+    - Changed from storing pre-formatted `durationText` to raw `duration` (in seconds)
+    - Renderer now formats duration from raw value (e.g., "3m", "180s")
+    - Allows for future flexibility in duration formatting (e.g., "over a while", "for some time")
+
+- **Quest turn-in appears before related events** (#38)
+    - Quest turn-in entry now appears before level up, XP gain, and reputation changes it triggers
+    - Reorders events so "Turned in" appears first, followed by related reward events
+    - Maintains correct chronological order for storytelling purposes
+
+### Fixed
+
+- **Quest rewards excluded from loot aggregation** (#37)
+    - Quest reward loot is now logged immediately, bypassing loot aggregation window
+    - Quest rewards appear right after "Turned in" entry (within 10 seconds)
+    - Only non-quest loot (gathering, combat drops) goes through aggregation window
+    - Prevents quest rewards from being held back and appearing later with unrelated loot
+
 ## [0.6.4] - 2026-01-17
 
 ### Added

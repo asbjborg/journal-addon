@@ -1,8 +1,8 @@
 ---
 name: Feature Request
-about: Request a new feature for the Journaling Addon
-title: '[Feature] '
-labels: enhancement
+about: Request a new feature or improvement for the Journaling Addon
+title: ''
+labels: feature
 assignees: ''
 ---
 
