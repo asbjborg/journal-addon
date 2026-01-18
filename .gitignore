@@ -17,3 +17,6 @@ Thumbs.db
 # Cursor plans
 .cursor/plans/
 .cursor/rules/
+
+# tests
+tests/
