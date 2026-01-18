@@ -3,6 +3,7 @@ Journal = Journal or _G.Journal or {}
 
 local DAMAGE_WINDOW = 10
 local LOOT_MERGE_WINDOW = 10
+local LOOT_AGG_WINDOW = 180  -- 3 minutes for loot aggregation
 
 function Journal:ResetCombatAgg()
   self.combatAgg = {
@@ -12,6 +13,69 @@ function Journal:ResetCombatAgg()
     money = 0,
     reputation = {},  -- { [faction] = change }
   }
+end
+
+function Journal:ResetLootAgg()
+  self.lootAgg = {
+    counts = {},
+    raw = {},
+    action = nil,
+    startTime = nil,
+  }
+end
+
+function Journal:StartLootAggWindow()
+  -- Initialize loot aggregation if not already started
+  if not self.lootAgg then
+    self:ResetLootAgg()
+  end
+  
+  -- Set start time if not already set
+  if not self.lootAgg.startTime then
+    self.lootAgg.startTime = time()
+  end
+  
+  -- Cancel existing timer if any
+  if self.lootAggTimer then
+    self.lootAggTimer:Cancel()
+    self.lootAggTimer = nil
+  end
+  
+  -- Start 3-minute timer to flush
+  if C_Timer and C_Timer.NewTimer then
+    self.lootAggTimer = C_Timer.NewTimer(LOOT_AGG_WINDOW, function()
+      Journal:CloseLootAggWindow()
+    end)
+  else
+    -- Fallback: flush immediately if no timer available
+    self:CloseLootAggWindow()
+  end
+end
+
+function Journal:CloseLootAggWindow()
+  if self.lootAggTimer then
+    self.lootAggTimer:Cancel()
+    self.lootAggTimer = nil
+  end
+  
+  if self.lootAgg and self.lootAgg.startTime and next(self.lootAgg.counts) then
+    local duration = time() - self.lootAgg.startTime
+    local minutes = math.floor(duration / 60)
+    local seconds = duration % 60
+    
+    -- Format duration: "Xm" if >= 60s, otherwise "Xs"
+    local durationText = minutes > 0 and (minutes .. "m") or (seconds .. "s")
+    
+    self:AddEvent("loot", {
+      action = self.lootAgg.action or "loot",
+      counts = Journal.CopyTable(self.lootAgg.counts),
+      raw = Journal.CopyTable(self.lootAgg.raw),
+      duration = duration,
+      durationText = durationText,
+    })
+  end
+  
+  self:ResetLootAgg()
 end
 
 function Journal:StartAggWindowTimer()
@@ -186,7 +250,7 @@ function Journal:RecordLoot(msg)
   local count = tonumber(msg:match("x(%d+)")) or 1
 
   if self.inAggWindow then
-    -- Add to aggregation window
+    -- Add to combat aggregation window (during/after combat)
     local counts = self.combatAgg.loot.counts
     counts[itemName] = (counts[itemName] or 0) + count
     table.insert(self.combatAgg.loot.raw, msg)
@@ -199,12 +263,31 @@ function Journal:RecordLoot(msg)
       self:StartAggWindowTimer()
     end
   else
-    -- Not in aggregation window - log immediately
-    self:AddEvent("loot", {
-      action = action,
-      counts = { [itemName] = count },
-      raw = { msg },
-    })
+    -- Not in combat aggregation - check if we should use loot aggregation window
+    -- Start loot aggregation window if not already active
+    if not self.lootAgg or not self.lootAgg.startTime then
+      self:StartLootAggWindow()
+    end
+    
+    -- Add to loot aggregation
+    local counts = self.lootAgg.counts
+    counts[itemName] = (counts[itemName] or 0) + count
+    table.insert(self.lootAgg.raw, msg)
+    -- Store action for loot (use first seen action)
+    if not self.lootAgg.action then
+      self.lootAgg.action = action
+    end
+    
+    -- Extend the timer
+    if self.lootAggTimer then
+      self.lootAggTimer:Cancel()
+      self.lootAggTimer = nil
+    end
+    if C_Timer and C_Timer.NewTimer then
+      self.lootAggTimer = C_Timer.NewTimer(LOOT_AGG_WINDOW, function()
+        Journal:CloseLootAggWindow()
+      end)
+    end
   end
 end
 
@@ -408,7 +491,12 @@ Journal:RegisterRenderer("loot", function(data)
     elseif data.action == "receive" then
       prefix = "Received"
     end
-    return prefix .. ": " .. table.concat(parts, ", ")
+    local text = prefix .. ": " .. table.concat(parts, ", ")
+    -- Add duration if this was aggregated over time
+    if data.durationText then
+      text = text .. " (over " .. data.durationText .. ")"
+    end
+    return text
   end
   return "Looted items"
 end)
@@ -441,6 +529,10 @@ Journal.On("PLAYER_REGEN_DISABLED", function()
   -- Flush previous aggregation window before starting new combat
   if Journal.inAggWindow then
     Journal:CloseAggWindow()
+  end
+  -- Also flush loot aggregation when combat starts
+  if Journal.lootAgg and Journal.lootAgg.startTime then
+    Journal:CloseLootAggWindow()
   end
   Journal.inCombat = true
   Journal.inAggWindow = true

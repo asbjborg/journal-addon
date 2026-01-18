@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.4] - 2026-01-17
+
+### Added
+
+- **Loot aggregation for repeated gathering** (#33)
+    - Aggregates repeated loot messages (especially from gathering like clams/meat) into a single summary line
+    - Uses a 3-minute aggregation window that triggers on loot/gathering loops (even outside combat)
+    - Format: `Looted: [Item] x[N], [Item] x[M] (over [time])`
+    - Improves readability for storytelling purposes by reducing spam from repeated gathering activities
+    - Works independently from combat aggregation window
+
 ## [0.6.3] - 2026-01-17
 
 ### Added
