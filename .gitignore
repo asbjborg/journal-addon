@@ -14,9 +14,10 @@ Thumbs.db
 # Logs
 *.log
 
-# Cursor plans
+# Cursor
 .cursor/plans/
 .cursor/rules/
+.cursor/commands/
 
 # tests
 tests/

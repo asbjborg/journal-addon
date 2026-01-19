@@ -132,6 +132,10 @@ function Journal:EndSession()
     if self.inAggWindow and self.CloseAggWindow then
       self:CloseAggWindow()
     end
+    -- Also flush loot aggregation on logout
+    if self.lootAgg and self.lootAgg.startTime and self.CloseLootAggWindow then
+      self:CloseLootAggWindow()
+    end
     self.currentSession.endTime = time()
   end
 end

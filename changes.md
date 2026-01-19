@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.7] - 2026-01-17
+
+### Fixed
+
+- **Loot aggregation flushed on logout** (#40)
+    - Loot aggregation window is now flushed when player logs out
+    - Prevents loss of pending loot items when logging out during active aggregation window
+    - Ensures all loot is saved before session ends
+
 ## [0.6.6] - 2026-01-17
 
 ### Fixed
