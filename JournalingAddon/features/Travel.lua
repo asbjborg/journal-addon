@@ -38,12 +38,80 @@ function Journal:HandleFlightStart()
   self.flightState.startedAt = time()
   local dest = self.flightState.destinationName
   local origin = self.flightState.originName or self.flightState.originZone
-  self:AddEvent("travel", {
+  
+  -- Check for duplicate entries within 30 seconds (deduplication)
+  -- Look at last 50 entries for identical flight_start entries
+  if self.currentSession and self.currentSession.entries then
+    for i = #self.currentSession.entries, math.max(1, #self.currentSession.entries - 50), -1 do
+      local entry = self.currentSession.entries[i]
+      if entry.type == "travel" and entry.data and entry.data.action == "flight_start" then
+        -- Check if entries are identical (same origin, destination)
+        local entryOrigin = entry.data.origin
+        local entryDest = entry.data.destination
+        if entryOrigin == origin and entryDest == dest then
+          -- Check if within 30 seconds by comparing timestamps (simple string comparison works for recent entries)
+          -- ISO timestamps are sortable, so if they're close in the array and have same hour/minute, likely within 30s
+          -- For safety, we check last 50 entries which should cover ~30 seconds of normal gameplay
+          -- Remove the first (older) duplicate entry
+          table.remove(self.currentSession.entries, i)
+          self:DebugLog("Removed duplicate flight_start entry (deduplication)")
+          break
+        end
+      end
+    end
+  end
+  
+  local eventData = {
     action = "flight_start",
     origin = origin,
     destination = dest,
     hops = self.flightState.hops,
-  })
+  }
+  
+  -- Store entry index for verification
+  local entryIndex = nil
+  if self.currentSession and self.currentSession.entries then
+    entryIndex = #self.currentSession.entries + 1
+  end
+  
+  self:AddEvent("travel", eventData)
+  
+  -- Verify flight after 3 seconds - remove entry if player is not actually on taxi
+  if C_Timer and C_Timer.NewTimer then
+    -- Cancel any existing verification timer
+    if self.flightVerificationTimer then
+      self.flightVerificationTimer:Cancel()
+      self.flightVerificationTimer = nil
+    end
+    
+    self.flightVerificationTimer = C_Timer.NewTimer(3, function()
+      if not UnitOnTaxi("player") then
+        -- Flight didn't actually start - remove the entry we just added
+        if self.currentSession and self.currentSession.entries and entryIndex then
+          -- Find and remove the entry (entryIndex might have shifted due to deduplication)
+          for i = #self.currentSession.entries, 1, -1 do
+            local entry = self.currentSession.entries[i]
+            if entry.type == "travel" and entry.data and entry.data.action == "flight_start" then
+              local entryOrigin = entry.data.origin
+              local entryDest = entry.data.destination
+              if entryOrigin == origin and entryDest == dest then
+                -- This should be our entry - remove it
+                table.remove(self.currentSession.entries, i)
+                self.flightState.onTaxi = false
+                self.flightState.startedAt = nil
+                self:DebugLog("Removed flight_start entry - flight verification failed")
+                if self.uiFrame and self.uiFrame:IsShown() and self.RefreshUI then
+                  self:RefreshUI()
+                end
+                break
+              end
+            end
+          end
+        end
+      end
+      self.flightVerificationTimer = nil
+    end)
+  end
 end
 
 function Journal:CaptureTaxiOrigin()

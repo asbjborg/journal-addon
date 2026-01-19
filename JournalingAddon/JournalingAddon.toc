@@ -2,7 +2,7 @@
 ## Title: JournalingAddon
 ## Notes: Session-based journal log.
 ## Author: asbjborg
-## Version: 0.6.5
+## Version: 0.6.6
 ## SavedVariables: JournalDB
 
 core/Namespace.lua

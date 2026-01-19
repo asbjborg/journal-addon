@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.6] - 2026-01-17
+
+### Fixed
+
+- **Flight start verification and deduplication** (#39)
+    - Verifies flight actually started after 3 seconds - removes entry if player is not on taxi
+    - Deduplicates identical "Started flying" entries within 30 seconds
+    - Prevents duplicate flight entries when flight fails (e.g., due to shapeshift) or when player retries quickly
+    - Handles both scenarios: flight fails completely, or player shapeshifts out and retries successfully
+
 ## [0.6.5] - 2026-01-17
 
 ### Changed
