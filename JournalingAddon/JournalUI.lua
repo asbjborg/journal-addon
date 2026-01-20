@@ -10,7 +10,7 @@ local function ParseISOTimestamp(isoStr)
   if type(isoStr) ~= "string" then
     return time()
   end
-  -- Parse "2026-01-15T19:16:12Z" format
+  -- Parse "2026-01-15T19:16:12" or "2026-01-15T19:16:12Z" format
   local year, month, day, hour, min, sec = isoStr:match("^(%d+)-(%d+)-(%d+)T(%d+):(%d+):(%d+)")
   if year then
     return time({

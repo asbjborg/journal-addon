@@ -2,9 +2,9 @@ local _, Journal = ...
 Journal = Journal or _G.Journal or {}
 Journal.Util = Journal.Util or {}
 
--- ISO 8601 timestamp generator
+-- ISO 8601 timestamp generator (using local time, not UTC, to avoid timezone issues)
 local function ISOTimestamp()
-  return date("!%Y-%m-%dT%H:%M:%SZ")
+  return date("%Y-%m-%dT%H:%M:%S")
 end
 
 -- Format copper amount as "Xg Ys Zc" string

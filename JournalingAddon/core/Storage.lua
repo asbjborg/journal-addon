@@ -36,15 +36,17 @@ function Journal:InitState()
   }
   self.lastZone = GetRealZoneText()
   self.lastSubZone = GetSubZoneText()
+  -- Note: inCombat may still be used for other purposes (e.g., damage tracking)
   self.inCombat = UnitAffectingCombat("player") or false
-  self.inAggWindow = self.inCombat
-  self.aggWindowTimer = nil
-  if self.ResetCombatAgg then
-    self:ResetCombatAgg()
+  if self.ResetActivityChunk then
+    self:ResetActivityChunk()
   end
+  self.idleTimer = nil
+  self.hardCapTimer = nil
   self.lastQuestCompleted = nil
   self.lastHearthCastAt = nil
   self.lastHearthFrom = nil
+  self.lastLevelUpAt = nil  -- Track level up time to add XP gain to previous chunk
   self.flightState = {
     onTaxi = false,
     originZone = nil,
@@ -129,12 +131,9 @@ end
 
 function Journal:EndSession()
   if self.currentSession and not self.currentSession.endTime then
-    if self.inAggWindow and self.CloseAggWindow then
-      self:CloseAggWindow()
-    end
-    -- Also flush loot aggregation on logout
-    if self.lootAgg and self.lootAgg.startTime and self.CloseLootAggWindow then
-      self:CloseLootAggWindow()
+    -- Flush activity chunk on logout
+    if self.FlushActivityChunk then
+      self:FlushActivityChunk()
     end
     self.currentSession.endTime = time()
   end
@@ -151,11 +150,35 @@ function Journal:CreateEvent(eventType, data)
   }
 end
 
+-- Check if an event is a hard cut event that should flush activity chunk
+function Journal:IsHardCutEvent(eventType, data)
+  if eventType == "quest" and data and (data.action == "accepted" or data.action == "turned_in") then
+    return true
+  elseif eventType == "level" then
+    return true
+  elseif eventType == "screenshot" then
+    return true
+  elseif eventType == "note" then
+    return true
+  elseif eventType == "travel" and data and (data.action == "zone_change" or data.action == "subzone_change" or data.action == "flight_start") then
+    return true
+  elseif eventType == "system" then
+    return true
+  end
+  return false
+end
+
 -- New event-first entry creation
 function Journal:AddEvent(eventType, data)
   if not self.currentSession then
     return
   end
+  
+  -- Flush activity chunk if this is a hard cut event
+  if self:IsHardCutEvent(eventType, data) and self.FlushActivityChunk then
+    self:FlushActivityChunk()
+  end
+  
   local event = self:CreateEvent(eventType, data)
   table.insert(self.currentSession.entries, event)
   if self.debug then

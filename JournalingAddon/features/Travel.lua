@@ -31,6 +31,12 @@ function Journal:HandleFlightStart()
   if self.flightState.onTaxi then
     return
   end
+  
+  -- Flush activity chunk before starting flight (hard cut event)
+  if self.FlushActivityChunk then
+    self:FlushActivityChunk()
+  end
+  
   self.flightState.onTaxi = true
   if not self.flightState.originZone then
     self.flightState.originZone = GetRealZoneText()

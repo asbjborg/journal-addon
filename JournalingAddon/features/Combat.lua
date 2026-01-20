@@ -2,114 +2,76 @@ local _, Journal = ...
 Journal = Journal or _G.Journal or {}
 
 local DAMAGE_WINDOW = 10
-local LOOT_MERGE_WINDOW = 10
-local LOOT_AGG_WINDOW = 180  -- 3 minutes for loot aggregation
+local RESUME_WINDOW = 30  -- 30 seconds resume window for activity chunk
+local HARD_CAP_WINDOW = 180  -- 3 minutes hard cap for activity chunk
 local QUEST_REWARD_WINDOW = 10  -- Seconds after quest turn-in to consider loot as quest reward
 
-function Journal:ResetCombatAgg()
-  self.combatAgg = {
+function Journal:ResetActivityChunk()
+  self.activityChunk = {
     kills = {},
     xp = 0,
     loot = { counts = {}, raw = {}, action = nil },
     money = 0,
     reputation = {},  -- { [faction] = change }
-  }
-end
-
-function Journal:ResetLootAgg()
-  self.lootAgg = {
-    counts = {},
-    raw = {},
-    action = nil,
     startTime = nil,
+    lastActivityTime = nil,
   }
 end
 
-function Journal:StartLootAggWindow()
-  -- Initialize loot aggregation if not already started
-  if not self.lootAgg then
-    self:ResetLootAgg()
+function Journal:StartActivityChunk()
+  -- Initialize activity chunk if not already started
+  if not self.activityChunk then
+    self:ResetActivityChunk()
   end
   
-  -- Set start time if not already set
-  if not self.lootAgg.startTime then
-    self.lootAgg.startTime = time()
+  local now = time()
+  -- Set start time if not already set (for hard cap timer)
+  if not self.activityChunk.startTime then
+    self.activityChunk.startTime = now
+    -- Start hard cap timer (3 minutes, never resets)
+    if C_Timer and C_Timer.NewTimer then
+      if self.hardCapTimer then
+        self.hardCapTimer:Cancel()
+      end
+      self.hardCapTimer = C_Timer.NewTimer(HARD_CAP_WINDOW, function()
+        Journal:FlushActivityChunk()
+      end)
+    end
   end
   
-  -- Cancel existing timer if any
-  if self.lootAggTimer then
-    self.lootAggTimer:Cancel()
-    self.lootAggTimer = nil
-  end
+  -- Update last activity time
+  self.activityChunk.lastActivityTime = now
   
-  -- Start 3-minute timer to flush
+  -- Reset idle timer (30 seconds, resets on every activity)
+  if self.idleTimer then
+    self.idleTimer:Cancel()
+    self.idleTimer = nil
+  end
   if C_Timer and C_Timer.NewTimer then
-    self.lootAggTimer = C_Timer.NewTimer(LOOT_AGG_WINDOW, function()
-      Journal:CloseLootAggWindow()
+    self.idleTimer = C_Timer.NewTimer(RESUME_WINDOW, function()
+      Journal:FlushActivityChunk()
     end)
-  else
-    -- Fallback: flush immediately if no timer available
-    self:CloseLootAggWindow()
   end
 end
 
-function Journal:CloseLootAggWindow()
-  if self.lootAggTimer then
-    self.lootAggTimer:Cancel()
-    self.lootAggTimer = nil
+function Journal:FlushActivityChunk()
+  -- Cancel both timers
+  if self.idleTimer then
+    self.idleTimer:Cancel()
+    self.idleTimer = nil
+  end
+  if self.hardCapTimer then
+    self.hardCapTimer:Cancel()
+    self.hardCapTimer = nil
   end
   
-  if self.lootAgg and self.lootAgg.startTime and next(self.lootAgg.counts) then
-    local duration = time() - self.lootAgg.startTime
-    
-    self:AddEvent("loot", {
-      action = self.lootAgg.action or "loot",
-      counts = Journal.CopyTable(self.lootAgg.counts),
-      raw = Journal.CopyTable(self.lootAgg.raw),
-      duration = duration,  -- Store raw duration in seconds for renderer to format
-    })
-  end
-  
-  self:ResetLootAgg()
-end
-
-function Journal:StartAggWindowTimer()
-  -- Cancel existing timer if any
-  if self.aggWindowTimer then
-    self.aggWindowTimer:Cancel()
-    self.aggWindowTimer = nil
-  end
-
-  -- Keep aggregation window open
-  self.inAggWindow = true
-
-  -- Start 10-second timer to flush
-  if C_Timer and C_Timer.NewTimer then
-    self.aggWindowTimer = C_Timer.NewTimer(LOOT_MERGE_WINDOW, function()
-      Journal:CloseAggWindow()
-    end)
-  else
-    -- Fallback: flush immediately if no timer available
-    self:CloseAggWindow()
-  end
-end
-
-function Journal:CloseAggWindow()
-  if self.aggWindowTimer then
-    self.aggWindowTimer:Cancel()
-    self.aggWindowTimer = nil
-  end
-  self.inAggWindow = false
-  self:FlushCombatAgg()
-end
-
-function Journal:FlushCombatAgg()
-  if not self.currentSession or not self.combatAgg then
+  if not self.currentSession or not self.activityChunk then
+    self:ResetActivityChunk()
     return
   end
 
-  local killCounts = self.combatAgg.kills
-  local xpTotal = self.combatAgg.xp
+  local killCounts = self.activityChunk.kills
+  local xpTotal = self.activityChunk.xp
   if next(killCounts) or xpTotal > 0 then
     -- Count unique targets
     local targetCount = 0
@@ -121,8 +83,15 @@ function Journal:FlushCombatAgg()
       singleCount = count
     end
 
+    -- Calculate duration
+    local duration = nil
+    if self.activityChunk.startTime then
+      duration = time() - self.activityChunk.startTime
+    end
+
     local eventData = {
       xp = xpTotal > 0 and xpTotal or nil,
+      duration = duration,  -- Store raw duration in seconds for renderer to format
     }
 
     if targetCount == 1 then
@@ -137,28 +106,33 @@ function Journal:FlushCombatAgg()
     self:AddEvent("activity", eventData)
   end
 
-  local lootCounts = self.combatAgg.loot.counts
+  local lootCounts = self.activityChunk.loot.counts
   if next(lootCounts) then
+    local duration = nil
+    if self.activityChunk.startTime then
+      duration = time() - self.activityChunk.startTime
+    end
     self:AddEvent("loot", {
-      action = self.combatAgg.loot.action or "loot",
-      counts = Journal.CopyTable(lootCounts),
-      raw = Journal.CopyTable(self.combatAgg.loot.raw),
+      action = self.activityChunk.loot.action or "loot",
+      counts = Journal.CopyTable(self.activityChunk.loot.counts),
+      raw = Journal.CopyTable(self.activityChunk.loot.raw),
+      duration = duration,  -- Store raw duration in seconds for renderer to format
     })
   end
 
-  local money = self.combatAgg.money
+  local money = self.activityChunk.money
   if money and money > 0 then
     self:AddEvent("money", { copper = money })
   end
 
-  local reputation = self.combatAgg.reputation
+  local reputation = self.activityChunk.reputation
   if reputation and next(reputation) then
     self:AddEvent("reputation", {
       changes = Journal.CopyTable(reputation),
     })
   end
 
-  self:ResetCombatAgg()
+  self:ResetActivityChunk()
 end
 
 function Journal:RecordKill(destName)
@@ -166,13 +140,11 @@ function Journal:RecordKill(destName)
     return
   end
 
-  if self.inAggWindow then
-    local counts = self.combatAgg.kills
-    counts[destName] = (counts[destName] or 0) + 1
-  else
-    -- Kill outside aggregation window - log immediately
-    self:AddEvent("activity", { target = destName, count = 1 })
-  end
+  self:EnsureActivityChunk()
+  
+  -- Add kill to chunk
+  local counts = self.activityChunk.kills
+  counts[destName] = (counts[destName] or 0) + 1
 end
 
 function Journal:RecordXP()
@@ -190,9 +162,65 @@ function Journal:RecordXP()
   end
 
   if delta > 0 then
-    if self.inAggWindow then
-      self.combatAgg.xp = self.combatAgg.xp + delta
+    local now = time()
+    
+    -- If XP gain comes immediately after level up (within 1 second), it belongs to the previous chunk
+    if self.lastLevelUpAt and (now - self.lastLevelUpAt) <= 1 then
+      -- XP gain from level up - this should have been in the previous chunk
+      -- Since chunk is already flushed, we need to add this XP to the last activity entry
+      -- Find the last activity entry and add XP to it
+      if self.currentSession and self.currentSession.entries then
+        for i = #self.currentSession.entries, 1, -1 do
+          local entry = self.currentSession.entries[i]
+          if entry.type == "activity" and entry.data then
+            -- Add XP to this activity entry
+            entry.data.xp = (entry.data.xp or 0) + delta
+            -- Update the message
+            entry.msg = self:RenderMessage("activity", entry.data)
+            if self.uiFrame and self.uiFrame:IsShown() and self.RefreshUI then
+              self:RefreshUI()
+            end
+            self.agg.xp.lastXP = currentXP
+            self.agg.xp.lastMaxXP = currentMax
+            return
+          end
+        end
+      end
+    end
+    
+    -- Check if there's an active chunk with actual activity (kills, loot, money, reputation)
+    -- XP gain alone should not start a chunk - only add to existing active chunks
+    local hasActiveChunk = false
+    if self.activityChunk and self.activityChunk.lastActivityTime then
+      -- Check if chunk has actual activity (not just XP)
+      if next(self.activityChunk.kills) or 
+         next(self.activityChunk.loot.counts) or 
+         (self.activityChunk.money and self.activityChunk.money > 0) or
+         next(self.activityChunk.reputation) then
+        -- Chunk has actual activity - check if within resume window
+        if (now - self.activityChunk.lastActivityTime) <= RESUME_WINDOW then
+          hasActiveChunk = true
+        end
+      end
+    end
+    
+    if hasActiveChunk then
+      -- Add XP to existing active chunk
+      self.activityChunk.xp = self.activityChunk.xp + delta
+      -- Update last activity time and reset idle timer
+      self.activityChunk.lastActivityTime = now
+      if self.idleTimer then
+        self.idleTimer:Cancel()
+        self.idleTimer = nil
+      end
+      if C_Timer and C_Timer.NewTimer then
+        self.idleTimer = C_Timer.NewTimer(RESUME_WINDOW, function()
+          Journal:FlushActivityChunk()
+        end)
+      end
     else
+      -- No active chunk with actual activity - log XP immediately without chunk
+      -- This handles quest rewards, zone discovery, and other isolated XP gains
       self:AddEvent("xp", { amount = delta })
     end
   end
@@ -210,6 +238,36 @@ function Journal:DetectLootAction(msg)
     return "receive"
   else
     return "loot"
+  end
+end
+
+-- Helper function to ensure activity chunk is active and update timers
+function Journal:EnsureActivityChunk()
+  local now = time()
+  -- Check if we should start a new chunk or continue existing one
+  if not self.activityChunk or not self.activityChunk.lastActivityTime or (now - self.activityChunk.lastActivityTime) > RESUME_WINDOW then
+    -- Gap > 30 seconds - flush existing chunk and start new one
+    if self.activityChunk and self.activityChunk.lastActivityTime then
+      self:FlushActivityChunk()
+    end
+    self:StartActivityChunk()
+  else
+    -- Within resume window - continue existing chunk
+    if not self.activityChunk then
+      self:StartActivityChunk()
+    else
+      -- Update last activity time and reset idle timer
+      self.activityChunk.lastActivityTime = now
+      if self.idleTimer then
+        self.idleTimer:Cancel()
+        self.idleTimer = nil
+      end
+      if C_Timer and C_Timer.NewTimer then
+        self.idleTimer = C_Timer.NewTimer(RESUME_WINDOW, function()
+          Journal:FlushActivityChunk()
+        end)
+      end
+    end
   end
 end
 
@@ -244,61 +302,31 @@ function Journal:RecordLoot(msg)
   local action = self:DetectLootAction(msg)
   local count = tonumber(msg:match("x(%d+)")) or 1
 
-  if self.inAggWindow then
-    -- Add to combat aggregation window (during/after combat)
-    local counts = self.combatAgg.loot.counts
-    counts[itemName] = (counts[itemName] or 0) + count
-    table.insert(self.combatAgg.loot.raw, msg)
-    -- Store action for loot (use first seen action)
-    if not self.combatAgg.loot.action then
-      self.combatAgg.loot.action = action
-    end
-    -- Extend the timer if we're in post-combat window
-    if not self.inCombat and self.aggWindowTimer then
-      self:StartAggWindowTimer()
-    end
+  -- Check if this is a quest reward (should be logged immediately, bypass aggregation)
+  local now = time()
+  local isQuestReward = false
+  if self.lastQuestTurnedIn and (now - self.lastQuestTurnedIn) < QUEST_REWARD_WINDOW then
+    -- Loot received within quest reward window - treat as quest reward and log immediately
+    isQuestReward = true
+  end
+  
+  if isQuestReward then
+    -- Quest reward - log immediately, bypass activity chunk aggregation
+    self:AddEvent("loot", {
+      action = action,
+      counts = { [itemName] = count },
+      raw = { msg },
+    })
   else
-    -- Not in combat aggregation - check if this is a quest reward
-    local now = time()
-    local isQuestReward = false
-    if self.lastQuestTurnedIn and (now - self.lastQuestTurnedIn) < QUEST_REWARD_WINDOW then
-      -- Loot received within quest reward window - treat as quest reward and log immediately
-      isQuestReward = true
-    end
+    -- Not a quest reward - add to activity chunk
+    self:EnsureActivityChunk()
     
-    if isQuestReward then
-      -- Quest reward - log immediately, bypass loot aggregation
-      self:AddEvent("loot", {
-        action = action,
-        counts = { [itemName] = count },
-        raw = { msg },
-      })
-    else
-      -- Not a quest reward - check if we should use loot aggregation window
-      -- Start loot aggregation window if not already active
-      if not self.lootAgg or not self.lootAgg.startTime then
-        self:StartLootAggWindow()
-      end
-      
-      -- Add to loot aggregation
-      local counts = self.lootAgg.counts
-      counts[itemName] = (counts[itemName] or 0) + count
-      table.insert(self.lootAgg.raw, msg)
-      -- Store action for loot (use first seen action)
-      if not self.lootAgg.action then
-        self.lootAgg.action = action
-      end
-      
-      -- Extend the timer
-      if self.lootAggTimer then
-        self.lootAggTimer:Cancel()
-        self.lootAggTimer = nil
-      end
-      if C_Timer and C_Timer.NewTimer then
-        self.lootAggTimer = C_Timer.NewTimer(LOOT_AGG_WINDOW, function()
-          Journal:CloseLootAggWindow()
-        end)
-      end
+    local counts = self.activityChunk.loot.counts
+    counts[itemName] = (counts[itemName] or 0) + count
+    table.insert(self.activityChunk.loot.raw, msg)
+    -- Store action for loot (use first seen action)
+    if not self.activityChunk.loot.action then
+      self.activityChunk.loot.action = action
     end
   end
 end
@@ -354,18 +382,16 @@ function Journal:RecordReputation(faction, change)
     return
   end
 
-  if self.inAggWindow then
-    -- Add to aggregation window
-    local rep = self.combatAgg.reputation
-    rep[faction] = (rep[faction] or 0) + (change or 0)
+  -- Only aggregate if we have a numeric change
+  if change then
+    self:EnsureActivityChunk()
+    
+    local rep = self.activityChunk.reputation
+    rep[faction] = (rep[faction] or 0) + change
     self:DebugLog("Rep aggregated: " .. faction .. " " .. (change >= 0 and "+" or "") .. change)
   else
-    -- Not in aggregation window - log immediately
-    if change then
-      self:AddEvent("reputation", { faction = faction, change = change })
-    else
-      self:AddEvent("reputation", { faction = faction })
-    end
+    -- No numeric change (vague reputation change) - log immediately
+    self:AddEvent("reputation", { faction = faction })
   end
 end
 
@@ -382,17 +408,10 @@ function Journal:RecordMoney(msg)
     return
   end
 
-  if self.inAggWindow then
-    -- Add to aggregation window
-    self.combatAgg.money = self.combatAgg.money + copper
-    -- Extend the timer if we're in post-combat window
-    if not self.inCombat and self.aggWindowTimer then
-      self:StartAggWindowTimer()
-    end
-  else
-    -- Not in aggregation window - log immediately
-    self:AddEvent("money", { copper = copper })
-  end
+  self:EnsureActivityChunk()
+  
+  -- Add money to chunk
+  self.activityChunk.money = self.activityChunk.money + copper
 end
 
 function Journal:RecordDamage(eventTime, sourceName, spellName, amount)
@@ -481,6 +500,16 @@ Journal:RegisterRenderer("activity", function(data)
   if data.xp and data.xp > 0 then
     table.insert(parts, "Gained " .. data.xp .. " XP")
   end
+  
+  -- Add duration if present and > 0 (similar to loot entries)
+  if data.duration and data.duration > 0 then
+    local minutes = math.floor(data.duration / 60)
+    local seconds = data.duration % 60
+    -- Format duration: "Xm" if >= 60s, otherwise "Xs"
+    local durationText = minutes > 0 and (minutes .. "m") or (seconds .. "s")
+    table.insert(parts, "(over " .. durationText .. ")")
+  end
+  
   return table.concat(parts, " | ")
 end)
 
@@ -504,8 +533,8 @@ Journal:RegisterRenderer("loot", function(data)
       prefix = "Received"
     end
     local text = prefix .. ": " .. table.concat(parts, ", ")
-    -- Add duration if this was aggregated over time
-    if data.duration then
+    -- Add duration if this was aggregated over time and > 0
+    if data.duration and data.duration > 0 then
       local minutes = math.floor(data.duration / 60)
       local seconds = data.duration % 60
       -- Format duration: "Xm" if >= 60s, otherwise "Xs"
@@ -535,24 +564,9 @@ Journal:RegisterRenderer("money", function(data)
   return "Looted: " .. Journal.FormatMoney(data.copper or 0)
 end)
 
-Journal.On("PLAYER_REGEN_ENABLED", function()
-  Journal.inCombat = false
-  -- Don't flush yet - start 10-second post-combat window for looting
-  Journal:StartAggWindowTimer()
-end)
-
-Journal.On("PLAYER_REGEN_DISABLED", function()
-  -- Flush previous aggregation window before starting new combat
-  if Journal.inAggWindow then
-    Journal:CloseAggWindow()
-  end
-  -- Also flush loot aggregation when combat starts
-  if Journal.lootAgg and Journal.lootAgg.startTime then
-    Journal:CloseLootAggWindow()
-  end
-  Journal.inCombat = true
-  Journal.inAggWindow = true
-end)
+-- Note: PLAYER_REGEN_ENABLED/DISABLED are no longer used for aggregation
+-- Activity chunk is now time-based, not combat-based
+-- These events may still be used for other purposes (e.g., damage tracking for death events)
 
 Journal.On("PLAYER_XP_UPDATE", function()
   Journal:RecordXP()

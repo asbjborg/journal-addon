@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.6.8] - 2026-01-20
+
+### Changed
+
+- **Unified time-based activity chunk system** (#42)
+    - Replaced dual aggregation system (`combatAgg` + `lootAgg`) with unified `activityChunk`
+    - Activity chunk aggregates kills, XP, loot, money, and reputation using time-based logic
+    - **Resume window (30s)**: Activity continues to aggregate if new activity happens within 30 seconds of previous activity
+    - **Hard cap (3m)**: Chunk is force-flushed after 3 minutes, regardless of continued activity
+    - Short gaps between combats (leave combat → loot → re-enter combat) no longer split entries
+    - Continuous grinding becomes one coherent activity block
+    - **Activity chunk flush points:**
+        - **Hard cut events** (flush immediately before logging):
+            - Quest accepted
+            - Quest turned in
+            - Level up
+            - Screenshot (manual, capture_scene, capture_target)
+            - Note
+            - Travel: zone change, subzone change, flight start
+            - System events (login, logout, AFK, etc.)
+        - **Time-based flush:**
+            - Resume window expiry (>30s idle since last activity)
+            - Hard cap expiry (3m since chunk start)
+        - **Session events:**
+            - Logout
+            - Flight start (explicit flush before logging)
+    - Removed combat-based aggregation logic (`inAggWindow`, `inCombat` flags for aggregation)
+    - Activity entries now include `duration` field (in seconds) matching loot entries for temporal consistency
+    - Duration is only shown if greater than 0 seconds (prevents "(over 0s)" entries)
+    - **XP gain handling:**
+        - XP gain alone no longer starts activity chunks - chunks are only started by actual activity (kills, loot, money, reputation)
+        - XP gain is only added to existing active chunks (with actual activity)
+        - Isolated XP gains (quest rewards, zone discovery, etc.) are logged immediately without chunk aggregation
+        - Race condition handling: XP gain immediately after level up (within 1 second) is added to the previous activity entry instead of starting a new chunk
+
+### Fixed
+
+- **Timezone issue** - ISO timestamps now use local time instead of UTC to prevent 1-hour timeshift in display
+
 ## [0.6.7] - 2026-01-17
 
 ### Fixed
