@@ -1,7 +1,7 @@
 local _, Journal = ...
 Journal = Journal or _G.Journal or {}
 
-local CURRENT_SCHEMA = 2
+local CURRENT_SCHEMA = 3
 Journal.CURRENT_SCHEMA = CURRENT_SCHEMA
 
 local function BackupKey()
@@ -51,6 +51,7 @@ function Journal:InitState()
     self:ResetSkillAgg()
   end
   self.skillAggTimer = nil
+  self.eventSeqCounter = 0  -- Sequence counter for stable event ordering
   self.flightState = {
     onTaxi = false,
     originZone = nil,
@@ -149,9 +150,12 @@ end
 
 -- Create a structured event
 function Journal:CreateEvent(eventType, data)
+  -- Increment sequence counter for stable ordering when timestamps are identical
+  self.eventSeqCounter = (self.eventSeqCounter or 0) + 1
   return {
     v = CURRENT_SCHEMA,
-    ts = Journal.ISOTimestamp(),
+    ts = Journal.ISOTimestamp(),  -- Always use current time at creation (time of insert)
+    seq = self.eventSeqCounter,   -- Sequence number for stable ordering
     type = eventType,
     data = data,
     msg = self:RenderMessage(eventType, data),
@@ -206,9 +210,12 @@ function Journal:AddEntry(entryType, text, meta)
   end
   -- Convert to new event format
   local data = meta or {}
+  -- Increment sequence counter for stable ordering when timestamps are identical
+  self.eventSeqCounter = (self.eventSeqCounter or 0) + 1
   local event = {
     v = CURRENT_SCHEMA,
-    ts = Journal.ISOTimestamp(),
+    ts = Journal.ISOTimestamp(),  -- Always use current time at creation (time of insert)
+    seq = self.eventSeqCounter,   -- Sequence number for stable ordering
     type = entryType,
     data = data,
     msg = text,

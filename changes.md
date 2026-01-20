@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.11] - 2026-01-20
+
+### Fixed
+
+- **Out-of-order events (chunk timestamping)** (#45)
+    - Events now appear in correct chronological order in the UI
+    - Added sequence counter (`seq`) to track insertion order for stable sorting
+    - Events are sorted by `(ts, seq)` when displayed, ensuring proper ordering even when inserted out of timestamp order
+    - Event timestamps (`ts`) always reflect "time of insert" (current time when `AddEvent` is called)
+    - Keeps `startTs/endTs` in event data only, never as event `ts`
+    - Resolves issue where later events could appear before earlier events in the journal
+
 ## [0.6.10] - 2026-01-20
 
 ### Changed

@@ -160,11 +160,30 @@ function Journal:RefreshUI()
   if self.debug then
     self:DebugLog("RefreshUI: sessions=" .. #sessions .. " entries=" .. #entries)
   end
+  
+  -- Sort entries by (ts, seq) for stable chronological ordering
+  -- This ensures events appear in correct order even when inserted out of timestamp order
+  local sortedEntries = {}
+  for i, entry in ipairs(entries) do
+    table.insert(sortedEntries, entry)
+  end
+  table.sort(sortedEntries, function(a, b)
+    local tsA = GetEntryTimestamp(a)
+    local tsB = GetEntryTimestamp(b)
+    if tsA ~= tsB then
+      return tsA < tsB
+    end
+    -- If timestamps are equal, use sequence number (or fallback to insertion order)
+    local seqA = a.seq or 0
+    local seqB = b.seq or 0
+    return seqA < seqB
+  end)
+  
   local contentWidth = (self.uiFrame.content:GetWidth() or 1) - 4
   local entrySpacing = 4
 
   local currentY = 0
-  for i, entry in ipairs(entries) do
+  for i, entry in ipairs(sortedEntries) do
     local line = self.uiFrame.entryLines[i]
     if not line then
       line = self.uiFrame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
