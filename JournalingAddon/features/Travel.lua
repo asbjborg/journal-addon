@@ -354,6 +354,14 @@ function Journal:HandleSubZoneChanged()
   self.lastSubZone = subZone
 end
 
+Journal:RegisterRenderer("discovery", function(data)
+  local text = "Discovered: " .. (data.discoveredZone or "unknown")
+  if data.xp and data.xp > 0 then
+    text = text .. " (" .. data.xp .. " XP)"
+  end
+  return text
+end)
+
 Journal:RegisterRenderer("travel", function(data)
   if data.action == "flight_start" then
     local text = "Started flying"
@@ -391,6 +399,30 @@ end)
 Journal.On("CHAT_MSG_SYSTEM", function(msg)
   if msg and msg ~= "" then
     local cleaned = msg:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    
+    -- Check for zone discovery: "Discovered [Zone Name]: X experience gained"
+    local zoneName, xpAmount = cleaned:match("^Discovered (.+): (%d+) experience gained$")
+    if zoneName and zoneName ~= "" then
+      local zone = GetRealZoneText()
+      local subZone = GetSubZoneText()
+      local x, y = Journal:GetPlayerCoords()
+      
+      local eventData = {
+        zone = zone,
+        subZone = (subZone and subZone ~= "") and subZone or nil,
+        discoveredZone = zoneName,
+        xp = tonumber(xpAmount) or nil,
+      }
+      if x and y then
+        eventData.x = x
+        eventData.y = y
+      end
+      
+      Journal:AddEvent("discovery", eventData)
+      return
+    end
+    
+    -- Check for flight destination
     local flightDest = cleaned:match("^Taking flight to: %[(.+)%]$")
     if flightDest and flightDest ~= "" then
       Journal.flightState.destinationName = flightDest

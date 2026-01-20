@@ -160,6 +160,8 @@ function Journal:IsHardCutEvent(eventType, data)
     return true
   elseif eventType == "note" then
     return true
+  elseif eventType == "discovery" then
+    return true
   elseif eventType == "travel" and data and (data.action == "zone_change" or data.action == "subzone_change" or data.action == "flight_start") then
     return true
   elseif eventType == "system" then

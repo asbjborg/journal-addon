@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.9] - 2026-01-20
+
+### Added
+
+- **Zone discovery logging** (#43)
+    - New `discovery` event type for zone/subzone discovery
+    - Logs when player discovers a new area (from "Discovered [Zone Name]: X experience gained" system message)
+    - Includes discovered zone name, current zone/subzone, XP gained, and coordinates
+    - Display format: "Discovered: [Zone Name] (X XP)"
+    - Important for downstream storytelling to track exploration milestones
+    - Discovery events are hard cut events (flush activity chunks)
+
 ## [0.6.8] - 2026-01-20
 
 ### Changed
