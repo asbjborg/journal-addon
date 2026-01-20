@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.10] - 2026-01-20
+
+### Changed
+
+- **Skill up aggregation** (#44)
+    - Skill ups for the same skill within 10 seconds are now aggregated into a single entry
+    - Display format: `[Skill] skill increased from [start]-[end] (over [duration]s)`
+    - Example: `Wands skill increased from 7-9 (over 3s)`
+    - Uses rolling window (10 seconds) that resets/extends on each new skill up
+    - Reduces log spam from rapid skill increases during crafting/gathering
+    - Skill aggregation is flushed on logout
+
 ## [0.6.9] - 2026-01-20
 
 ### Added

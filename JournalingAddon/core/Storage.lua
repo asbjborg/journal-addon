@@ -47,6 +47,10 @@ function Journal:InitState()
   self.lastHearthCastAt = nil
   self.lastHearthFrom = nil
   self.lastLevelUpAt = nil  -- Track level up time to add XP gain to previous chunk
+  if self.ResetSkillAgg then
+    self:ResetSkillAgg()
+  end
+  self.skillAggTimer = nil
   self.flightState = {
     onTaxi = false,
     originZone = nil,
@@ -134,6 +138,10 @@ function Journal:EndSession()
     -- Flush activity chunk on logout
     if self.FlushActivityChunk then
       self:FlushActivityChunk()
+    end
+    -- Flush skill aggregation on logout
+    if self.CloseSkillAggWindow then
+      self:CloseSkillAggWindow()
     end
     self.currentSession.endTime = time()
   end
