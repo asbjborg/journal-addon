@@ -5,6 +5,7 @@ local DAMAGE_WINDOW = 10
 local RESUME_WINDOW = 30  -- 30 seconds resume window for activity chunk
 local HARD_CAP_WINDOW = 180  -- 3 minutes hard cap for activity chunk
 local QUEST_REWARD_WINDOW = 10  -- Seconds after quest turn-in to consider loot as quest reward
+local KILL_XP_SUPPRESSION_WINDOW = 2  -- Seconds to suppress PLAYER_XP_UPDATE that matches kill XP
 
 function Journal:ResetActivityChunk()
   self.activityChunk = {
@@ -147,6 +148,62 @@ function Journal:RecordKill(destName)
   counts[destName] = (counts[destName] or 0) + 1
 end
 
+function Journal:RecordCombatXP(msg)
+  if not msg or msg == "" then
+    return
+  end
+  
+  -- Parse XP amount from message: "%s dies, you gain %d experience." or "You gain %d experience."
+  -- Check if it's kill XP (contains "dies")
+  local isKillXP = msg:match("dies")
+  local xpAmount = tonumber(msg:match("(%d+) experience"))
+  
+  if not xpAmount or xpAmount <= 0 then
+    return
+  end
+  
+  -- Only handle kill XP here (from "dies" messages)
+  -- Quest/other XP will be handled by PLAYER_XP_UPDATE
+  if isKillXP then
+    local now = time()
+    
+    -- Track this kill XP for suppression window
+    table.insert(self.recentKillXP, {
+      amount = xpAmount,
+      timestamp = now,
+    })
+    
+    -- Clean up old entries (older than suppression window)
+    while #self.recentKillXP > 0 and (now - self.recentKillXP[1].timestamp) > KILL_XP_SUPPRESSION_WINDOW do
+      table.remove(self.recentKillXP, 1)
+    end
+    
+    -- Add kill XP directly to activity chunk
+    self:EnsureActivityChunk()
+    self.activityChunk.xp = (self.activityChunk.xp or 0) + xpAmount
+    self.activityChunk.lastActivityTime = now
+    
+    -- Reset idle timer
+    if self.idleTimer then
+      self.idleTimer:Cancel()
+      self.idleTimer = nil
+    end
+    if C_Timer and C_Timer.NewTimer then
+      self.idleTimer = C_Timer.NewTimer(RESUME_WINDOW, function()
+        Journal:FlushActivityChunk()
+      end)
+    end
+    
+    -- Update last XP tracking to prevent double-counting in RecordXP
+    if self.agg.xp.lastXP then
+      local currentXP = UnitXP("player")
+      local currentMax = UnitXPMax("player")
+      self.agg.xp.lastXP = currentXP
+      self.agg.xp.lastMaxXP = currentMax
+    end
+  end
+end
+
 function Journal:RecordXP()
   local currentXP = UnitXP("player")
   local currentMax = UnitXPMax("player")
@@ -163,6 +220,24 @@ function Journal:RecordXP()
 
   if delta > 0 then
     local now = time()
+    
+    -- Check if this XP matches recent kill XP (suppress duplicate)
+    if self.recentKillXP and #self.recentKillXP > 0 then
+      -- Clean up old entries first
+      while #self.recentKillXP > 0 and (now - self.recentKillXP[1].timestamp) > KILL_XP_SUPPRESSION_WINDOW do
+        table.remove(self.recentKillXP, 1)
+      end
+      
+      -- Check if any recent kill XP matches this delta
+      for _, killXP in ipairs(self.recentKillXP) do
+        if killXP.amount == delta then
+          -- This XP matches recent kill XP - suppress it (already counted in RecordCombatXP)
+          self.agg.xp.lastXP = currentXP
+          self.agg.xp.lastMaxXP = currentMax
+          return
+        end
+      end
+    end
     
     -- If XP gain comes immediately after level up (within 1 second), it belongs to the previous chunk
     if self.lastLevelUpAt and (now - self.lastLevelUpAt) <= 1 then
@@ -570,6 +645,10 @@ end)
 
 Journal.On("PLAYER_XP_UPDATE", function()
   Journal:RecordXP()
+end)
+
+Journal.On("CHAT_MSG_COMBAT_XP_GAIN", function(msg)
+  Journal:RecordCombatXP(msg)
 end)
 
 Journal.On("COMBAT_LOG_EVENT_UNFILTERED", function()

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.12] - 2026-01-20
+
+### Fixed
+
+- **XP totals incorrect in activity chunk (double counting)** (#48)
+    - XP totals in activity chunks now correctly reflect actual kill XP
+    - Use `CHAT_MSG_COMBAT_XP_GAIN` as canonical source for kill XP (explicitly tells kill XP from "dies" messages)
+    - Suppress duplicate `PLAYER_XP_UPDATE` events that match recent kill XP (within 2 seconds)
+    - Non-kill XP (quest rewards, discovery, etc.) still handled via `PLAYER_XP_UPDATE`
+    - Resolves issue where XP totals were inflated (e.g., 224 XP instead of 160 for 2 mobs)
+
 ## [0.6.11] - 2026-01-20
 
 ### Fixed

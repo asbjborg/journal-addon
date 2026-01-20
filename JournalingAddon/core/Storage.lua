@@ -52,6 +52,7 @@ function Journal:InitState()
   end
   self.skillAggTimer = nil
   self.eventSeqCounter = 0  -- Sequence counter for stable event ordering
+  self.recentKillXP = {}  -- Track recent kill XP amounts to suppress duplicate PLAYER_XP_UPDATE
   self.flightState = {
     onTaxi = false,
     originZone = nil,

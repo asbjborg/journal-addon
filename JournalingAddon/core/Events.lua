@@ -30,6 +30,7 @@ local events = {
   "SCREENSHOT_SUCCEEDED",
   "CHAT_MSG_COMBAT_FACTION_CHANGE",
   "CHAT_MSG_SKILL",
+  "CHAT_MSG_COMBAT_XP_GAIN",
 }
 
 for _, eventName in ipairs(events) do
