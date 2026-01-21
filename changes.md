@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.13] - 2026-01-20
+
+### Fixed
+
+- **Discovery XP duplication** (#46)
+    - Discovery XP no longer appears twice in journal entries
+    - Discovery XP is tracked when discovery event is created
+    - Duplicate `PLAYER_XP_UPDATE` events that match discovery XP are suppressed (within 3 seconds)
+    - Only the discovery event shows XP, not a separate "Gained XP" entry
+    - Resolves issue where discovery XP appeared in both discovery event and standalone XP event
+
 ## [0.6.12] - 2026-01-20
 
 ### Fixed

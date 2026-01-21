@@ -6,6 +6,7 @@ local RESUME_WINDOW = 30  -- 30 seconds resume window for activity chunk
 local HARD_CAP_WINDOW = 180  -- 3 minutes hard cap for activity chunk
 local QUEST_REWARD_WINDOW = 10  -- Seconds after quest turn-in to consider loot as quest reward
 local KILL_XP_SUPPRESSION_WINDOW = 2  -- Seconds to suppress PLAYER_XP_UPDATE that matches kill XP
+local DISCOVERY_XP_SUPPRESSION_WINDOW = 3  -- Seconds to suppress PLAYER_XP_UPDATE that matches discovery XP
 
 function Journal:ResetActivityChunk()
   self.activityChunk = {
@@ -232,6 +233,24 @@ function Journal:RecordXP()
       for _, killXP in ipairs(self.recentKillXP) do
         if killXP.amount == delta then
           -- This XP matches recent kill XP - suppress it (already counted in RecordCombatXP)
+          self.agg.xp.lastXP = currentXP
+          self.agg.xp.lastMaxXP = currentMax
+          return
+        end
+      end
+    end
+    
+    -- Check if this XP matches recent discovery XP (suppress duplicate)
+    if self.recentDiscoveryXP and #self.recentDiscoveryXP > 0 then
+      -- Clean up old entries first
+      while #self.recentDiscoveryXP > 0 and (now - self.recentDiscoveryXP[1].timestamp) > DISCOVERY_XP_SUPPRESSION_WINDOW do
+        table.remove(self.recentDiscoveryXP, 1)
+      end
+      
+      -- Check if any recent discovery XP matches this delta
+      for _, discoveryXP in ipairs(self.recentDiscoveryXP) do
+        if discoveryXP.amount == delta then
+          -- This XP matches recent discovery XP - suppress it (already logged in discovery event)
           self.agg.xp.lastXP = currentXP
           self.agg.xp.lastMaxXP = currentMax
           return

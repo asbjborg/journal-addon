@@ -407,15 +407,33 @@ Journal.On("CHAT_MSG_SYSTEM", function(msg)
       local subZone = GetSubZoneText()
       local x, y = Journal:GetPlayerCoords()
       
+      local xpValue = tonumber(xpAmount) or nil
       local eventData = {
         zone = zone,
         subZone = (subZone and subZone ~= "") and subZone or nil,
         discoveredZone = zoneName,
-        xp = tonumber(xpAmount) or nil,
+        xp = xpValue,
       }
       if x and y then
         eventData.x = x
         eventData.y = y
+      end
+      
+      -- Track discovery XP to suppress duplicate PLAYER_XP_UPDATE events
+      if xpValue and xpValue > 0 then
+        local now = time()
+        if not Journal.recentDiscoveryXP then
+          Journal.recentDiscoveryXP = {}
+        end
+        table.insert(Journal.recentDiscoveryXP, {
+          amount = xpValue,
+          timestamp = now,
+        })
+        
+        -- Clean up old entries (older than suppression window)
+        while #Journal.recentDiscoveryXP > 0 and (now - Journal.recentDiscoveryXP[1].timestamp) > 3 do
+          table.remove(Journal.recentDiscoveryXP, 1)
+        end
       end
       
       Journal:AddEvent("discovery", eventData)
