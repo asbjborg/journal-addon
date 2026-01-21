@@ -1,0 +1,55 @@
+14:00:00  Session started.
+14:00:15  Accepted: Delivery to the North Sanctum (8895)
+14:00:32  Entered North Sanctum (from Eversong Woods).
+14:00:34  Discovered: North Sanctum (45 XP)
+14:01:12  Killed: Feral Dragonhawk Hatchling x3 | Gained 225 XP | (over 45s)
+14:01:12  Looted: Rough Stone x1, Small Egg x2 (over 45s)
+14:01:12  Looted: 12c
+14:01:45  Wands skill increased from 16-22 (over 19s)
+14:02:03  Turned in: Delivery to the North Sanctum (8895)
+14:02:03  Reputation: Silvermoon City +25
+14:02:03  Gained 140 XP
+14:02:15  Accepted: Malfunction at the West Sanctum (9119)
+14:02:28  Traveled to Eversong Woods from Eversong Woods - North Sanctum.
+14:02:45  Entered West Sanctum (from Eversong Woods).
+14:02:47  Discovered: West Sanctum (55 XP)
+14:03:15  Turned in: Malfunction at the West Sanctum (9119)
+14:03:15  Reputation: Silvermoon City +250
+14:03:15  Gained 450 XP
+14:03:18  Accepted: Arcane Instability (8486)
+14:03:42  Killed: Darnassian Scout | Gained 75 XP | (over 5s)
+14:03:42  Looted: Incriminating Documents x1 (over 5s)
+14:03:42  Looted: 3c
+14:03:42  Accepted: Incriminating Documents (8482)
+14:04:06  Wands skill increased from 23-26 (over 15s)
+14:04:25  Gained 79 XP
+14:04:32  Wands skill increased from 27-29 (over 17s)
+14:04:50  Killed: Manawraith | Gained 135 XP | (over 24s)
+14:04:50  Looted: Mana Residue x4 (over 24s)
+14:04:50  Leveled up to 7!
+14:04:52  Screenshot: WoWScrnShot_012026_140452.jpg
+14:04:52  Looted: Mana Residue x3
+14:04:59  Wands skill increased to 30
+14:05:15  Killed: Grimscale Forager x2, Grimscale Scout x1 | Gained 320 XP | (over 1m)
+14:05:15  Looted: Grimscale Murloc Head x2, Shiny Seashell x1, Small Brown Pouch x1, Withered Staff x1 (over 1m)
+14:05:15  Looted: 21c
+14:05:15  Reputation: Darkspear Trolls +10
+14:05:45  Killed: Grimscale Forager | Gained 80 XP | (over 30s)
+14:05:45  Looted: Grimscale Murloc Head x1, Sharpened Letter Opener x1 (over 30s)
+14:05:45  Looted: 7c
+14:06:20  Spotted: Lor'themar Theron (lvl 70) [friendly] Blood Elf Warrior note="Interesting NPC" screenshot=WoWScrnShot_012026_140620.jpg
+14:06:45  Note: Found a rare spawn but couldn't kill it yet
+14:07:10  Started flying to Undercity from Silvermoon City.
+14:08:30  Landed in Tirisfal Glades.
+14:08:32  Traveled to Tirisfal Glades from Eversong Woods.
+14:09:00  Died to Rotting Corpse (Disease Cloud) (lvl 12)
+14:09:30  Received: Heavy Linen Bandage x5
+14:09:45  Crafted: Linen Cloth x3
+14:10:00  Created: Minor Healing Potion x2
+14:10:15  Reputation with Undercity increased
+14:10:30  Reputation with Scarlet Crusade decreased
+14:10:45  Reputation tier: Friendly with Argent Dawn
+14:11:00  Defense skill increased to 32
+14:11:30  Hearth to Eversong Woods - Silvermoon City from Tirisfal Glades.
+14:12:00  Border dancing near Sunstrider Isle.
+14:12:30  Scene: note="Beautiful sunset over the city" screenshot=WoWScrnShot_012026_141230.jpg

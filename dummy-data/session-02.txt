@@ -1,0 +1,39 @@
+15:00:00  Session started.
+15:00:10  Accepted: Fish Heads, Fish Heads... (8884)
+15:00:45  Killed: Grimscale Forager | Gained 80 XP | (over 3m)
+15:00:45  Looted: Grimscale Murloc Head x1 (over 3m)
+15:01:15  Entered Tranquil Shore (from Eversong Woods).
+15:01:17  Discovered: Tranquil Shore (65 XP)
+15:02:28  Gained 64 XP
+15:03:05  Looted: Refreshing Spring Water x1 (over 31s)
+15:03:05  Looted: 7c
+15:05:51  Gained 80 XP
+15:06:56  Defense skill increased to 32
+15:07:26  Killed: Grimscale Forager x2 | Gained 160 XP | (over 1m)
+15:07:26  Looted: Grimscale Murloc Head x2, Shiny Seashell x1, Small Brown Pouch x1, Withered Staff x1 (over 1m)
+15:07:26  Looted: 21c
+15:08:33  Killed: Grimscale Forager | Gained 80 XP | (over 49s)
+15:08:33  Looted: Grimscale Murloc Head x1, Sharpened Letter Opener x1 (over 49s)
+15:08:33  Looted: 7c
+15:09:00  Leveled up to 8!
+15:09:02  Screenshot: WoWScrnShot_012026_150902.jpg
+15:09:05  Looted: Mana Residue x2
+15:09:05  Looted: 5c
+15:09:30  Entered Sunstrider Isle (from Tranquil Shore).
+15:09:32  Entered Tranquil Shore (from Sunstrider Isle).
+15:09:34  Entered Sunstrider Isle (from Tranquil Shore).
+15:09:36  Border dancing near Sunstrider Isle.
+15:10:00  Turned in: Fish Heads, Fish Heads... (8884)
+15:10:00  Looted: Grimscale Murloc Head x5
+15:10:00  Gained 150 XP
+15:10:00  Looted: 50c
+15:10:15  Reputation: Darkspear Trolls +50
+15:10:30  Killed: Rotting Corpse
+15:10:30  Looted: Linen Cloth x2 (over 15s)
+15:11:00  Tailoring skill increased from 45-52 (over 8s)
+15:11:30  Note: Found a rare fishing spot, caught 3 rare fish
+15:12:00  Scene: screenshot=WoWScrnShot_012026_151200.jpg
+15:12:30  Killed: Grimscale Oracle x1, Grimscale Scout x3 | Gained 480 XP | (over 30s)
+15:12:30  Looted: Grimscale Murloc Head x3, Shiny Seashell x2 (over 30s)
+15:12:30  Looted: 18c
+15:13:00  Gained 120 XP

@@ -1,0 +1,39 @@
+{"v":3,"ts":"2026-01-20T15:00:00","seq":1,"type":"system","data":{"message":"Session started."},"msg":"Session started."}
+{"v":3,"ts":"2026-01-20T15:00:10","seq":2,"type":"quest","data":{"action":"accepted","questID":8884,"title":"Fish Heads, Fish Heads...","zone":"Eversong Woods","subZone":null},"msg":"Accepted: Fish Heads, Fish Heads... (8884)"}
+{"v":3,"ts":"2026-01-20T15:00:45","seq":3,"type":"activity","data":{"target":"Grimscale Forager","count":1,"xp":80,"duration":180},"msg":"Killed: Grimscale Forager | Gained 80 XP | (over 3m)"}
+{"v":3,"ts":"2026-01-20T15:00:45","seq":3,"type":"loot","data":{"action":"loot","counts":{"Grimscale Murloc Head":1},"raw":["You receive loot: Grimscale Murloc Head"],"duration":180},"msg":"Looted: Grimscale Murloc Head x1 (over 3m)"}
+{"v":3,"ts":"2026-01-20T15:01:15","seq":4,"type":"travel","data":{"action":"subzone_change","zone":"Eversong Woods","subZone":"Tranquil Shore","fromSubZone":null},"msg":"Entered Tranquil Shore (from Eversong Woods)."}
+{"v":3,"ts":"2026-01-20T15:01:17","seq":5,"type":"discovery","data":{"zone":"Eversong Woods","subZone":"Tranquil Shore","discoveredZone":"Tranquil Shore","xp":65},"msg":"Discovered: Tranquil Shore (65 XP)"}
+{"v":3,"ts":"2026-01-20T15:02:28","seq":6,"type":"xp","data":{"amount":64},"msg":"Gained 64 XP"}
+{"v":3,"ts":"2026-01-20T15:03:05","seq":7,"type":"loot","data":{"action":"loot","counts":{"Refreshing Spring Water":1},"raw":["You receive loot: Refreshing Spring Water"],"duration":31},"msg":"Looted: Refreshing Spring Water x1 (over 31s)"}
+{"v":3,"ts":"2026-01-20T15:03:05","seq":7,"type":"money","data":{"copper":7},"msg":"Looted: 7c"}
+{"v":3,"ts":"2026-01-20T15:05:51","seq":8,"type":"xp","data":{"amount":80},"msg":"Gained 80 XP"}
+{"v":3,"ts":"2026-01-20T15:06:56","seq":9,"type":"profession","data":{"skill":"Defense","level":32},"msg":"Defense skill increased to 32"}
+{"v":3,"ts":"2026-01-20T15:07:26","seq":10,"type":"activity","data":{"kills":{"Grimscale Forager":2},"xp":160,"duration":60},"msg":"Killed: Grimscale Forager x2 | Gained 160 XP | (over 1m)"}
+{"v":3,"ts":"2026-01-20T15:07:26","seq":10,"type":"loot","data":{"action":"loot","counts":{"Grimscale Murloc Head":2,"Shiny Seashell":1,"Small Brown Pouch":1,"Withered Staff":1},"raw":["You receive loot: Grimscale Murloc Head x2","You receive loot: Shiny Seashell","You receive loot: Small Brown Pouch","You receive loot: Withered Staff"],"duration":60},"msg":"Looted: Grimscale Murloc Head x2, Shiny Seashell x1, Small Brown Pouch x1, Withered Staff x1 (over 1m)"}
+{"v":3,"ts":"2026-01-20T15:07:26","seq":10,"type":"money","data":{"copper":21},"msg":"Looted: 21c"}
+{"v":3,"ts":"2026-01-20T15:08:33","seq":11,"type":"activity","data":{"target":"Grimscale Forager","count":1,"xp":80,"duration":49},"msg":"Killed: Grimscale Forager | Gained 80 XP | (over 49s)"}
+{"v":3,"ts":"2026-01-20T15:08:33","seq":11,"type":"loot","data":{"action":"loot","counts":{"Grimscale Murloc Head":1,"Sharpened Letter Opener":1},"raw":["You receive loot: Grimscale Murloc Head","You receive loot: Sharpened Letter Opener"],"duration":49},"msg":"Looted: Grimscale Murloc Head x1, Sharpened Letter Opener x1 (over 49s)"}
+{"v":3,"ts":"2026-01-20T15:08:33","seq":11,"type":"money","data":{"copper":7},"msg":"Looted: 7c"}
+{"v":3,"ts":"2026-01-20T15:09:00","seq":12,"type":"level","data":{"level":8},"msg":"Leveled up to 8!"}
+{"v":3,"ts":"2026-01-20T15:09:02","seq":13,"type":"screenshot","data":{"action":"manual","filename":"WoWScrnShot_012026_150902.jpg","zone":"Eversong Woods","subZone":"Tranquil Shore"},"msg":"Screenshot: WoWScrnShot_012026_150902.jpg"}
+{"v":3,"ts":"2026-01-20T15:09:05","seq":14,"type":"loot","data":{"action":"loot","counts":{"Mana Residue":2},"raw":["You receive loot: Mana Residue x2"]},"msg":"Looted: Mana Residue x2"}
+{"v":3,"ts":"2026-01-20T15:09:05","seq":15,"type":"money","data":{"copper":5},"msg":"Looted: 5c"}
+{"v":3,"ts":"2026-01-20T15:09:30","seq":16,"type":"travel","data":{"action":"subzone_change","zone":"Eversong Woods","subZone":"Sunstrider Isle","fromSubZone":"Tranquil Shore"},"msg":"Entered Sunstrider Isle (from Tranquil Shore)."}
+{"v":3,"ts":"2026-01-20T15:09:32","seq":17,"type":"travel","data":{"action":"subzone_change","zone":"Eversong Woods","subZone":"Tranquil Shore","fromSubZone":"Sunstrider Isle"},"msg":"Entered Tranquil Shore (from Sunstrider Isle)."}
+{"v":3,"ts":"2026-01-20T15:09:34","seq":18,"type":"travel","data":{"action":"subzone_change","zone":"Eversong Woods","subZone":"Sunstrider Isle","fromSubZone":"Tranquil Shore"},"msg":"Entered Sunstrider Isle (from Tranquil Shore)."}
+{"v":3,"ts":"2026-01-20T15:09:36","seq":19,"type":"travel","data":{"action":"boundary_noise","zone":"Eversong Woods","subZone":"Sunstrider Isle","x":52.3,"y":48.7},"msg":"Border dancing near Sunstrider Isle."}
+{"v":3,"ts":"2026-01-20T15:10:00","seq":20,"type":"quest","data":{"action":"turned_in","questID":8884,"title":"Fish Heads, Fish Heads...","xp":150,"money":50,"zone":"Eversong Woods","subZone":"Tranquil Shore"},"msg":"Turned in: Fish Heads, Fish Heads... (8884)"}
+{"v":3,"ts":"2026-01-20T15:10:00","seq":21,"type":"loot","data":{"action":"loot","counts":{"Grimscale Murloc Head":5},"raw":["You receive item: Grimscale Murloc Head x5"]},"msg":"Looted: Grimscale Murloc Head x5"}
+{"v":3,"ts":"2026-01-20T15:10:00","seq":22,"type":"xp","data":{"amount":150},"msg":"Gained 150 XP"}
+{"v":3,"ts":"2026-01-20T15:10:00","seq":23,"type":"money","data":{"copper":50},"msg":"Looted: 50c"}
+{"v":3,"ts":"2026-01-20T15:10:15","seq":24,"type":"reputation","data":{"changes":{"Darkspear Trolls":50}},"msg":"Reputation: Darkspear Trolls +50"}
+{"v":3,"ts":"2026-01-20T15:10:30","seq":25,"type":"activity","data":{"target":"Rotting Corpse","count":1,"xp":0,"duration":15},"msg":"Killed: Rotting Corpse"}
+{"v":3,"ts":"2026-01-20T15:10:30","seq":25,"type":"loot","data":{"action":"loot","counts":{"Linen Cloth":2},"raw":["You receive loot: Linen Cloth x2"],"duration":15},"msg":"Looted: Linen Cloth x2 (over 15s)"}
+{"v":3,"ts":"2026-01-20T15:11:00","seq":26,"type":"profession","data":{"skill":"Tailoring","startLevel":45,"endLevel":52,"duration":8},"msg":"Tailoring skill increased from 45-52 (over 8s)"}
+{"v":3,"ts":"2026-01-20T15:11:30","seq":27,"type":"note","data":{"text":"Found a rare fishing spot, caught 3 rare fish"},"msg":"Note: Found a rare fishing spot, caught 3 rare fish"}
+{"v":3,"ts":"2026-01-20T15:12:00","seq":28,"type":"screenshot","data":{"action":"capture_scene","filename":"WoWScrnShot_012026_151200.jpg","zone":"Eversong Woods","subZone":"Tranquil Shore"},"msg":"Scene: screenshot=WoWScrnShot_012026_151200.jpg"}
+{"v":3,"ts":"2026-01-20T15:12:30","seq":29,"type":"activity","data":{"kills":{"Grimscale Scout":3,"Grimscale Oracle":1},"xp":480,"duration":30},"msg":"Killed: Grimscale Oracle x1, Grimscale Scout x3 | Gained 480 XP | (over 30s)"}
+{"v":3,"ts":"2026-01-20T15:12:30","seq":29,"type":"loot","data":{"action":"loot","counts":{"Grimscale Murloc Head":3,"Shiny Seashell":2},"raw":["You receive loot: Grimscale Murloc Head x3","You receive loot: Shiny Seashell x2"],"duration":30},"msg":"Looted: Grimscale Murloc Head x3, Shiny Seashell x2 (over 30s)"}
+{"v":3,"ts":"2026-01-20T15:12:30","seq":29,"type":"money","data":{"copper":18},"msg":"Looted: 18c"}
+{"v":3,"ts":"2026-01-20T15:13:00","seq":30,"type":"xp","data":{"amount":120},"msg":"Gained 120 XP"}
