@@ -7,6 +7,7 @@ local HARD_CAP_WINDOW = 180  -- 3 minutes hard cap for activity chunk
 local QUEST_REWARD_WINDOW = 10  -- Seconds after quest turn-in to consider loot as quest reward
 local KILL_XP_SUPPRESSION_WINDOW = 2  -- Seconds to suppress PLAYER_XP_UPDATE that matches kill XP
 local DISCOVERY_XP_SUPPRESSION_WINDOW = 3  -- Seconds to suppress PLAYER_XP_UPDATE that matches discovery XP
+local HARD_FLUSH_WINDOW = 10  -- Seconds after hard flush where new chunks cannot start (late-arriving loot logged immediately)
 
 function Journal:ResetActivityChunk()
   self.activityChunk = {
@@ -72,6 +73,10 @@ function Journal:FlushActivityChunk()
     return
   end
 
+  -- Capture a single timestamp for all entries flushed from this chunk
+  -- This ensures kill, loot, money, and rep entries appear together in chronological order
+  local flushTimestamp = Journal.ISOTimestamp()
+
   local killCounts = self.activityChunk.kills
   local xpTotal = self.activityChunk.xp
   if next(killCounts) or xpTotal > 0 then
@@ -105,7 +110,7 @@ function Journal:FlushActivityChunk()
       eventData.kills = Journal.CopyTable(killCounts)
     end
 
-    self:AddEvent("activity", eventData)
+    self:AddEventWithTimestamp("activity", eventData, flushTimestamp)
   end
 
   local lootCounts = self.activityChunk.loot.counts
@@ -114,24 +119,24 @@ function Journal:FlushActivityChunk()
     if self.activityChunk.startTime then
       duration = time() - self.activityChunk.startTime
     end
-    self:AddEvent("loot", {
+    self:AddEventWithTimestamp("loot", {
       action = self.activityChunk.loot.action or "loot",
       counts = Journal.CopyTable(self.activityChunk.loot.counts),
       raw = Journal.CopyTable(self.activityChunk.loot.raw),
       duration = duration,  -- Store raw duration in seconds for renderer to format
-    })
+    }, flushTimestamp)
   end
 
   local money = self.activityChunk.money
   if money and money > 0 then
-    self:AddEvent("money", { copper = money })
+    self:AddEventWithTimestamp("money", { copper = money }, flushTimestamp)
   end
 
   local reputation = self.activityChunk.reputation
   if reputation and next(reputation) then
-    self:AddEvent("reputation", {
+    self:AddEventWithTimestamp("reputation", {
       changes = Journal.CopyTable(reputation),
-    })
+    }, flushTimestamp)
   end
 
   self:ResetActivityChunk()
@@ -338,16 +343,29 @@ end
 -- Helper function to ensure activity chunk is active and update timers
 function Journal:EnsureActivityChunk()
   local now = time()
+  
   -- Check if we should start a new chunk or continue existing one
   if not self.activityChunk or not self.activityChunk.lastActivityTime or (now - self.activityChunk.lastActivityTime) > RESUME_WINDOW then
     -- Gap > 30 seconds - flush existing chunk and start new one
     if self.activityChunk and self.activityChunk.lastActivityTime then
       self:FlushActivityChunk()
     end
+    
+    -- Check if we're in a hard flush window - if so, don't start new chunks
+    if self.lastHardFlushTime and (now - self.lastHardFlushTime) <= 10 then
+      -- Within hard flush window - don't start new chunks, return false to indicate no chunk
+      return false
+    end
+    
     self:StartActivityChunk()
   else
     -- Within resume window - continue existing chunk
     if not self.activityChunk then
+      -- Check if we're in a hard flush window - if so, don't start new chunks
+      if self.lastHardFlushTime and (now - self.lastHardFlushTime) <= 10 then
+        -- Within hard flush window - don't start new chunks, return false to indicate no chunk
+        return false
+      end
       self:StartActivityChunk()
     else
       -- Update last activity time and reset idle timer
@@ -363,6 +381,7 @@ function Journal:EnsureActivityChunk()
       end
     end
   end
+  return true
 end
 
 function Journal:RecordLoot(msg)
@@ -412,15 +431,35 @@ function Journal:RecordLoot(msg)
       raw = { msg },
     })
   else
-    -- Not a quest reward - add to activity chunk
-    self:EnsureActivityChunk()
+    -- Check if we're in a hard flush window - if so, log immediately without duration
+    if self.lastHardFlushTime and (now - self.lastHardFlushTime) <= 10 then
+      -- Within hard flush window - log immediately without duration (not aggregated)
+      -- This handles late-arriving loot from the kill that just got flushed
+      self:AddEvent("loot", {
+        action = action,
+        counts = { [itemName] = count },
+        raw = { msg },
+        -- No duration - appears immediately after hard flush event
+      })
+      return
+    end
     
-    local counts = self.activityChunk.loot.counts
-    counts[itemName] = (counts[itemName] or 0) + count
-    table.insert(self.activityChunk.loot.raw, msg)
-    -- Store action for loot (use first seen action)
-    if not self.activityChunk.loot.action then
-      self.activityChunk.loot.action = action
+    -- Not a quest reward and not in hard flush window - add to activity chunk
+    if self:EnsureActivityChunk() then
+      local counts = self.activityChunk.loot.counts
+      counts[itemName] = (counts[itemName] or 0) + count
+      table.insert(self.activityChunk.loot.raw, msg)
+      -- Store action for loot (use first seen action)
+      if not self.activityChunk.loot.action then
+        self.activityChunk.loot.action = action
+      end
+    else
+      -- Couldn't create chunk (in hard flush window) - log immediately
+      self:AddEvent("loot", {
+        action = action,
+        counts = { [itemName] = count },
+        raw = { msg },
+      })
     end
   end
 end
@@ -502,10 +541,24 @@ function Journal:RecordMoney(msg)
     return
   end
 
-  self:EnsureActivityChunk()
+  local now = time()
   
-  -- Add money to chunk
-  self.activityChunk.money = self.activityChunk.money + copper
+  -- Check if we're in a hard flush window - if so, log immediately without duration
+  if self.lastHardFlushTime and (now - self.lastHardFlushTime) <= 10 then
+    -- Within hard flush window - log immediately without duration (not aggregated)
+    -- This handles late-arriving money from the kill that just got flushed
+    self:AddEvent("money", { copper = copper })
+    return
+  end
+
+  -- Not in hard flush window - add to activity chunk
+  if self:EnsureActivityChunk() then
+    -- Add money to chunk
+    self.activityChunk.money = self.activityChunk.money + copper
+  else
+    -- Couldn't create chunk (in hard flush window) - log immediately
+    self:AddEvent("money", { copper = copper })
+  end
 end
 
 function Journal:RecordDamage(eventTime, sourceName, spellName, amount)

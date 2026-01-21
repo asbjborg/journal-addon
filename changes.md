@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.14] - 2026-01-21
+
+### Fixed
+
+- **Loot entries appear out of order relative to their source kills** (#47)
+    - Loot entries now appear immediately after their source kill entries
+    - All entries flushed from the same activity chunk (kill, loot, money, rep) now use the same timestamp
+    - Late-arriving loot (within 5 seconds after hard flush) is attached to the last flushed chunk with the same timestamp
+    - Resolves issue where loot appeared separated from kills by other events (e.g., after level-up hard flush)
+    - Ensures proper chronological ordering so loot always appears right after its source kill
+
 ## [0.6.13] - 2026-01-20
 
 ### Fixed

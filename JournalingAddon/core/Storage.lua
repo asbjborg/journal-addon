@@ -54,6 +54,7 @@ function Journal:InitState()
   self.eventSeqCounter = 0  -- Sequence counter for stable event ordering
   self.recentKillXP = {}  -- Track recent kill XP amounts to suppress duplicate PLAYER_XP_UPDATE
   self.recentDiscoveryXP = {}  -- Track recent discovery XP amounts to suppress duplicate PLAYER_XP_UPDATE
+  self.lastHardFlushTime = nil  -- Unix time when last hard flush occurred (prevents new chunks during window)
   self.flightState = {
     onTaxi = false,
     originZone = nil,
@@ -151,17 +152,33 @@ function Journal:EndSession()
 end
 
 -- Create a structured event
-function Journal:CreateEvent(eventType, data)
+function Journal:CreateEvent(eventType, data, overrideTimestamp)
   -- Increment sequence counter for stable ordering when timestamps are identical
   self.eventSeqCounter = (self.eventSeqCounter or 0) + 1
   return {
     v = CURRENT_SCHEMA,
-    ts = Journal.ISOTimestamp(),  -- Always use current time at creation (time of insert)
+    ts = overrideTimestamp or Journal.ISOTimestamp(),  -- Use override timestamp if provided, otherwise current time
     seq = self.eventSeqCounter,   -- Sequence number for stable ordering
     type = eventType,
     data = data,
     msg = self:RenderMessage(eventType, data),
   }
+end
+
+-- Add event with optional timestamp override (for flush operations)
+function Journal:AddEventWithTimestamp(eventType, data, timestamp)
+  if not self.currentSession then
+    return
+  end
+  
+  local event = self:CreateEvent(eventType, data, timestamp)
+  table.insert(self.currentSession.entries, event)
+  if self.debug then
+    self:DebugLog("Event added: " .. eventType .. " - " .. event.msg)
+  end
+  if self.uiFrame and self.uiFrame:IsShown() and self.RefreshUI then
+    self:RefreshUI()
+  end
 end
 
 -- Check if an event is a hard cut event that should flush activity chunk
@@ -193,6 +210,8 @@ function Journal:AddEvent(eventType, data)
   -- Flush activity chunk if this is a hard cut event
   if self:IsHardCutEvent(eventType, data) and self.FlushActivityChunk then
     self:FlushActivityChunk()
+    -- Mark that a hard flush just occurred (prevents new chunks during window)
+    self.lastHardFlushTime = time()
   end
   
   local event = self:CreateEvent(eventType, data)
