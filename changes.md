@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.15] - 2026-01-21
+
+### Enhanced
+
+- **Retroactive loot aggregation in hard flush window** (#47)
+    - Late-arriving loot (within 10 seconds after hard flush) now retroactively updates the last flushed loot entry
+    - All loot from the same activity chunk is combined into a single entry, even if some arrives after the hard flush event
+    - Improves readability by keeping all loot together instead of splitting it across multiple entries
+    - Example: Loot received 2 seconds after screenshot now appears in the same entry as loot from the flushed chunk
+
 ## [0.6.14] - 2026-01-21
 
 ### Fixed
@@ -7,7 +17,8 @@
 - **Loot entries appear out of order relative to their source kills** (#47)
     - Loot entries now appear immediately after their source kill entries
     - All entries flushed from the same activity chunk (kill, loot, money, rep) now use the same timestamp
-    - Late-arriving loot (within 5 seconds after hard flush) is attached to the last flushed chunk with the same timestamp
+    - Hard flush window (10 seconds) prevents new chunks from starting immediately after hard flush events
+    - Late-arriving loot within the window is captured immediately without duration
     - Resolves issue where loot appeared separated from kills by other events (e.g., after level-up hard flush)
     - Ensures proper chronological ordering so loot always appears right after its source kill
 

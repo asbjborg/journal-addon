@@ -119,12 +119,16 @@ function Journal:FlushActivityChunk()
     if self.activityChunk.startTime then
       duration = time() - self.activityChunk.startTime
     end
-    self:AddEventWithTimestamp("loot", {
+    local lootEvent = self:AddEventWithTimestamp("loot", {
       action = self.activityChunk.loot.action or "loot",
       counts = Journal.CopyTable(self.activityChunk.loot.counts),
       raw = Journal.CopyTable(self.activityChunk.loot.raw),
       duration = duration,  -- Store raw duration in seconds for renderer to format
     }, flushTimestamp)
+    -- Store reference to this loot entry for retroactive updates during hard flush window
+    self.lastFlushedLootEntry = lootEvent
+  else
+    self.lastFlushedLootEntry = nil
   end
 
   local money = self.activityChunk.money
@@ -140,6 +144,9 @@ function Journal:FlushActivityChunk()
   end
 
   self:ResetActivityChunk()
+  
+  -- Clear last flushed loot entry after a delay (so it can be updated during window)
+  -- It will be cleared when a new flush happens or when window expires
 end
 
 function Journal:RecordKill(destName)
@@ -431,17 +438,32 @@ function Journal:RecordLoot(msg)
       raw = { msg },
     })
   else
-    -- Check if we're in a hard flush window - if so, log immediately without duration
+    -- Check if we're in a hard flush window - if so, try to update last flushed loot entry
     if self.lastHardFlushTime and (now - self.lastHardFlushTime) <= 10 then
-      -- Within hard flush window - log immediately without duration (not aggregated)
-      -- This handles late-arriving loot from the kill that just got flushed
-      self:AddEvent("loot", {
-        action = action,
-        counts = { [itemName] = count },
-        raw = { msg },
-        -- No duration - appears immediately after hard flush event
-      })
-      return
+      -- Within hard flush window - try to retroactively update last flushed loot entry
+      if self.lastFlushedLootEntry and self.lastFlushedLootEntry.data and self.lastFlushedLootEntry.data.counts then
+        -- Update the last loot entry with new loot
+        local counts = self.lastFlushedLootEntry.data.counts
+        counts[itemName] = (counts[itemName] or 0) + count
+        if self.lastFlushedLootEntry.data.raw then
+          table.insert(self.lastFlushedLootEntry.data.raw, msg)
+        end
+        -- Re-render the message with updated counts
+        self.lastFlushedLootEntry.msg = self:RenderMessage("loot", self.lastFlushedLootEntry.data)
+        if self.uiFrame and self.uiFrame:IsShown() and self.RefreshUI then
+          self:RefreshUI()
+        end
+        return
+      else
+        -- No loot entry to update - log immediately without duration
+        self:AddEvent("loot", {
+          action = action,
+          counts = { [itemName] = count },
+          raw = { msg },
+          -- No duration - appears immediately after hard flush event
+        })
+        return
+      end
     end
     
     -- Not a quest reward and not in hard flush window - add to activity chunk

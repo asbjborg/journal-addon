@@ -55,6 +55,7 @@ function Journal:InitState()
   self.recentKillXP = {}  -- Track recent kill XP amounts to suppress duplicate PLAYER_XP_UPDATE
   self.recentDiscoveryXP = {}  -- Track recent discovery XP amounts to suppress duplicate PLAYER_XP_UPDATE
   self.lastHardFlushTime = nil  -- Unix time when last hard flush occurred (prevents new chunks during window)
+  self.lastFlushedLootEntry = nil  -- Reference to last loot entry from flushed chunk (for retroactive updates)
   self.flightState = {
     onTaxi = false,
     originZone = nil,
@@ -179,6 +180,7 @@ function Journal:AddEventWithTimestamp(eventType, data, timestamp)
   if self.uiFrame and self.uiFrame:IsShown() and self.RefreshUI then
     self:RefreshUI()
   end
+  return event  -- Return event for potential retroactive updates
 end
 
 -- Check if an event is a hard cut event that should flush activity chunk
@@ -212,6 +214,12 @@ function Journal:AddEvent(eventType, data)
     self:FlushActivityChunk()
     -- Mark that a hard flush just occurred (prevents new chunks during window)
     self.lastHardFlushTime = time()
+    -- Clear last flushed loot entry after window expires (11 seconds to ensure cleanup)
+    if C_Timer and C_Timer.NewTimer then
+      C_Timer.NewTimer(11, function()
+        self.lastFlushedLootEntry = nil
+      end)
+    end
   end
   
   local event = self:CreateEvent(eventType, data)
