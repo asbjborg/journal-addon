@@ -13,12 +13,10 @@
 15:07:26  Looted: Grimscale Murloc Head x2, Shiny Seashell x1, Small Brown Pouch x1, Withered Staff x1 (over 1m)
 15:07:26  Looted: 21c
 15:08:33  Killed: Grimscale Forager | Gained 80 XP | (over 49s)
-15:08:33  Looted: Grimscale Murloc Head x1, Sharpened Letter Opener x1 (over 49s)
-15:08:33  Looted: 7c
+15:08:33  Looted: Grimscale Murloc Head x1, Mana Residue x2, Sharpened Letter Opener x1 (over 49s)
+15:08:33  Looted: 12c
 15:09:00  Leveled up to 8!
 15:09:02  Screenshot: WoWScrnShot_012026_150902.jpg
-15:09:05  Looted: Mana Residue x2
-15:09:05  Looted: 5c
 15:09:30  Entered Sunstrider Isle (from Tranquil Shore).
 15:09:32  Entered Tranquil Shore (from Sunstrider Isle).
 15:09:34  Entered Sunstrider Isle (from Tranquil Shore).

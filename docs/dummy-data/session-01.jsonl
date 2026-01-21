@@ -25,10 +25,9 @@
 {"v":3,"ts":"2026-01-20T14:04:25","seq":21,"type":"xp","data":{"amount":79},"msg":"Gained 79 XP"}
 {"v":3,"ts":"2026-01-20T14:04:32","seq":22,"type":"profession","data":{"skill":"Wands","startLevel":27,"endLevel":29,"duration":17},"msg":"Wands skill increased from 27-29 (over 17s)"}
 {"v":3,"ts":"2026-01-20T14:04:50","seq":23,"type":"activity","data":{"target":"Manawraith","count":1,"xp":135,"duration":24},"msg":"Killed: Manawraith | Gained 135 XP | (over 24s)"}
-{"v":3,"ts":"2026-01-20T14:04:50","seq":23,"type":"loot","data":{"action":"loot","counts":{"Mana Residue":4},"raw":["You receive loot: Mana Residue x4"],"duration":24},"msg":"Looted: Mana Residue x4 (over 24s)"}
+{"v":3,"ts":"2026-01-20T14:04:50","seq":23,"type":"loot","data":{"action":"loot","counts":{"Mana Residue":7},"raw":["You receive loot: Mana Residue x4","You receive loot: Mana Residue x3"],"duration":24},"msg":"Looted: Mana Residue x7 (over 24s)"}
 {"v":3,"ts":"2026-01-20T14:04:50","seq":24,"type":"level","data":{"level":7},"msg":"Leveled up to 7!"}
 {"v":3,"ts":"2026-01-20T14:04:52","seq":25,"type":"screenshot","data":{"action":"manual","filename":"WoWScrnShot_012026_140452.jpg","zone":"Eversong Woods","subZone":"West Sanctum"},"msg":"Screenshot: WoWScrnShot_012026_140452.jpg"}
-{"v":3,"ts":"2026-01-20T14:04:52","seq":26,"type":"loot","data":{"action":"loot","counts":{"Mana Residue":3},"raw":["You receive loot: Mana Residue x3"]},"msg":"Looted: Mana Residue x3"}
 {"v":3,"ts":"2026-01-20T14:04:59","seq":27,"type":"profession","data":{"skill":"Wands","level":30},"msg":"Wands skill increased to 30"}
 {"v":3,"ts":"2026-01-20T14:05:15","seq":28,"type":"activity","data":{"kills":{"Grimscale Forager":2,"Grimscale Scout":1},"xp":320,"duration":67},"msg":"Killed: Grimscale Forager x2, Grimscale Scout x1 | Gained 320 XP | (over 1m)"}
 {"v":3,"ts":"2026-01-20T14:05:15","seq":28,"type":"loot","data":{"action":"loot","counts":{"Grimscale Murloc Head":2,"Shiny Seashell":1,"Small Brown Pouch":1,"Withered Staff":1},"raw":["You receive loot: Grimscale Murloc Head x2","You receive loot: Shiny Seashell","You receive loot: Small Brown Pouch","You receive loot: Withered Staff"],"duration":67},"msg":"Looted: Grimscale Murloc Head x2, Shiny Seashell x1, Small Brown Pouch x1, Withered Staff x1 (over 1m)"}

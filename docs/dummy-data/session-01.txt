@@ -25,10 +25,9 @@
 14:04:25  Gained 79 XP
 14:04:32  Wands skill increased from 27-29 (over 17s)
 14:04:50  Killed: Manawraith | Gained 135 XP | (over 24s)
-14:04:50  Looted: Mana Residue x4 (over 24s)
+14:04:50  Looted: Mana Residue x7 (over 24s)
 14:04:50  Leveled up to 7!
 14:04:52  Screenshot: WoWScrnShot_012026_140452.jpg
-14:04:52  Looted: Mana Residue x3
 14:04:59  Wands skill increased to 30
 14:05:15  Killed: Grimscale Forager x2, Grimscale Scout x1 | Gained 320 XP | (over 1m)
 14:05:15  Looted: Grimscale Murloc Head x2, Shiny Seashell x1, Small Brown Pouch x1, Withered Staff x1 (over 1m)

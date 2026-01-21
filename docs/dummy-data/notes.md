@@ -35,7 +35,7 @@ This directory contains representative dummy journal output generated from the c
 
 **Loot Cases:**
 - Loot from kills (aggregated in activity chunks)
-- Late-arriving loot after hard cut (Mana Residue x3 after level-up)
+- Late-arriving loot after hard cut (Mana Residue x3 merged into previous chunk, total x7)
 - Money loot (aggregated and standalone)
 - Item "receive" cases (Heavy Linen Bandage - not from kills)
 - Craft actions (Linen Cloth)
@@ -58,8 +58,10 @@ This directory contains representative dummy journal output generated from the c
 - Activity chunk timing out after 30s idle (multiple examples)
 
 **Late-Arriving Loot:**
-- Loot appearing after level-up hard cut (Mana Residue x2, Money 5c at 15:09:05)
-- These appear immediately without duration (within 10s hard flush window)
+- Loot appearing after level-up hard cut is retroactively merged into the previous chunk's loot entry if one exists
+- Example: Mana Residue x4 + x3 = x7 in session-01 (merged into chunk at 14:04:50)
+- Example: Mana Residue x2 merged into chunk at 15:08:33 in session-02
+- If no loot entry exists in previous chunk, late loot is logged immediately without duration (within 10s hard flush window)
 
 **Quest Rewards:**
 - Quest turn-in with immediate loot logging (Grimscale Murloc Head x5, Money 50c)
@@ -132,7 +134,7 @@ This directory contains representative dummy journal output generated from the c
 
 2. **Singleton Chunks with Duration**: Single-kill activity chunks still show duration, which may feel awkward but is consistent with the aggregation system.
 
-3. **Late Loot Without Duration**: Loot arriving within 10s of a hard flush appears immediately without duration, reflecting the hard flush window behavior.
+3. **Late Loot Retroactive Merge**: Loot arriving within 10s of a hard flush is retroactively merged into the previous chunk's loot entry if one exists (keeps same timestamp and duration, counts updated). If no loot entry exists in previous chunk, it's logged immediately without duration.
 
 4. **Quest Reward Loot**: Quest rewards are logged immediately, bypassing activity chunk aggregation, which is intentional.
 
