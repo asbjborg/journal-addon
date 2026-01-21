@@ -53,7 +53,7 @@
     - Added sequence counter (`seq`) to track insertion order for stable sorting
     - Events are sorted by `(ts, seq)` when displayed, ensuring proper ordering even when inserted out of timestamp order
     - Event timestamps (`ts`) always reflect "time of insert" (current time when `AddEvent` is called)
-    - Keeps `startTs/endTs` in event data only, never as event `ts`
+    - Design principle: future span timestamps (startTs/endTs) would be stored in event data only, never as event `ts`
     - Resolves issue where later events could appear before earlier events in the journal
 
 ## [0.6.10] - 2026-01-20
