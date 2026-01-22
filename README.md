@@ -1,4 +1,4 @@
-# JournalingAddon
+# Journal addon
 
 A World of Warcraft addon for creating a personal journal of your adventures. Automatically tracks quests, kills, loot, XP gains, travel, and more, while also allowing manual entries for screenshots, target captures, and notes.
 
