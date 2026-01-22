@@ -1,0 +1,430 @@
+Maskine-Thunderstrike - 2026-01-17 15:32 - current
+
+14:32:32  Session started.
+14:33:38  Killed: Magram Windchaser | Gained 430 XP
+14:33:38  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:33:46  Looted: Centaur Ear x1
+14:33:47  Looted: 1s 80c
+14:34:18  Killed: Magram Windchaser | Gained 430 XP
+14:34:18  Looted: Centaur Ear x1, Silk Cloth x1
+14:34:18  Looted: 82c
+14:34:18  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:35:11  Killed: Magram Stormer | Gained 430 XP
+14:35:11  Looted: Centaur Ear x1, Silk Cloth x1
+14:35:11  Looted: 1s 4c
+14:35:11  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:36:00  Killed: Magram Wrangler | Gained 214 XP
+14:36:00  Looted: 60c
+14:36:00  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:36:48  Killed: Magram Windchaser | Gained 197 XP
+14:36:48  Looted: 1s 90c
+14:36:48  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:37:15  Killed: Magram Stormer | Gained 215 XP
+14:37:15  Looted: 2s 42c
+14:37:15  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:37:53  Killed: Magram Wrangler | Gained 215 XP
+14:37:53  Looted: Centaur Ear x1, Silk Cloth x2
+14:37:53  Looted: 2s 4c
+14:37:53  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:38:13  Killed: Magram Windchaser | Gained 215 XP
+14:38:13  Looted: Silk Cloth x2
+14:38:13  Looted: 2s 18c
+14:38:13  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:38:45  Two-Handed Maces skill increased to 85
+14:39:17  Killed: Magram Marauder x1, Magram Mauler x1 | Gained 472 XP
+14:39:17  Looted: Wool Cloth x3
+14:39:17  Looted: 3s 17c
+14:39:17  Reputation: Gelkis Clan Centaur +40, Magram Clan Centaur -200
+14:39:48  Killed: Magram Wrangler | Gained 215 XP
+14:39:48  Looted: 38c
+14:39:48  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:40:16  Killed: Magram Stormer | Gained 215 XP
+14:40:16  Looted: 1s 99c
+14:40:16  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:40:49  Killed: Magram Windchaser | Gained 197 XP
+14:40:49  Looted: Centaur Ear x1
+14:40:49  Looted: 2s 21c
+14:40:49  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:41:22  Killed: Magram Marauder | Gained 236 XP
+14:41:22  Looted: Silk Cloth x1
+14:41:22  Looted: 1s 14c
+14:41:22  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:41:59  Killed: Magram Marauder | Gained 236 XP
+14:41:59  Looted: Centaur Ear x1
+14:41:59  Looted: 1s 90c
+14:41:59  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:42:44  Killed: Magram Stormer | Gained 215 XP
+14:42:44  Looted: Silk Cloth x2
+14:42:44  Looted: 53c
+14:42:44  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:43:16  Killed: Magram Windchaser | Gained 215 XP
+14:43:16  Looted: Centaur Ear x1
+14:43:16  Looted: 1s 18c
+14:43:16  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:57:28  Killed: Magram Wrangler | Gained 218 XP
+14:57:28  Looted: Centaur Ear x1
+14:57:28  Looted: 87c
+14:57:28  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:57:49  Killed: Magram Windchaser | Gained 215 XP
+14:57:49  Looted: Centaur Ear x1
+14:57:49  Looted: 57c
+14:57:49  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:58:18  Killed: Magram Outrunner | Gained 197 XP
+14:58:18  Looted: Centaur Ear x1
+14:58:18  Looted: 1s 17c
+14:58:18  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:58:48  Killed: Magram Wrangler | Gained 215 XP
+14:58:48  Looted: Silk Cloth x1
+14:58:48  Looted: 1s 28c
+14:58:48  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:59:20  Killed: Magram Windchaser | Gained 197 XP
+14:59:20  Looted: Centaur Ear x1
+14:59:20  Looted: 66c
+14:59:20  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:59:52  Killed: Magram Windchaser | Gained 215 XP
+14:59:52  Looted: 1s 55c
+14:59:52  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+14:59:59  Leveled up to 35!
+15:00:01  Screenshot: WoWScrnShot_011726_160001.jpg
+15:00:12  Killed: Magram Stormer | Gained 215 XP
+15:00:12  Looted: 1s 30c
+15:00:12  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:01:31  Defense skill increased to 167
+15:01:58  Killed: Magram Wrangler | Gained 202 XP
+15:01:58  Looted: 2s 16c
+15:01:58  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:02:37  Killed: Magram Wrangler | Gained 202 XP
+15:02:37  Looted: 1s 19c
+15:02:37  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:03:35  Killed: Magram Stormer | Gained 220 XP
+15:03:35  Looted: 1s 65c
+15:03:35  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:04:08  Killed: Magram Mauler | Gained 231 XP
+15:04:08  Looted: Silk Cloth x2
+15:04:08  Looted: 60c
+15:04:08  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:04:49  Killed: Magram Windchaser | Gained 202 XP
+15:04:49  Looted: 1s 62c
+15:04:49  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:05:18  Killed: Magram Wrangler | Gained 183 XP
+15:05:18  Looted: 1s 71c
+15:05:18  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:05:46  Killed: Magram Outrunner | Gained 183 XP
+15:05:46  Looted: Centaur Ear x1
+15:05:46  Looted: 94c
+15:05:46  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:06:13  Killed: Magram Outrunner | Gained 183 XP
+15:06:13  Looted: Centaur Ear x1
+15:06:13  Looted: 1s 4c
+15:06:13  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:06:48  Killed: Magram Scout | Gained 183 XP
+15:06:48  Looted: Silk Cloth x2
+15:06:48  Looted: 1s 27c
+15:06:48  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:07:25  Killed: Magram Outrunner | Gained 183 XP
+15:07:25  Looted: 1s 83c
+15:07:25  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:08:13  Killed: Magram Windchaser | Gained 202 XP
+15:08:13  Looted: Centaur Ear x1
+15:08:13  Looted: 1s 22c
+15:08:13  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:08:46  Killed: Magram Marauder | Gained 220 XP
+15:08:46  Looted: Centaur Ear x1
+15:08:46  Looted: 2s 29c
+15:08:46  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:09:13  Killed: Magram Marauder | Gained 220 XP
+15:09:13  Looted: 73c
+15:09:13  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:09:39  Killed: Magram Windchaser | Gained 202 XP
+15:09:39  Looted: Silk Cloth x2
+15:09:39  Looted: 39c
+15:09:39  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:10:12  Killed: Magram Windchaser | Gained 183 XP
+15:10:12  Looted: 91c
+15:10:12  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:10:51  Killed: Magram Stormer | Gained 220 XP
+15:10:51  Looted: 38c
+15:10:51  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:11:25  Killed: Magram Stormer | Gained 202 XP
+15:11:25  Looted: Scroll of Stamina II x1
+15:11:25  Looted: 2s 3c
+15:11:25  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:11:54  Killed: Magram Windchaser | Gained 202 XP
+15:11:54  Looted: 1s 90c
+15:11:54  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:12:27  Killed: Magram Wrangler | Gained 202 XP
+15:12:27  Looted: Wool Cloth x1
+15:12:27  Looted: 47c
+15:12:27  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:12:55  Killed: Magram Stormer | Gained 220 XP
+15:12:55  Looted: Silk Cloth x1
+15:12:55  Looted: 97c
+15:12:55  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:13:18  Killed: Magram Windchaser | Gained 183 XP
+15:13:18  Looted: 71c
+15:13:18  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:13:45  Killed: Magram Outrunner | Gained 183 XP
+15:13:45  Looted: Silk Cloth x2
+15:13:45  Looted: 67c
+15:13:45  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:14:15  Killed: Magram Wrangler | Gained 183 XP
+15:14:15  Looted: 1s 28c
+15:14:15  Reputation: Gelkis Clan Centaur +20, Magram Clan Centaur -100
+15:24:39  Entered Desolace (from Magram Village).
+15:24:54  Entered Scrabblescrew's Camp (from Desolace).
+15:25:17  Entered Desolace (from Scrabblescrew's Camp).
+15:25:29  Entered Ghost Walker Post (from Desolace).
+15:26:03  Reputation with Orgrimmar increased by 350
+15:26:03  Turned in: Centaur Bounty (1366)
+15:26:03  Received: Braced Handguards x1
+15:26:03  Gained 3800 XP
+15:27:47  Reputation with Thunder Bluff increased by 150
+15:27:47  Turned in: Catch of the Day (5386)
+15:27:47  Received: Mithril Ore x3
+15:27:47  Gained 2750 XP
+15:28:01  Entered Kodo Graveyard (from Ghost Walker Post).
+15:28:30  Entered Desolace (from Kodo Graveyard).
+15:28:31  Entered Kodo Graveyard (from Desolace).
+15:28:42  Entered Mannoroc Coven (from Desolace).
+15:29:25  Entered Desolace (from Mannoroc Coven).
+15:37:22  Herbalism skill increased to 185
+15:37:22  Looted: Liferoot x1
+15:40:17  Entered Desolace (from Gelkis Village).
+15:40:47  Entered Gelkis Village (from Desolace).
+15:43:19  Entered Desolace (from Gelkis Village).
+15:48:55  Entered Gelkis Village (from Desolace).
+15:49:04  Turned in: Gelkis Alliance (1368)
+15:49:04  Reputation with Magram Clan Centaur decreased by 250
+15:49:04  Reputation with Gelkis Clan Centaur increased by 250
+15:49:04  Gained 725 XP
+15:49:53  Entered Desolace (from Gelkis Village).
+15:50:10  Entered Sar'theris Strand (from Desolace).
+15:50:39  Entered Shadowprey Village (from Sar'theris Strand).
+15:51:55  Entered Sar'theris Strand (from Shadowprey Village).
+15:53:28  Looted: Soft-shelled Clam x1
+15:53:33  Looted: Soft-shelled Clam Meat x1
+15:53:40  Defense skill increased to 168
+15:53:42  Two-Handed Maces skill increased to 86
+15:54:35  Killed: Drysnap Crawler x2 | Gained 404 XP
+15:54:35  Looted: Greater Healing Potion x1
+15:54:35  Looted: 3s 78c
+15:55:29  Killed: Drysnap Pincer | Gained 202 XP
+15:55:29  Looted: Soft-shelled Clam x1
+15:55:29  Looted: 1s 80c
+15:55:56  Looted: Soft-shelled Clam x1
+15:56:40  Killed: Enraged Reef Crawler | Gained 165 XP
+15:56:40  Looted: Crawler Claw x1, Seaweed x1, Soft-shelled Clam x1
+15:56:50  Entered The Veiled Sea (from Sar'theris Strand).
+15:56:51  Entered Sar'theris Strand (from The Veiled Sea).
+15:57:03  Looted: Soft-shelled Clam x1
+15:57:39  Looted: Soft-shelled Clam x1
+15:57:54  Looted: Soft-shelled Clam Meat x1
+15:57:55  Looted: Soft-shelled Clam Meat x1
+15:57:58  Looted: Soft-shelled Clam Meat x1
+15:57:59  Looted: Soft-shelled Clam Meat x1
+15:58:00  Looted: Soft-shelled Clam Meat x1
+15:58:14  Looted: Soft-shelled Clam x1
+15:58:17  Looted: Soft-shelled Clam Meat x1
+15:59:12  Looted: Soft-shelled Clam x1
+15:59:16  Looted: Soft-shelled Clam Meat x1
+15:59:25  Entered Ethel Rethor (from Sar'theris Strand).
+15:59:33  Accepted: Claim Rackmore's Treasure! (6161)
+16:00:03  Entered Sar'theris Strand (from Ethel Rethor).
+16:00:52  Killed: Drysnap Crawler | Gained 183 XP
+16:00:52  Looted: 1s 95c
+16:01:28  Killed: Enraged Reef Crawler | Gained 165 XP
+16:01:28  Looted: Crawler Claw x1, Shiny Fish Scales x1, Soft-shelled Clam x1
+16:02:07  Killed: Drysnap Crawler | Gained 183 XP
+16:02:07  Looted: Shiny Fish Scales x1
+16:02:07  Looted: 1s 96c
+16:02:46  Killed: Drysnap Pincer | Gained 220 XP
+16:02:46  Looted: Rackmore's Silver Key x1
+16:02:46  Looted: 43c
+16:03:14  Killed: Enraged Reef Crawler | Gained 147 XP
+16:03:14  Looted: Crawler Claw x1
+16:03:17  Looted: Soft-shelled Clam Meat x1
+16:03:57  Killed: Enraged Reef Crawler | Gained 165 XP
+16:03:57  Looted: Crawler Claw x1, Fine Sand x1, Soft-shelled Clam Meat x1, Soft-shelled Clam x1
+16:05:12  Killed: Slitherblade Sorceress | Gained 183 XP
+16:05:12  Looted: 1s 1c
+16:06:20  Killed: Slitherblade Oracle | Gained 220 XP
+16:06:20  Looted: 75c
+16:06:52  Killed: Slitherblade Myrmidon | Gained 202 XP
+16:06:52  Looted: 70c
+16:07:39  Killed: Slitherblade Sorceress | Gained 183 XP
+16:07:39  Looted: 1s 71c
+16:08:18  Killed: Slitherblade Naga | Gained 165 XP
+16:08:18  Looted: Fish Oil x1
+16:08:18  Looted: 1s 98c
+16:08:47  Killed: Slitherblade Sorceress | Gained 183 XP
+16:08:47  Looted: Fish Oil x1
+16:08:47  Looted: 67c
+16:08:59  Entered Ethel Rethor (from Sar'theris Strand).
+16:09:32  Entered Sar'theris Strand (from Ethel Rethor).
+16:09:32  Killed: Slitherblade Sorceress | Gained 165 XP
+16:09:32  Looted: Shiny Fish Scales x1
+16:09:32  Looted: 55c
+16:09:43  Defense skill increased to 169
+16:09:55  Killed: Slitherblade Naga | Gained 183 XP
+16:09:55  Looted: 1s 88c
+16:10:20  Killed: Slitherblade Warrior | Gained 202 XP
+16:10:20  Looted: Fish Oil x1, Rackmore's Golden Key x1, Shiny Fish Scales x1
+16:10:20  Looted: 2s 7c
+16:11:14  Killed: Slitherblade Sorceress | Gained 183 XP
+16:11:14  Looted: Mana Potion x1, Shiny Fish Scales x1
+16:11:14  Looted: 1s 64c
+16:11:44  Killed: Slitherblade Naga | Gained 165 XP
+16:11:44  Looted: 1s 54c
+16:12:14  Killed: Slitherblade Naga | Gained 165 XP
+16:12:14  Looted: Shiny Fish Scales x1
+16:12:14  Looted: 1s 72c
+16:12:52  Killed: Slitherblade Myrmidon | Gained 202 XP
+16:12:52  Looted: Fish Oil x1, Shiny Fish Scales x1
+16:12:52  Looted: 1s 85c
+16:13:50  Killed: Slitherblade Myrmidon | Gained 202 XP
+16:13:50  Looted: 75c
+16:14:19  Killed: Slitherblade Oracle | Gained 220 XP
+16:14:19  Looted: Ballast Maul of the Whale x1, Fish Oil x1, Shiny Fish Scales x1
+16:14:19  Looted: 1s 2c
+16:14:52  Killed: Slitherblade Myrmidon | Gained 220 XP
+16:14:52  Looted: Shiny Fish Scales x1
+16:14:52  Looted: 69c
+16:15:08  Killed: Slitherblade Myrmidon | Gained 220 XP
+16:15:08  Looted: Shiny Fish Scales x1
+16:15:08  Looted: 2s 15c
+16:15:37  Killed: Slitherblade Myrmidon | Gained 202 XP
+16:15:37  Looted: 1s 77c
+16:16:00  Killed: Slitherblade Oracle | Gained 220 XP
+16:16:00  Looted: 1s 11c
+16:16:30  Killed: Slitherblade Naga | Gained 183 XP
+16:16:30  Looted: Fish Oil x1
+16:16:30  Looted: 1s 86c
+16:17:45  Killed: Slitherblade Oracle | Gained 220 XP
+16:17:45  Looted: Fish Oil x1
+16:17:45  Looted: 2s 21c
+16:18:21  Killed: Slitherblade Oracle | Gained 220 XP
+16:18:21  Looted: Sweet Nectar x1
+16:18:21  Looted: 1s 37c
+16:18:57  Killed: Slitherblade Myrmidon | Gained 202 XP
+16:18:57  Looted: 75c
+16:19:32  Two-Handed Maces skill increased to 87
+16:19:34  Two-Handed Maces skill increased to 88
+16:20:15  Killed: Slitherblade Oracle x1, Slitherblade Razortail x1 | Gained 433 XP
+16:20:15  Looted: Fish Oil x1, Shiny Fish Scales x1
+16:20:15  Looted: 3s 30c
+16:20:55  Killed: Slitherblade Oracle | Gained 220 XP
+16:20:55  Looted: Fish Oil x1, Oracle Crystal x1
+16:20:55  Looted: 1s 48c
+16:22:20  Killed: Slitherblade Naga | Gained 183 XP
+16:22:20  Looted: Fish Oil x1
+16:22:20  Looted: 1s 57c
+16:23:17  Killed: Slitherblade Naga x2 | Gained 366 XP
+16:23:17  Looted: Shiny Fish Scales x1
+16:23:17  Looted: 2s 99c
+16:24:17  Entered Ranazjar Isle (from Sar'theris Strand).
+16:24:58  Killed: Slitherblade Sea Witch | Gained 561 XP
+16:24:58  Looted: Fish Oil x1, Naga Scale x1
+16:24:58  Looted: 1s 7c
+16:25:40  Turned in: Claim Rackmore's Treasure! (6161)
+16:25:40  Killed: Slitherblade Tidehunter | Gained 3731 XP
+16:25:40  Looted: 50c
+16:25:40  Received: Captain Rackmore's Wheel x1
+16:25:40  Received: Captain Rackmore's Tiller x1
+16:26:23  Killed: Slitherblade Myrmidon | Gained 220 XP
+16:26:23  Looted: Hardened Leather Pants x1
+16:26:23  Looted: 1s 79c
+16:26:55  Killed: Slitherblade Warrior | Gained 183 XP
+16:26:55  Looted: Greater Healing Potion x1
+16:26:55  Looted: 1s 52c
+16:27:30  Killed: Slitherblade Sorceress | Gained 183 XP
+16:27:30  Looted: Cutthroat's Buckler of Intellect x1, Fish Oil x1
+16:27:30  Looted: 40c
+16:27:52  Killed: Slitherblade Sorceress | Gained 183 XP
+16:27:52  Looted: Shiny Fish Scales x1
+16:27:52  Looted: 1s 46c
+16:28:38  Killed: Lord Kragaru | Gained 126 XP
+16:28:38  Looted: Book of the Ancients x1
+16:28:47  Entered Sar'theris Strand (from Ranazjar Isle).
+16:28:59  Entered Ranazjar Isle (from Sar'theris Strand).
+16:29:04  Entered Sar'theris Strand (from Ranazjar Isle).
+21:29:14  Entered Ethel Rethor (from Sar'theris Strand).
+21:29:43  Defense skill increased to 170
+21:30:29  Reputation with Argent Dawn increased by 700
+21:30:29  Received: Arcmetal Shoulders x1
+21:30:29  Turned in: Book of the Ancients (6027)
+21:30:29  Gained 4900 XP
+21:32:45  Entered Desolace (from Ethel Rethor).
+21:33:15  Spotted: Deepstrider Giant (lvl 39) [hostile] note="there he goes again" screenshot=WoWScrnShot_011726_223307.jpg
+21:34:14  Killed: Dread Swoop | Gained 330 XP
+21:34:14  Looted: Mystery Meat x1
+21:34:35  Killed: Dread Swoop | Gained 212 XP
+21:34:35  Looted: Buzzard Talon x1, Buzzard Wing x1, Mystery Meat x1
+21:35:04  Killed: Dread Swoop | Gained 165 XP
+21:35:04  Looted: Buzzard Talon x1, Buzzard Wing x1, Long Tail Feather x1
+21:35:36  Killed: Dread Swoop | Gained 183 XP
+21:35:59  Killed: Dread Swoop | Gained 165 XP
+21:35:59  Looted: Hollow Wing Bone x1, Long Tail Feather x1
+21:36:22  Killed: Gritjaw Basilisk | Gained 165 XP
+21:36:59  Killed: Raging Thunder Lizard | Gained 202 XP
+21:37:20  Killed: Dread Swoop | Gained 183 XP
+21:37:46  Killed: Bonepaw Hyena | Gained 40 XP
+21:37:46  Spotted: Bonepaw Hyena (lvl 34) [hostile] note="that was close!!!" screenshot=WoWScrnShot_011726_223740.jpg
+21:37:52  Looted: Red Wolf Meat x1
+21:37:56  Looted: Buzzard Talon x1
+21:37:56  Looted: Buzzard Wing x1
+21:38:35  Spotted: Bonepaw Hyena (lvl 35) [hostile] note="gonna follow them, keep an eye on them" screenshot=WoWScrnShot_011726_223827.jpg
+21:39:22  Killed: Raging Thunder Lizard | Gained 202 XP
+21:39:51  Killed: Whirlwind Ripper | Gained 183 XP
+21:40:23  Killed: Raging Thunder Lizard | Gained 183 XP
+21:40:34  Entered Ethel Rethor (from Desolace).
+21:40:39  Entered Desolace (from Ethel Rethor).
+21:40:54  Entered Ethel Rethor (from Desolace).
+21:40:55  Entered Desolace (from Ethel Rethor).
+21:41:08  Entered Ethel Rethor (from Desolace).
+21:41:09  Entered Desolace (from Ethel Rethor).
+21:41:16  Killed: Raging Thunder Lizard | Gained 183 XP
+21:41:28  Entered Sar'theris Strand (from Desolace).
+21:41:36  Entered Desolace (from Sar'theris Strand).
+21:41:43  Entered Sar'theris Strand (from Desolace).
+21:41:48  Entered Desolace (from Sar'theris Strand).
+21:42:04  Entered Desolace (from Sar'theris Strand).
+21:42:09  Entered Sar'theris Strand (from Desolace).
+21:42:11  Killed: Raging Thunder Lizard | Gained 202 XP
+21:42:28  Spotted: Bonepaw Hyena (lvl 33) [hostile] note="where are you going..." screenshot=WoWScrnShot_011726_224222.jpg
+21:43:23  Killed: Raging Thunder Lizard | Gained 183 XP
+21:44:57  Scene: note="wallclimbing hyenas, now i have seen it all" screenshot=WoWScrnShot_011726_224445.jpg
+21:45:33  Entered Desolace (from Sar'theris Strand).
+21:45:34  Killed: Dread Swoop | Gained 165 XP
+21:45:38  Entered Sar'theris Strand (from Desolace).
+21:46:06  Entered Desolace (from Sar'theris Strand).
+21:46:11  Killed: Raging Thunder Lizard | Gained 202 XP
+21:46:34  Entered Thunder Axe Fortress (from Desolace).
+21:46:39  Killed: Gritjaw Basilisk | Gained 147 XP
+21:46:41  Herbalism skill increased to 186
+21:46:59  Looted: Kingsblood x2
+21:46:59  Looted: Kingsblood x1
+21:47:54  Killed: Raging Thunder Lizard x2 | Gained 366 XP
+21:48:34  Killed: Whirlwind Ripper | Gained 183 XP
+21:48:54  Entered Desolace (from Thunder Axe Fortress).
+21:48:58  Killed: Dread Swoop | Gained 165 XP
+21:48:58  Looted: Mystery Meat x1
+21:49:18  Killed: Dread Swoop | Gained 165 XP
+21:49:18  Looted: Buzzard Talon x1, Long Tail Feather x1
+21:49:26  Defense skill increased to 171
+21:49:38  Killed: Gritjaw Basilisk | Gained 165 XP
+21:50:24  Killed: Raging Thunder Lizard | Gained 183 XP
+21:50:56  Killed: Dread Swoop | Gained 183 XP
+21:50:56  Looted: Buzzard Wing x1
+21:51:14  Killed: Dread Swoop | Gained 165 XP
+21:51:48  Killed: Dread Swoop | Gained 183 XP
+21:51:48  Looted: Buzzard Talon x1, Buzzard Wing x1
+21:52:28  Spotted: Bonepaw Hyena (lvl 35) [hostile] note="well well, guess who's back. and they have a new pack leader!" screenshot=WoWScrnShot_011726_225212.jpg
+22:01:52  Killed: Whirlwind Ripper | Gained 165 XP
+22:02:34  Killed: Raging Thunder Lizard | Gained 183 XP
+22:02:58  Killed: Dread Swoop | Gained 165 XP
+22:02:58  Looted: Mystery Meat x1
+22:03:21  Killed: Dread Swoop | Gained 165 XP
+22:03:21  Looted: Mystery Meat x1
+22:05:47  Entered Kodo Graveyard (from Desolace).
+22:06:02  Entered Desolace (from Kodo Graveyard).
+22:06:02  Entered Ghost Walker Post (from Desolace).

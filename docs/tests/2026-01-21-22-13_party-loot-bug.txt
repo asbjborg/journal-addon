@@ -1,0 +1,78 @@
+# test that shows issue with party loot
+
+## test 1 - chat log
+
+[22:05:15] [Seynttodeath] has invited you to join a group.
+[22:05:16] Dungeon Difficulty set to Normal. (All saved instances have been reset)
+[22:05:16] Looting changed to Free for All.
+[22:05:19] Hezrul Bloodmark attempts to run away in fear!
+[22:05:20] Hezrul Bloodmark dies, you gain 94 experience. (+47 exp Rested bonus, +11 group bonus)
+[22:05:22] Zaraboz receives loot: [Hezrul's Head].
+[22:05:23] Your share of the loot is 11 Copper.
+[22:05:25] Kolkar Bloodcharger dies, you gain 52 experience. (+26 exp Rested bonus, +6 group bonus)
+[22:05:27] Your share of the loot is 4 Copper.
+[22:05:30] You receive loot: [Hezrul's Head].
+[22:05:33] Seynttodeath receives loot: [Hezrul's Head].
+[22:05:39] Kolkar Bloodcharger dies, you gain 52 experience. (+26 exp Rested bonus, +6 group bonus)
+[22:05:41] Your share of the loot is 7 Copper.
+[22:05:46] Darthmalaga receives loot: [Linen Cloth]x2.
+[22:05:51] Darthmalaga receives loot: [Hezrul's Head].
+[22:06:02] You leave the group.
+[22:11:41] Warlord Krom'zar yells: The Kolkar will rule!
+[22:12:10] Regthar Deathgate says: A defender has fallen!
+[22:12:10] Regthar Deathgate says: A defender has fallen!
+[22:12:11] Regthar Deathgate says: A defender has fallen!
+[22:12:17] You gain 1100 experience.
+[22:12:17] Reputation with Orgrimmar increased by 150.
+[22:12:17] You receive item: [Bounty Hunter's Ring].
+[22:12:17] Hezrul Bloodmark completed.
+[22:12:17] Experience gained: 1100.
+[22:12:17] Received 8 Silver.
+
+## test 1 - entry export (BEFORE FIX - shows the bug)
+
+22:06:21  Killed: Hezrul Bloodmark x1, Kolkar Bloodcharger x2 | Gained 198 XP | (over 1m)
+22:06:21  Looted: Hezrul's Head x4, Linen Cloth x2 (over 1m)  # BUG: counts party member loot
+22:06:21  Looted: 22c
+22:06:37  Entered The Barrens (from Lushwater Oasis).
+22:12:17  Received: Bounty Hunter's Ring x1
+22:12:17  Reputation: Orgrimmar +150
+22:12:17  Turned in: Hezrul Bloodmark (852)
+22:12:17  Gained 1100 XP
+
+## test 1 - expected entry export (AFTER FIX)
+
+22:06:21  Killed: Hezrul Bloodmark x1, Kolkar Bloodcharger x2 | Gained 198 XP | (over 1m)
+22:06:21  Looted: Hezrul's Head x1 (over 1m)  # FIXED: only player loot (line 14)
+22:06:21  Looted: 22c  # Money still works (lines 11, 13, 17)
+22:06:37  Entered The Barrens (from Lushwater Oasis).
+22:12:17  Received: Bounty Hunter's Ring x1  # Player loot (line 27)
+22:12:17  Reputation: Orgrimmar +150
+22:12:17  Turned in: Hezrul Bloodmark (852)
+22:12:17  Gained 1100 XP
+
+## test assertions
+
+### Should NOT record (party member loot):
+- Line 10: "Zaraboz receives loot: [Hezrul's Head]." → 0 items
+- Line 15: "Seynttodeath receives loot: [Hezrul's Head]." → 0 items
+- Line 18: "Darthmalaga receives loot: [Linen Cloth]x2." → 0 items (multiple variant)
+- Line 19: "Darthmalaga receives loot: [Hezrul's Head]." → 0 items
+
+### SHOULD record (player loot):
+- Line 14: "You receive loot: [Hezrul's Head]." → 1 item
+- Line 27: "You receive item: [Bounty Hunter's Ring]." → 1 item (pushed variant)
+
+### Money should still work:
+- Lines 11, 13, 17: "Your share of the loot is X Copper." → 22c total
+
+## test 2 - multiple count parsing (synthetic)
+
+### Self multiple:
+- "You receive loot: [Linen Cloth]x5." → should record 5 items
+
+### Other multiple (if player name matches):
+- "PlayerName receives loot: [Linen Cloth]x3." → should record 3 items (only if PlayerName == UnitName("player"))
+
+### Pushed multiple:
+- "You receive item: [Quest Item]x2." → should record 2 items

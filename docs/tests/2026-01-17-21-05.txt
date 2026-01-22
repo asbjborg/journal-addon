@@ -1,0 +1,85 @@
+# testing for issue 47
+
+## test 1 - chat log
+
+[20:59:38] Sunscale Scytheclaw dies, you gain 270 experience. (+135 exp Rested bonus)
+[20:59:40] You receive loot: [Small Raptor Tooth].
+[20:59:40] You receive loot: [Sunscale Feather].
+[20:59:41] Your skill in Staves has increased to 4.
+[21:00:04] Sunscale Scytheclaw dies, you gain 240 experience. (+120 exp Rested bonus)
+[21:02:47] Herald of Thrall yells: Honor your heroes! On this day, they have dealt a great blow against one of our most hated enemies! The false Warchief, Rend Blackhand, has fallen!
+[21:02:50] Herald of Thrall yells: Be bathed in the power of the Warchief! Drink in his might! Battle for the glory of the Horde!
+[21:03:39] Sunscale Scytheclaw dies, you gain 240 experience. (+120 exp Rested bonus)
+[21:03:41] You receive loot: [Small Raptor Tooth].
+[21:03:41] You receive loot: [Sunscale Feather].
+[21:04:25] Sunscale Scytheclaw dies, you gain 270 experience. (+135 exp Rested bonus)
+[21:04:25] Congratulations, you have reached level 19!
+[21:04:25] You have gained 15 hit points and 41 mana.
+[21:04:25] You have gained 1 talent |4point:points;.
+[21:04:25] Your Agility increases by 1.
+[21:04:25] Your Stamina increases by 1.
+[21:04:25] Your Intellect increases by 1.
+[21:04:25] Your Spirit increases by 1.
+[21:04:26] Total time played: 0 |4day:days;, 21 |4hour:hours;, 58 |4minute:minutes;, 44 |4second:seconds;
+[21:04:26] Time played this level: 0 |4day:days;, 0 |4hour:hours;, 0 |4minute:minutes;, 0 |4second:seconds;
+[21:04:29] You receive loot: [Feral Cord of the Monkey].
+
+## test 1 - entry export
+
+Graceperiod-Thunderstrike - 2026-01-21 20:59 - current
+
+20:59:12  Session started.
+20:59:51  Staves skill increased to 4
+21:00:34  Killed: Sunscale Scytheclaw x2 | Gained 510 XP | (over 56s)
+21:00:34  Looted: Small Raptor Tooth x1, Sunscale Feather x1 (over 56s)
+21:04:11  Killed: Sunscale Scytheclaw | Gained 240 XP | (over 32s)
+21:04:11  Looted: Small Raptor Tooth x1, Sunscale Feather x1 (over 32s)
+21:04:25  Killed: Sunscale Scytheclaw | Gained 270 XP
+21:04:25  Leveled up to 19!
+21:04:28  Screenshot: WoWScrnShot_012126_210428.jpg
+21:04:59  Looted: Feral Cord of the Monkey x1 (over 30s)
+
+## test 2 - chat log
+
+[21:21:18] Sunscale Scytheclaw dies, you gain 186 experience. (+93 exp Rested bonus)
+[21:21:18] Your skill in Wands has increased to 91.
+[21:21:20] You receive loot: [Small Raptor Tooth].
+[21:21:20] You are no longer AFK.
+[21:21:38] Sunscale Scytheclaw dies, you gain 248 experience. (+124 exp Rested bonus)
+[21:21:38] Your skill in Wands has increased to 92.
+[21:21:43] You receive loot: [Intact Raptor Horn].
+
+## test 2 - entry export
+
+Graceperiod-Thunderstrike - 2026-01-21 20:59 - current
+
+21:21:28  Wands skill increased to 91
+21:21:41  Killed: Sunscale Scytheclaw x2 | Gained 434 XP | (over 23s)
+21:21:41  Looted: Small Raptor Tooth x1 (over 23s)
+21:21:41  Screenshot: WoWScrnShot_012126_212141.jpg
+21:21:43  Looted: Intact Raptor Horn x1
+21:21:48  Wands skill increased to 92
+
+## test 3 - chat log
+
+[21:34:58] Sunscale Scytheclaw dies, you gain 248 experience. (+124 exp Rested bonus)
+[21:34:59] You receive loot: [Sunscale Feather].
+[21:35:13] Your skill in Wands has increased to 94.
+[21:35:15] Ornery Plainstrider attempts to run away in fear!
+[21:35:19] Ornery Plainstrider dies, you gain 218 experience. (+109 exp Rested bonus)
+[21:35:21] Screenshot: WoWScrnShot_012126_213521.jpg
+[21:35:23] You receive loot: [Strider Meat].
+[21:35:23] You receive loot: [Cracked Bill].
+
+## test 3 - entry export
+
+Graceperiod-Thunderstrike - 2026-01-21 20:59 - current
+
+21:33:06  Entered Northwatch Hold (from Raptor Grounds).
+21:33:09  Border dancing near Raptor Grounds.
+21:33:18  Entered Southern Barrens (from Northwatch Hold).
+21:33:24  Entered The Barrens (from Southern Barrens).
+21:35:21  Killed: Ornery Plainstrider x1, Sunscale Scytheclaw x1 | Gained 466 XP | (over 23s)
+21:35:21  Looted: Cracked Bill x1, Strider Meat x1, Sunscale Feather x1 (over 23s)
+21:35:21  Screenshot: WoWScrnShot_012126_213521.jpg
+21:35:23  Wands skill increased to 94

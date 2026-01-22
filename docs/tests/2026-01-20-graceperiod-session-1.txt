@@ -1,0 +1,50 @@
+Graceperiod-Thunderstrike - 2026-01-20 19:58 - current
+
+19:58:43  Session started.
+19:59:27  Received: Spider Silk Slippers x3 (over 31s)
+20:04:45  Started flying to Crossroads from Orgrimmar.
+20:06:33  Landed in The Barrens.
+20:06:43  Entered The Barrens (from The Crossroads).
+20:08:04  Entered Lushwater Oasis (from The Barrens).
+20:09:00  Killed: Kolkar Stormer x1, Kolkar Wrangler x1 | Gained 120 XP | (over 36s)
+20:09:00  Looted: Linen Cloth x3 (over 36s)
+20:09:00  Looted: 15c
+20:09:00  Entered The Barrens (from Lushwater Oasis).
+20:09:37  Killed: Kolkar Stormer x1, Kolkar Wrangler x1 | Gained 150 XP | (over 35s)
+20:09:37  Looted: Linen Cloth x2 (over 35s)
+20:09:37  Looted: 57c
+20:09:37  Entered Lushwater Oasis (from The Barrens).
+20:10:41  Staves skill increased to 2
+20:11:22  Staves skill increased to 3
+20:12:52  Killed: Kolkar Stormer x4, Kolkar Wrangler x6, Oasis Snapjaw x3 | Gained 828 XP | (over 3m)
+20:12:52  Looted: Altered Snapjaw Shell x3, Centaur Bracers x2, Linen Cloth x8, Raw Rainbow Fin Albacore x3, Small Barnacled Clam x3, Thick Scaly Tail x1, War Torn Girdle x1 (over 3m)
+20:12:52  Looted: 1s 7c
+20:13:45  Killed: Kolkar Stormer x2, Kolkar Wrangler x1 | Gained 138 XP | (over 45s)
+20:13:45  Looted: Linen Cloth x2 (over 45s)
+20:13:45  Looted: 22c
+20:13:45  Entered The Barrens (from Lushwater Oasis).
+20:13:54  Entered Lushwater Oasis (from The Barrens).
+20:14:13  Killed: Kolkar Wrangler x2, Sunscale Screecher x1 | Gained 78 XP | (over 9s)
+20:14:13  Entered The Barrens (from Lushwater Oasis).
+20:14:15  Gained 80 XP
+20:14:19  Looted: Altered Snapjaw Shell x1, Ruined Leather Scraps x1 (over 3s)
+20:14:19  Looted: 4c
+20:14:19  Entered Lushwater Oasis (from The Barrens).
+20:14:31  Looted: Lesser Healing Potion x1 (over 10s)
+20:14:31  Looted: 21c
+20:14:31  Entered The Barrens (from Lushwater Oasis).
+20:14:34  Border dancing near Lushwater Oasis.
+20:15:01  Entered The Barrens (from Lushwater Oasis).
+20:15:04  Border dancing near Lushwater Oasis.
+20:15:21  Killed: Kolkar Stormer x1, Kolkar Wrangler x1 | Gained 24 XP | (over 20s)
+20:15:21  Looted: Ice Cold Milk x1, Linen Cloth x1 (over 20s)
+20:15:21  Looted: 20c
+20:15:21  Entered The Barrens (from Lushwater Oasis).
+20:15:22  Border dancing near Lushwater Oasis.
+20:18:26  Killed: Hecklefang Hyena x2, Kolkar Pack Runner x1, Kolkar Stormer x1, Kolkar Wrangler x4, Oasis Snapjaw x2 | Gained 528 XP | (over 2m)
+20:18:26  Looted: Altered Snapjaw Shell x2, Centaur Bracers x1, Linen Cloth x2, Minor Mana Potion x1, Raw Rainbow Fin Albacore x1, Sharp Canine x1, Small Barnacled Clam x2 (over 2m)
+20:18:26  Looted: 54c
+20:18:28  Entered The Barrens (from Lushwater Oasis).
+20:21:09  Traveled to The Wailing Caverns from The Barrens.
+20:21:09  Traveled to The Barrens - Lushwater Oasis from The Wailing Caverns.
+20:21:29  Entered The Barrens (from Lushwater Oasis).

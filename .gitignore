@@ -19,8 +19,5 @@ Thumbs.db
 .cursor/rules/
 .cursor/commands/
 
-# tests
-tests/
-
 # projectmanagement docs
 Chad/

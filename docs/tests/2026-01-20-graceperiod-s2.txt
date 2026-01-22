@@ -1,0 +1,24 @@
+Graceperiod-Thunderstrike - 2026-01-20 19:58 - current
+
+20:48:54  Entered Southern Barrens (from Camp Taurajo).
+20:49:05  Entered Southern Gold Road (from Southern Barrens).
+20:49:12  Entered Southern Barrens (from Southern Gold Road).
+20:49:50  Entered Southern Gold Road (from Southern Barrens).
+20:49:51  Border dancing near Southern Barrens.
+20:49:59  Entered Bramblescar (from Southern Barrens).
+20:50:00  Discovered: Bramblescar (155 XP)
+20:50:00  Gained 155 XP
+20:50:02  Entered Southern Gold Road (from Bramblescar).
+20:50:06  Border dancing near Bramblescar.
+20:50:34  Entered Southern Barrens (from Southern Gold Road).
+20:51:31  Defense skill increased to 86
+20:52:20  Killed: Sunscale Scytheclaw x2 | Gained 450 XP | (over 59s)
+20:52:20  Looted: Intact Raptor Horn x1, Sharp Claw x1 (over 59s)
+20:54:00  Entered Northwatch Hold (from Southern Barrens).
+20:54:02  Discovered: Northwatch Hold (105 XP)
+20:54:02  Gained 105 XP
+20:54:39  Entered Raptor Grounds (from Northwatch Hold).
+20:54:39  Discovered: Raptor Grounds (135 XP)
+20:54:39  Gained 135 XP
+20:55:58  Killed: Sunscale Scytheclaw x2 | Gained 510 XP | (over 52s)
+20:55:58  Looted: Sunscale Feather x2 (over 52s)
