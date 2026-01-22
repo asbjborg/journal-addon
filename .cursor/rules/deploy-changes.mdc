@@ -1,0 +1,17 @@
+---
+alwaysApply: true
+---
+# Overview
+
+Agents must always run `deploy.sh` after making any changes to the addon inside the JournalingAddon folder. This ensures all updates are correctly synchronized to the World of Warcraft AddOns folder for testing and use. No change to the addon is considered deployed until `deploy.sh` has been executed successfully.
+
+## Workflow
+
+**Before deploying:**
+1. **Bump version in `JournalingAddon/JournalingAddon.toc`** - Update version number to match the new version in `changes.md`
+2. **Update `changes.md`** - Add new version section at the top with changes
+3. **Then deploy** - Run `deploy.sh` to deploy changes for testing
+
+**Deploy BEFORE commit and close** - Always deploy changes first and wait for user testing before committing or closing issues. See `.cursor/rules/workflow.mdc` for complete workflow guidelines.
+
+Changes to the repository itself outside the JournalingAddon folder (e.g. .cursor/rules/, .gitignore, etc.) should not require a deploy.

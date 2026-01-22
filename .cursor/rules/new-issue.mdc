@@ -1,0 +1,32 @@
+---
+alwaysApply: true
+---
+# Overview
+
+**note: remote repo is https://github.com/asbjborg/journal-addon**
+
+Agents must use the appropriate issue templates found in `.github/ISSUE_TEMPLATE` when creating new issues. Select the template that best matches the nature of the issue:
+- **Bug Report** - for bugs and issues
+- **Feature Request** - for completely new features
+- **Change Request** - for improvements/modifications to existing features
+
+Ensure all relevant template sections are completed to provide sufficient context and detail.
+
+## Labels/Tags
+
+**Do NOT include labels in issue titles** - use GitHub labels instead:
+
+- **`feature`** - New feature or request (use for brand new features)
+- **`change`** - Change/improvement to an existing feature (use for enhancements to existing features)
+- **`bug`** - Something isn't working (bug reports)
+- **`documentation`** - Improvements or additions to documentation
+- **`question`** - Further information is requested
+- **`duplicate`** - This issue already exists
+- **`invalid`** - This doesn't seem right
+- **`wontfix`** - This will not be worked on
+
+**When to use `feature` vs `change`:**
+- Use `feature` for completely new functionality
+- Use `change` for improvements, refinements, or modifications to existing features
+
+The templates will automatically apply the correct label. For manual issue creation or when using templates, ensure the correct label is selected.

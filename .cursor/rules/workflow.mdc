@@ -1,0 +1,27 @@
+---
+alwaysApply: true
+---
+# Overview
+
+Agents must follow this strict workflow when working on issues:
+
+1. **Implement** - Make code changes for ONE issue at a time
+2. **Deploy** - Run `deploy.sh` to deploy changes for testing
+   - **Bump version in `JournalingAddon/JournalingAddon.toc` FIRST** (before deploy)
+   - Update `changes.md` with the new changes when deploying
+   - Create a NEW version section at the top (never add to already-committed versions)
+   - Version in `.toc` must match the version in `changes.md`
+3. **Test** - Wait for user to test before proceeding
+4. **Commit** - Only commit after successful testing and user approval
+5. **Close** - Only close issue after commit is complete
+
+## Critical Rules
+
+- **ONE issue at a time** - Never work on multiple issues simultaneously unless explicitly asked
+- **Deploy before commit** - Always deploy and test before committing
+- **No premature commits** - Never commit or close issues before deployment and testing
+- **Wait for approval** - Wait for user confirmation after each step before proceeding
+
+## Workflow Exception
+
+The only exception is when explicitly told by the user to work on multiple issues or skip steps.

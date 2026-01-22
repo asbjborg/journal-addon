@@ -1,0 +1,17 @@
+---
+description: This rule is relevant when commiting and pushing to git
+alwaysApply: false
+---
+# Overview
+
+Agents must always follow proper versioning and documentation practices when committing and pushing to git. Every change to the codebase must be accompanied by a version bump following semantic versioning principles, and an entry must be added to `changes.md` describing the change. No ad hoc or undocumented changes are permitted; all updates must be reflected with both a new version and a clear changelog note.
+
+## Changelog Structure
+
+**CRITICAL: Never add changes to an already-released version**
+
+- **Always create a NEW version section** at the top of `changes.md` for uncommitted changes
+- **Never modify** changelog entries for versions that have already been committed/released
+- New changes go into a new `## [X.Y.Z]` section at the top of the file
+- The version number must match the version bump in `JournalingAddon.toc`
+- Only add changes to a version section if that version hasn't been committed yet
