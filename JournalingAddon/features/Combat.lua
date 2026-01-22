@@ -335,6 +335,130 @@ function Journal:RecordXP()
   self.agg.xp.lastMaxXP = currentMax
 end
 
+-- Helper function to convert WoW format string to Lua pattern
+local function escapePattern(s)
+  if not s or s == "" then return nil end
+  -- Replace format placeholders with temporary placeholders first
+  s = s:gsub("%%(%d%$)?s", "__STRING_PLACEHOLDER__")
+  s = s:gsub("%%(%d%$)?d", "__NUMBER_PLACEHOLDER__")
+  -- Escape all Lua pattern special characters
+  s = s:gsub("([%(%)%.%+%-%*%?%[%]%^%$%%])", "%%%1")
+  -- Replace placeholders with capture patterns
+  s = s:gsub("__STRING_PLACEHOLDER__", "(.+)")
+  s = s:gsub("__NUMBER_PLACEHOLDER__", "(%%d+)")
+  return "^" .. s .. "$"
+end
+
+-- Normalize player name (strip realm suffix, raid icons, color codes, and whitespace)
+local function normalizeName(name)
+  if not name then return nil end
+  -- Trim whitespace
+  name = name:gsub("^%s+", ""):gsub("%s+$", "")
+  -- Strip color codes (|c[0-9A-Fa-f]{8} and |r)
+  name = name:gsub("|c[0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f][0-9A-Fa-f]", "")
+  name = name:gsub("|r", "")
+  -- Strip raid target icons ({rt1} through {rt8})
+  name = name:gsub("{rt%d}", "")
+  -- Strip realm suffix (-RealmName)
+  name = name:match("([^%-]+)") or name
+  return name
+end
+
+-- Cache for built loot patterns
+local LOOT_PATTERNS = nil
+
+-- Build loot patterns from WoW's global format strings
+local function buildLootPatterns()
+  if LOOT_PATTERNS then return LOOT_PATTERNS end
+
+  local function pat(fmt) 
+    if not fmt or fmt == "" then return nil end
+    return escapePattern(fmt)
+  end
+
+  LOOT_PATTERNS = {
+    self = {
+      pat(_G.LOOT_ITEM_SELF),
+      pat(_G.LOOT_ITEM_SELF_MULTIPLE),
+      pat(_G.LOOT_ITEM_PUSHED_SELF),
+      pat(_G.LOOT_ITEM_PUSHED_SELF_MULTIPLE),
+    },
+    other = {
+      pat(_G.LOOT_ITEM),
+      pat(_G.LOOT_ITEM_MULTIPLE),
+      pat(_G.LOOT_ITEM_PUSHED),
+      pat(_G.LOOT_ITEM_PUSHED_MULTIPLE),
+    }
+  }
+
+  return LOOT_PATTERNS
+end
+
+-- Parse loot chat message and determine if it should be recorded
+-- Returns: shouldRecord (bool), itemLink (string), count (number)
+-- 
+-- Pattern matching order is critical:
+-- 1. Check self patterns first (always record if matched)
+-- 2. Check other patterns and verify recipient == player name
+--    (Some locales/settings may use "PlayerName receives loot" even for self)
+-- 3. Fallback to "You" patterns for create/craft messages
+local function parseLootChatMessage(msg)
+  if not msg or msg == "" then
+    return false
+  end
+
+  local patterns = buildLootPatterns()
+  local myName = normalizeName(UnitName("player"))
+
+  -- Extract itemLink first (works for all loot messages)
+  -- Item links are always present in loot messages and are more reliable than text matching
+  local itemLink = msg:match("|Hitem:.-|h%[.-%]|h")
+  if not itemLink then
+    return false
+  end
+
+  -- 1) Try self variants first (always record if matched)
+  -- LOOT_ITEM_SELF: "You receive loot: %s." -> captures (item), count defaults to 1
+  -- LOOT_ITEM_SELF_MULTIPLE: "You receive loot: %sx%d." -> captures (item, count)
+  for _, p in ipairs(patterns.self) do
+    if p then
+      local a, b = msg:match(p)
+      if a then
+        local count = tonumber(b) or 1
+        return true, itemLink, count
+      end
+    end
+  end
+
+  -- 2) Try other variants (must verify recipient is player)
+  -- LOOT_ITEM: "%s receives loot: %s." -> captures (recipient, item), count defaults to 1
+  -- LOOT_ITEM_MULTIPLE: "%s receives loot: %sx%d." -> captures (recipient, item, count)
+  for _, p in ipairs(patterns.other) do
+    if p then
+      local recipient, item, maybeCount = msg:match(p)
+      if recipient and item then
+        recipient = normalizeName(recipient)
+        if recipient == myName then
+          -- Player name matches - this is player loot (some locales use this format for self)
+          local count = tonumber(maybeCount) or 1
+          return true, itemLink, count
+        else
+          -- Party member loot - don't record
+          return false
+        end
+      end
+    end
+  end
+
+  -- 3) Fallback: check for "You" patterns (for create/craft which may not use LOOT_ITEM_SELF)
+  if msg:match("You create:") or msg:match("You craft:") or msg:match("You receive item:") or msg:match("You receive loot:") then
+    local count = tonumber(msg:match("x(%d+)")) or 1
+    return true, itemLink, count
+  end
+
+  return false
+end
+
 function Journal:DetectLootAction(msg)
   if msg:match("You create:") then
     return "create"
@@ -395,23 +519,15 @@ function Journal:RecordLoot(msg)
   if not msg or msg == "" then
     return
   end
-  local itemLink = msg:match("|Hitem:.-|h%[.-%]|h")
-  local itemName = nil
-  if itemLink then
-    itemName = itemLink:match("%[(.-)%]")
+
+  -- Parse loot message - only records if it's for the player
+  local shouldRecord, itemLink, count = parseLootChatMessage(msg)
+  if not shouldRecord or not itemLink then
+    return
   end
-  if not itemName then
-    itemName = msg:match("You receive loot: (.+)")
-  end
-  if not itemName then
-    itemName = msg:match("You receive item: (.+)")
-  end
-  if not itemName then
-    itemName = msg:match("You create: (.+)")
-  end
-  if not itemName then
-    itemName = msg:match("You craft: (.+)")
-  end
+
+  -- Extract item name from itemLink
+  local itemName = itemLink:match("%[(.-)%]")
   if not itemName then
     return
   end
@@ -420,7 +536,6 @@ function Journal:RecordLoot(msg)
   itemName = itemName:gsub("x%d+$", ""):gsub("%s+$", "")
 
   local action = self:DetectLootAction(msg)
-  local count = tonumber(msg:match("x(%d+)")) or 1
 
   -- Check if this is a quest reward (should be logged immediately, bypass aggregation)
   local now = time()

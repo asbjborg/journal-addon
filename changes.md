@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.16] - 2026-01-21
+
+### Fixed
+
+- **Party member loot incorrectly counted as player loot** (#53)
+    - Loot received by party members is now filtered out and not recorded in the journal
+    - Uses WoW's global format strings (LOOT_ITEM_SELF, LOOT_ITEM, etc.) for localization-safe pattern matching
+    - Only records loot where the player is the recipient
+    - Handles realm suffixes and name variations correctly
+    - Resolves issue where party member loot (e.g., "Zaraboz receives loot: [Hezrul's Head]") was being counted as player loot
+
 ## [0.6.15] - 2026-01-21
 
 ### Enhanced
