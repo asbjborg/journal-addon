@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.17] - 2026-01-25
+
+### Enhanced
+
+- **Money events now display duration like loot events** (#57)
+    - Money events aggregated over time now show duration: "Looted: Xg Ys Zc (over Xm)" or "(over Xs)"
+    - Duration formatting matches loot events: "Xm" for >= 60s, "Xs" for < 60s
+    - Money events logged immediately (not aggregated) do not show duration
+    - Improves consistency between money and loot display since they're aggregated in the same activity chunk
+
 ## [0.6.16] - 2026-01-22
 
 ### Fixed

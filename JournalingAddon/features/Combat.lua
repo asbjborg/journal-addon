@@ -133,7 +133,14 @@ function Journal:FlushActivityChunk()
 
   local money = self.activityChunk.money
   if money and money > 0 then
-    self:AddEventWithTimestamp("money", { copper = money }, flushTimestamp)
+    local duration = nil
+    if self.activityChunk.startTime then
+      duration = time() - self.activityChunk.startTime
+    end
+    self:AddEventWithTimestamp("money", { 
+      copper = money,
+      duration = duration,  -- Store raw duration in seconds for renderer to format
+    }, flushTimestamp)
   end
 
   local reputation = self.activityChunk.reputation
@@ -845,7 +852,16 @@ Journal:RegisterRenderer("death", function(data)
 end)
 
 Journal:RegisterRenderer("money", function(data)
-  return "Looted: " .. Journal.FormatMoney(data.copper or 0)
+  local text = "Looted: " .. Journal.FormatMoney(data.copper or 0)
+  -- Add duration if this was aggregated over time and > 0
+  if data.duration and data.duration > 0 then
+    local minutes = math.floor(data.duration / 60)
+    local seconds = data.duration % 60
+    -- Format duration: "Xm" if >= 60s, otherwise "Xs"
+    local durationText = minutes > 0 and (minutes .. "m") or (seconds .. "s")
+    text = text .. " (over " .. durationText .. ")"
+  end
+  return text
 end)
 
 -- Note: PLAYER_REGEN_ENABLED/DISABLED are no longer used for aggregation
