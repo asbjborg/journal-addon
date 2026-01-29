@@ -24,4 +24,5 @@ Agents must follow this strict workflow when working on issues:
 
 ## Workflow Exception
 
-The only exception is when explicitly told by the user to work on multiple issues or skip steps.
+- when explicitly told by the user to work on multiple issues or skip steps.
+- when not working on issues related to the journal addon.

@@ -149,7 +149,7 @@ This directory contains representative dummy journal output generated from the c
 These files can be used for:
 - Defining event contracts for LLM ingestion
 - Creating golden examples for testing
-- Validating n8n → LLM → comic pipeline
+- Validating story-writer workflow → LLM (and downstream) pipeline
 - Preventing future regressions
 - Documentation and schema generation
 

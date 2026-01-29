@@ -43,6 +43,10 @@ On addon load:
 
 No per-entry migrations are used during alpha.
 
+## Exported data and automation
+
+Sessions are exported as NDJSON (one JSON object per line). This format is consumed by the **story-writer** workflow runner in this repo (`story-writer/`), which enriches quest events with Wowhead data and outputs JSONL. Automation is done in Node.js workflows there, not via n8n.
+
 ## Adding a New Feature
 
 1. Create a new file under `JournalingAddon/features/`.

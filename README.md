@@ -22,7 +22,7 @@ A World of Warcraft addon for creating a personal journal of your adventures. Au
 - Sessions are automatically organized by character and day
 - Sessions persist across reloads and relogs (same character + same day = same session)
 - Character name visible in session labels
-- Export sessions as plain text or NDJSON (machine-readable) for easy sharing, backup, or automation
+- Export sessions as plain text or NDJSON (machine-readable) for easy sharing, backup, or automation (e.g. story-writer workflows)
 
 ## Requirements
 
@@ -45,7 +45,7 @@ A World of Warcraft addon for creating a personal journal of your adventures. Au
 - Type `/journal` in chat to open/close the journal UI
 - Use the dropdown to select different sessions
 - Click "Export" to copy a session as plain text
-- Click "JSON" to export as NDJSON (one JSON object per line) for automation tools
+- Click "JSON" to export as NDJSON (one JSON object per line) for automation (e.g. [story-writer](story-writer/) workflows)
 
 ### Commands
 - `/journal` - Toggle the journal UI
@@ -95,6 +95,10 @@ JournalingAddon/
 ```
 
 See `ARCHITECTURE.md` for the module layout and event flow.
+
+### Automation and workflows
+
+Session JSONL can be enriched and processed with the **story-writer** workflow runner (no n8n). See [story-writer/](story-writer/) for step templates and the story-beat-writer workflow (read session → collect quest IDs → fetch Wowhead → enrich quest events → output JSONL).
 
 ### Deployment
 A `deploy.sh` script is included for macOS to sync the addon to the WoW AddOns directory. Modify the path in the script to match your installation.

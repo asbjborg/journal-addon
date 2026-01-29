@@ -1,6 +1,6 @@
 # Generate representative dummy data (so we cover full spectrum)
 
-Generate **dummy sessions** from the current codebase that cover the full event spectrum exactly as emitted today (no normalization), so we can validate schema + n8n + LLM prompts.
+Generate **dummy sessions** from the current codebase that cover the full event spectrum exactly as emitted today (no normalization), so we can validate schema + story-writer workflows + LLM prompts.
 
 ## Deliverables
 
