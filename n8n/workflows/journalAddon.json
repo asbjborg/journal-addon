@@ -21,15 +21,15 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        864,
-        -128
+        768,
+        -96
       ],
       "id": "f76c6c54-b53d-464f-b3bf-dd4a33d6981b",
       "name": "Collect Quest IDs"
     },
     {
       "parameters": {
-        "fileSelector": "=/Users/asbjborg/Documents/code/journal_addon/sessions/{{ $json.realm }}/{{ $json.character_name }}/session-{{ $json.session }}/session-{{ $json.session }}.jsonl",
+        "fileSelector": "={{ $json.path_to_sessions }}/{{ $json.realm }}/{{ $json.character_name }}/session-{{ $json.session }}/session-{{ $json.session }}.jsonl",
         "options": {}
       },
       "type": "n8n-nodes-base.readWriteFile",
@@ -44,7 +44,7 @@
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "{\n  \"realm\": \"Thunderstrike\",\n  \"character_name\": \"Maskine\",\n  \"session\": \"01\"\n}\n",
+        "jsonOutput": "{\n  \"path_to_sessions\": \"/Users/asbjborg/Documents/code/journal_addon/sessions\",\n  \"realm\": \"Thunderstrike\",\n  \"character_name\": \"Maskine\",\n  \"session\": \"01\"\n}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.set",
@@ -120,7 +120,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "b4573106-21d2-4bbe-a6ea-b0aade02a681",
+  "versionId": "3cc4c2bf-edc1-4a94-ac1d-76ecdad277e6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "57eacd56cfac21d916c0bcdea69c7b2131437b30b960809f32f92aee239d36da"
