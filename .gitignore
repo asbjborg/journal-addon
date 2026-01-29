@@ -19,3 +19,7 @@ Thumbs.db
 
 # projectmanagement docs
 Chad/
+
+# sessions
+sessions/*
+!sessions/.gitignore
