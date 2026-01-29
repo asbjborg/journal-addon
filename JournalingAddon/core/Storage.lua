@@ -51,6 +51,7 @@ function Journal:InitState()
     self:ResetSkillAgg()
   end
   self.skillAggTimer = nil
+  self.lastSkillChunkEnd = nil  -- cleared on new session; used for continuous skill range across chunks
   self.eventSeqCounter = 0  -- Sequence counter for stable event ordering
   self.recentKillXP = {}  -- Track recent kill XP amounts to suppress duplicate PLAYER_XP_UPDATE
   self.recentDiscoveryXP = {}  -- Track recent discovery XP amounts to suppress duplicate PLAYER_XP_UPDATE

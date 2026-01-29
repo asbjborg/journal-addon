@@ -17,7 +17,13 @@ function Journal:StartSkillAggWindow(skill, level)
   if not self.skillAgg or self.skillAgg.skill ~= skill then
     self:ResetSkillAgg()
     self.skillAgg.skill = skill
-    self.skillAgg.startLevel = level
+    -- Use previous chunk's end level as start if same skill and level increased (continuous range)
+    local lastEnd = self.lastSkillChunkEnd and self.lastSkillChunkEnd[skill]
+    if lastEnd and level > lastEnd then
+      self.skillAgg.startLevel = lastEnd
+    else
+      self.skillAgg.startLevel = level
+    end
     self.skillAgg.startTime = time()
   end
   
@@ -67,6 +73,11 @@ function Journal:CloseSkillAggWindow()
         level = endLevel,
       })
     end
+    -- Persist end level per skill so next chunk can show continuous range (e.g. 8-12)
+    if not self.lastSkillChunkEnd then
+      self.lastSkillChunkEnd = {}
+    end
+    self.lastSkillChunkEnd[self.skillAgg.skill] = endLevel
   end
   
   self:ResetSkillAgg()

@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.20] - 2026-01-29
+
+### Fixed
+
+- **Skill level up aggregator fails to chunk subsequent skillups** (#52)
+    - Subsequent skill chunks (after the first 10s window) now show range and duration correctly
+    - Last flushed end level per skill is persisted across chunks; when a new chunk starts for the same skill, start level is taken from the previous chunk’s end (e.g. first chunk "2-8 (over 24s)", second chunk "8-12 (over Xs)")
+    - Resolves issue where the second entry showed "Swords skill increased to 12" instead of "from 8-12 (over Xs)"
+
 ## [0.6.19] - 2026-01-29
 
 ### Fixed
