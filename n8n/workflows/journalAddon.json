@@ -66,6 +66,20 @@
       ],
       "id": "d7905d78-4773-4557-bf33-884b62087b3f",
       "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.wowhead.com/tbc/quest={{ $('Collect Quest IDs').item.json.questID }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        976,
+        -96
+      ],
+      "id": "57cb7a70-eba1-4330-bd70-db3ffa6bec27",
+      "name": "HTTP Request"
     }
   ],
   "pinData": {},
@@ -113,6 +127,17 @@
           }
         ]
       ]
+    },
+    "Collect Quest IDs": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -120,7 +145,7 @@
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "3cc4c2bf-edc1-4a94-ac1d-76ecdad277e6",
+  "versionId": "f7448cdc-9e14-4b29-b1ec-c55cda6f4967",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "57eacd56cfac21d916c0bcdea69c7b2131437b30b960809f32f92aee239d36da"
