@@ -23,3 +23,7 @@ Chad/
 # sessions
 sessions/*
 !sessions/.gitignore
+
+# story-writer env (local config)
+story-writer/workflows/story-beat-writer/.env
+.env

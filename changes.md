@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.6.18] - 2026-01-29
+
+### Added
+
+- **story-writer workflow runner** – Node.js workflow runner in `story-writer/` (replaces n8n). Step templates: read-file, parse-jsonl, collect-quest-ids, fetch-wowhead-quests, enrich-jsonl. First workflow: **story-beat-writer** (read session JSONL → fetch Wowhead per quest → enrich quest events with `data.questContext` → output JSONL). Config via `.env`; docs and output example in `story-writer/workflows/story-beat-writer/docs/`. Addon and story-writer are versioned together.
+
+### Removed
+
+- **n8n workflow** – `n8n/workflows/journalAddon.json` removed; automation lives in story-writer.
+- **Root schemas and Wowhead examples** – Moved to `story-writer/workflows/story-beat-writer/schemas/` and `examples/`; single source of truth under story-writer.
+
+### Documentation
+
+- **README, ARCHITECTURE, docs** – Automation section points to story-writer; ARCHITECTURE notes exported data is consumed by story-writer (no n8n). Dummy-data notes and generate-dummy-data command updated for story-writer workflows.
+- **.gitignore** – Ignore `.env` and `story-writer/workflows/story-beat-writer/.env`.
+
 ## [0.6.17] - 2026-01-25
 
 ### Enhanced
