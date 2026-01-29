@@ -1,0 +1,146 @@
+Maskine-Thunderstrike - 2026-01-28 21:26 - current
+
+21:26:33  Session started.
+21:29:24  Killed: Dalaran Shield Guard | Gained 300 XP | (over 36s)
+21:29:24  Looted: Worn Stone Token x1 (over 36s)
+21:29:24  Looted: 30c (over 36s)
+21:31:18  Herbalism skill increased to 188
+21:31:38  Killed: Alina x1, Dalaran Shield Guard x1 | Gained 600 XP | (over 1m)
+21:31:38  Looted: Bloodstone Shard x1, Bruiseweed x2, Worn Stone Token x1 (over 1m)
+21:31:38  Looted: 2s 8c (over 1m)
+21:32:40  Killed: Dalaran Shield Guard x1, Dalaran Theurgist x1, Dermot x1 | Gained 534 XP | (over 55s)
+21:32:40  Looted: Bloodstone Wedge x1, Stormwind Brie x1 (over 55s)
+21:32:40  Looted: 1s 66c (over 55s)
+21:32:40  Entered Dalaran (from Lordamere Internment Camp).
+21:33:27  Killed: Dalaran Summoner | Gained 218 XP | (over 30s)
+21:34:43  Killed: Dalaran Summoner x2, Elemental Slave x2 | Gained 752 XP | (over 1m)
+21:34:43  Looted: Lifeless Stone x1, Worn Stone Token x1 (over 1m)
+21:34:43  Looted: 1s 70c (over 1m)
+21:34:43  Entered Lordamere Internment Camp (from Dalaran).
+21:36:37  Killed: Dalaran Shield Guard x4, Dalaran Theurgist x1 | Gained 730 XP | (over 1m)
+21:36:37  Looted: Stormwind Brie x1 (over 1m)
+21:36:37  Looted: 2s 18c (over 1m)
+21:38:35  Killed: Dalaran Shield Guard x4, Dalaran Theurgist x2, Kegan Darkmar x1, Spirit of Old x1, Warden Belamoore x1 | Gained 1344 XP | (over 1m)
+21:38:35  Looted: Bloodstone Oval x1, Silk Cloth x5, Worn Stone Token x1 (over 1m)
+21:38:35  Looted: 6s 14c (over 1m)
+21:38:54  Entered Dalaran (from Lordamere Internment Camp).
+21:42:09  Killed: Dalaran Summoner x3, Dalaran Worker x5, Elemental Slave x2 | Gained 1940 XP | (over 3m)
+21:42:09  Looted: Rune of Opening x3, Silk Cloth x5 (over 3m)
+21:42:09  Looted: 6s 16c (over 3m)
+21:43:47  Killed: Dalaran Summoner x4, Elemental Slave x3 | Gained 1366 XP | (over 1m)
+21:43:47  Looted: Elemental Earth x1, Heavy Stone x1, Interlaced Cloak x1, Jagged Piece of Stone x1, Lifeless Stone x1, Rune of Opening x1 (over 1m)
+21:43:47  Looted: 2s 60c (over 1m)
+21:43:47  Entered Lordamere Internment Camp (from Dalaran).
+21:46:26  Killed: Alina x1, Dalaran Shield Guard x6, Ricter x1 | Gained 1264 XP | (over 2m)
+21:46:26  Looted: Bloodstone Marble x1, Silk Cloth x2 (over 2m)
+21:46:26  Looted: 4s 61c (over 2m)
+21:46:26  Entered Dalaran (from Lordamere Internment Camp).
+21:47:22  Looted: Worn Stone Token x1 (over 11s)
+21:47:22  Looted: 1s (over 11s)
+21:47:22  Entered Lordamere Internment Camp (from Dalaran).
+21:47:35  Killed: Dalaran Shield Guard | Gained 138 XP
+21:47:35  Looted: 82c
+21:47:35  Entered Dalaran (from Lordamere Internment Camp).
+21:48:29  Killed: Dalaran Worker | Gained 198 XP | (over 32s)
+21:48:29  Looted: Silk Cloth x1 (over 32s)
+21:48:29  Looted: 73c (over 32s)
+21:49:47  Killed: Dalaran Summoner x1, Dalaran Worker x2 | Gained 614 XP | (over 1m)
+21:49:47  Looted: Stormwind Brie x1, Worn Stone Token x1 (over 1m)
+21:49:47  Looted: 2s 59c (over 1m)
+21:49:47  Entered Lordamere Internment Camp (from Dalaran).
+21:50:19  Herbalism skill increased to 189
+21:51:23  Killed: Dalaran Shield Guard x1, Dalaran Theurgist x2 | Gained 474 XP | (over 1m)
+21:51:23  Looted: Bruiseweed x1 (over 1m)
+21:51:23  Looted: 1s 62c (over 1m)
+21:51:23  Entered Dalaran (from Lordamere Internment Camp).
+21:52:26  Killed: Elemental Slave | Gained 178 XP | (over 30s)
+21:53:24  Killed: Dalaran Summoner x1, Dalaran Worker x1 | Gained 396 XP | (over 55s)
+21:53:24  Looted: Rune of Opening x1, Silk Cloth x2, Worn Stone Token x1 (over 55s)
+21:53:24  Looted: 1s 54c (over 55s)
+21:54:02  Killed: Dalaran Summoner | Gained 198 XP | (over 33s)
+21:54:02  Looted: Worn Stone Token x1 (over 33s)
+21:54:02  Looted: 93c (over 33s)
+21:55:33  Killed: Dalaran Summoner | Gained 198 XP | (over 32s)
+21:55:33  Looted: 18c (over 32s)
+21:55:50  Defense skill increased to 174
+21:57:41  Killed: Dalaran Summoner x3, Dalaran Worker x4 | Gained 1346 XP | (over 1m)
+21:57:41  Looted: Silk Cloth x1, Worn Stone Token x1 (over 1m)
+21:57:41  Looted: 4s 85c (over 1m)
+21:58:39  Killed: Dalaran Summoner x2, Elemental Slave x1 | Gained 594 XP | (over 49s)
+21:58:39  Looted: 71c (over 49s)
+21:58:45  Entered Lordamere Internment Camp (from Dalaran).
+21:59:31  Entered Gavin's Naze (from Lordamere Internment Camp).
+21:59:32  Discovered: Gavin's Naze (290 XP)
+22:00:10  Killed: Mountain Lion | Gained 300 XP | (over 17s)
+22:00:10  Looted: Fresh Carcass x1, Lion Meat x1 (over 17s)
+22:00:10  Entered The Headland (from Gavin's Naze).
+22:00:38  Traveled to Hillsbrad Foothills - Darrow Hill from Alterac Mountains - The Headland.
+22:00:50  Traveled to Alterac Mountains - Corrahn's Dagger from Hillsbrad Foothills - Darrow Hill.
+22:00:59  Entered The Headland (from Corrahn's Dagger).
+22:01:01  Border dancing near Corrahn's Dagger.
+22:01:17  Entered Growless Cave (from Corrahn's Dagger).
+22:03:21  Killed: Giant Yeti x3 | Gained 1090 XP | (over 1m)
+22:03:21  Looted: Large Fang x1 (over 1m)
+22:03:21  Looted: 3s 57c (over 1m)
+22:04:02  Killed: Frostmaw | Gained 472 XP | (over 33s)
+22:04:02  Looted: 2s 47c (over 33s)
+22:04:19  Entered Corrahn's Dagger (from Growless Cave).
+22:08:05  Killed: Syndicate Footpad | Gained 174 XP | (over 32s)
+22:08:05  Looted: 83c (over 32s)
+22:09:46  Killed: Syndicate Footpad x2, Syndicate Thief x2 | Gained 356 XP | (over 1m)
+22:09:46  Looted: Silk Cloth x2, Syndicate Missive x1 (over 1m)
+22:09:46  Looted: 2s 12c (over 1m)
+22:10:23  Turned in: Prison Break In (544)
+22:10:27  Turned in: Stone Tokens (556)
+22:10:39  Turned in: Infiltration (533)
+22:09:46  Reputation: Ravenholdt +10, Syndicate -50
+22:10:23  Gained 3850 XP
+22:10:27  Reputation: Undercity +600
+22:10:27  Gained 2700 XP
+22:09:46  Traveled to Hillsbrad Foothills from Alterac Mountains - Corrahn's Dagger.
+22:09:59  Entered Tarren Mill (from Hillsbrad Foothills).
+22:13:33  Turned in: Helcular's Revenge (553)
+22:10:39  Gained 3100 XP
+22:11:49  Reputation: Orgrimmar +250
+22:11:49  Entered Hillsbrad Foothills (from Tarren Mill).
+22:11:50  Border dancing near Tarren Mill.
+22:12:01  Entered Hillsbrad Foothills (from Tarren Mill).
+22:12:08  Entered Tarren Mill (from Hillsbrad Foothills).
+22:12:08  Border dancing near Hillsbrad Foothills.
+22:13:22  Entered Southshore (from Hillsbrad Foothills).
+22:13:33  Reputation: Undercity +350
+22:13:33  Gained 3600 XP
+22:13:48  Entered Hillsbrad Foothills (from Southshore).
+22:13:59  Entered Nethander Stead (from Hillsbrad Foothills).
+22:14:41  Entered Hillsbrad Foothills (from Nethander Stead).
+22:15:15  Herbalism skill increased to 190
+22:15:19  Looted: Kingsblood x2 (over 13s)
+22:15:19  Entered Thoradin's Wall (from Hillsbrad Foothills).
+22:15:28  Traveled to Arathi Highlands - Thoradin's Wall from Hillsbrad Foothills - Thoradin's Wall.
+22:15:30  Discovered: Thoradin's Wall (270 XP)
+22:15:36  Entered Arathi Highlands (from Thoradin's Wall).
+22:15:40  Entered Circle of West Binding (from Arathi Highlands).
+22:15:41  Discovered: Circle of West Binding (390 XP)
+22:16:05  Entered Northfold Manor (from Circle of West Binding).
+22:16:07  Discovered: Northfold Manor (250 XP)
+22:16:37  Entered Arathi Highlands (from Northfold Manor).
+22:17:34  Entered Dabyrie's Farmstead (from Arathi Highlands).
+22:17:37  Discovered: Dabyrie's Farmstead (250 XP)
+22:18:09  Entered Arathi Highlands (from Dabyrie's Farmstead).
+22:18:43  Entered Circle of East Binding (from Arathi Highlands).
+22:18:45  Discovered: Circle of East Binding (390 XP)
+22:18:56  Entered Hammerfall (from Circle of East Binding).
+22:19:01  Discovered: Hammerfall (232 XP)
+22:19:29  Accepted: Hammerfall (655)
+22:25:44  Turned in: Frostmaw (1136)
+22:19:42  Reputation: Orgrimmar +25
+22:19:42  Gained 310 XP
+22:19:42  Turned in: Hammerfall (655)
+22:20:00  Traveled to Orgrimmar - Valley of Strength from Arathi Highlands - Hammerfall.
+22:21:14  Started flying to Thunder Bluff from Orgrimmar.
+22:25:00  Landed in Thunder Bluff.
+22:25:34  Entered Hunter Rise (from Thunder Bluff).
+22:25:44  Received: Spirit Hunter Headdress x1
+22:25:44  Reputation: Thunder Bluff +500
+22:25:44  Gained 5550 XP
+22:25:45  Accepted: Deadmire (1205)
