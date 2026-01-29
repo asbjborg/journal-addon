@@ -1,0 +1,32 @@
+{
+  "runtime.version": "Lua 5.1",
+  "diagnostics.globals": [
+    "_G",
+    "JournalDB",
+    "CreateFrame",
+    "UIParent",
+    "DEFAULT_CHAT_FRAME",
+    "GetTime",
+    "GetRealZoneText",
+    "GetSubZoneText",
+    "GetRealmName",
+    "GetNumPartyMembers",
+    "UnitName",
+    "UnitExists",
+    "UnitLevel",
+    "UnitGUID",
+    "UnitAffectingCombat",
+    "UnitXP",
+    "UnitXPMax",
+    "date",
+    "time",
+    "UIDropDownMenu_SetWidth",
+    "UIDropDownMenu_SetText",
+    "UIDropDownMenu_Initialize",
+    "UIDropDownMenu_CreateInfo",
+    "UIDropDownMenu_AddButton",
+    "UIDropDownMenu_SetSelectedID"
+  ],
+  "diagnostics.globalsRegex": ["^C_.*", "^UIDropDownMenu_.*"],
+  "diagnostics.unusedLocalExclude": ["_"]
+}
