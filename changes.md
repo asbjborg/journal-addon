@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.19] - 2026-01-29
+
+### Fixed
+
+- **Text and JSON export timeline order** (#58)
+    - Export (text and JSON) now outputs entries in the same chronological order as the addon UI (sorted by timestamp, then sequence)
+    - Previously exports used raw insertion order, so events stored out of timestamp order (e.g. quest turn-ins, travel, reputation) could appear in the wrong order in exported output
+
 ## [0.6.18] - 2026-01-29
 
 ### Added

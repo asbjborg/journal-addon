@@ -35,6 +35,25 @@ local function GetEntryTimestamp(entry)
   return ParseISOTimestamp(entry.ts)
 end
 
+-- Return entries sorted by (ts, seq) for chronological order (same as addon UI)
+local function GetSortedEntries(entries)
+  local sorted = {}
+  for i, entry in ipairs(entries) do
+    table.insert(sorted, entry)
+  end
+  table.sort(sorted, function(a, b)
+    local tsA = GetEntryTimestamp(a)
+    local tsB = GetEntryTimestamp(b)
+    if tsA ~= tsB then
+      return tsA < tsB
+    end
+    local seqA = a.seq or 0
+    local seqB = b.seq or 0
+    return seqA < seqB
+  end)
+  return sorted
+end
+
 local function FormatSessionLabel(session)
   if not session then
     return "No sessions"
@@ -160,25 +179,9 @@ function Journal:RefreshUI()
   if self.debug then
     self:DebugLog("RefreshUI: sessions=" .. #sessions .. " entries=" .. #entries)
   end
-  
-  -- Sort entries by (ts, seq) for stable chronological ordering
-  -- This ensures events appear in correct order even when inserted out of timestamp order
-  local sortedEntries = {}
-  for i, entry in ipairs(entries) do
-    table.insert(sortedEntries, entry)
-  end
-  table.sort(sortedEntries, function(a, b)
-    local tsA = GetEntryTimestamp(a)
-    local tsB = GetEntryTimestamp(b)
-    if tsA ~= tsB then
-      return tsA < tsB
-    end
-    -- If timestamps are equal, use sequence number (or fallback to insertion order)
-    local seqA = a.seq or 0
-    local seqB = b.seq or 0
-    return seqA < seqB
-  end)
-  
+
+  local sortedEntries = GetSortedEntries(entries)
+
   local contentWidth = (self.uiFrame.content:GetWidth() or 1) - 4
   local entrySpacing = 4
 
@@ -261,7 +264,7 @@ function Journal:ExportSession()
   table.insert(lines, who .. startText .. " - " .. endText)
   table.insert(lines, "")
 
-  for _, entry in ipairs(session.entries) do
+  for _, entry in ipairs(GetSortedEntries(session.entries)) do
     local timestamp = GetEntryTimestamp(entry)
     local timeText = date("%H:%M:%S", timestamp)
     local displayText = GetEntryText(entry)
@@ -300,7 +303,7 @@ function Journal:ExportSessionJSON()
 
   -- Export as NDJSON (one JSON object per line)
   local lines = {}
-  for _, entry in ipairs(session.entries) do
+  for _, entry in ipairs(GetSortedEntries(session.entries)) do
     -- Build clean export object with only the event fields
     local exportEntry = {
       v = entry.v or 1,
