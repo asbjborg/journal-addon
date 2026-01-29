@@ -1,0 +1,8 @@
+{
+  "name": "story-writer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "story-beat-writer": "node workflows/story-beat-writer/index.js"
+  }
+}

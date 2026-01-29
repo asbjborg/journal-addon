@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/asbjborg/journal-addon/story-writer/workflows/story-beat-writer/schemas/session_event.schema.json",
+  "title": "Journal session event",
+  "description": "One line from a journal session JSONL file (e.g. session-01.jsonl). Each event has a common envelope and type-specific data.",
+  "type": "object",
+  "required": ["v", "ts", "seq", "type", "data", "msg"],
+  "properties": {
+    "v": { "type": "integer", "description": "Schema/format version" },
+    "ts": { "type": "string", "format": "date-time", "description": "Event timestamp (ISO 8601)" },
+    "seq": { "type": "integer", "description": "Sequence number within the session" },
+    "type": {
+      "type": "string",
+      "enum": ["system", "quest", "travel", "discovery", "activity", "loot", "money", "profession", "reputation", "xp", "level", "screenshot", "note", "death"],
+      "description": "Event type determining the shape of data"
+    },
+    "data": { "description": "Type-specific payload; shape depends on type" },
+    "msg": { "type": "string", "description": "Human-readable log message" }
+  },
+  "allOf": [
+    { "if": { "properties": { "type": { "const": "system" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["message"], "properties": { "message": { "type": "string" } } } } } },
+    { "if": { "properties": { "type": { "const": "quest" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["action", "questID", "title"], "properties": { "action": { "type": "string", "enum": ["accepted", "turned_in"] }, "questID": { "type": "integer" }, "title": { "type": "string" }, "zone": { "type": ["string", "null"] }, "subZone": { "type": ["string", "null"] }, "xp": { "type": ["integer", "null"] }, "money": { "type": ["integer", "null"] } } } } } },
+    { "if": { "properties": { "type": { "const": "travel" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["action"], "properties": { "action": { "type": "string", "enum": ["subzone_change", "zone_change", "flight_start", "flight_end", "hearth", "boundary_noise"] }, "zone": { "type": ["string", "null"] }, "subZone": { "type": ["string", "null"] }, "fromZone": { "type": ["string", "null"] }, "fromSubZone": { "type": ["string", "null"] }, "origin": { "type": "string" }, "destination": { "type": "string" }, "hops": { "type": "array", "items": { "type": "object", "required": ["from", "to"], "properties": { "from": { "type": "string" }, "to": { "type": "string" } } }, "x": { "type": "number" }, "y": { "type": "number" } } } } } },
+    { "if": { "properties": { "type": { "const": "discovery" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["zone", "subZone", "discoveredZone", "xp"], "properties": { "zone": { "type": "string" }, "subZone": { "type": "string" }, "discoveredZone": { "type": "string" }, "xp": { "type": "integer" } } } } } },
+    { "if": { "properties": { "type": { "const": "activity" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["xp", "duration"], "properties": { "target": { "type": "string" }, "count": { "type": "integer" }, "kills": { "type": "object", "additionalProperties": { "type": "integer" } }, "xp": { "type": "integer" }, "duration": { "type": "integer" } } } } } },
+    { "if": { "properties": { "type": { "const": "loot" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["action", "counts"], "properties": { "action": { "type": "string", "enum": ["loot", "receive", "craft", "create"] }, "counts": { "type": "object", "additionalProperties": { "type": "integer" } }, "raw": { "type": "array", "items": { "type": "string" } }, "duration": { "type": "integer" } } } } } },
+    { "if": { "properties": { "type": { "const": "money" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["copper"], "properties": { "copper": { "type": "integer" } } } } } },
+    { "if": { "properties": { "type": { "const": "profession" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["skill"], "properties": { "skill": { "type": "string" }, "level": { "type": "integer" }, "startLevel": { "type": "integer" }, "endLevel": { "type": "integer" }, "duration": { "type": "integer" } } } } } },
+    { "if": { "properties": { "type": { "const": "reputation" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "properties": { "changes": { "type": "object", "additionalProperties": { "type": "integer" } }, "faction": { "type": "string" }, "decreased": { "type": "boolean" }, "tier": { "type": "string" } } } } } },
+    { "if": { "properties": { "type": { "const": "xp" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["amount"], "properties": { "amount": { "type": "integer" } } } } } },
+    { "if": { "properties": { "type": { "const": "level" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["level"], "properties": { "level": { "type": "integer" } } } } } },
+    { "if": { "properties": { "type": { "const": "screenshot" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["action", "filename"], "properties": { "action": { "type": "string", "enum": ["manual", "capture_target", "capture_scene"] }, "filename": { "type": "string" }, "zone": { "type": ["string", "null"] }, "subZone": { "type": ["string", "null"] }, "note": { "type": "string" }, "target": { "type": "object", "properties": { "name": { "type": "string" }, "level": { "type": "integer" }, "reaction": { "type": "string" }, "race": { "type": "string" }, "class": { "type": "string" } } } } } } } } },
+    { "if": { "properties": { "type": { "const": "note" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["text"], "properties": { "text": { "type": "string" } } } } } },
+    { "if": { "properties": { "type": { "const": "death" } }, "required": ["type"], "then": { "properties": { "data": { "type": "object", "required": ["source", "spell", "level"], "properties": { "source": { "type": "string" }, "spell": { "type": "string" }, "level": { "type": "integer" } } } } } }
+  ]
+}
