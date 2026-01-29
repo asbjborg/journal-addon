@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.21] - 2026-01-29
+
+### Changed
+
+- **Optional startTs/endTs span fields on activity chunk events** (#54)
+    - Activity chunk events (`activity`, `loot`, `money`, `reputation`) now include optional `startTs` and `endTs` (ISO 8601) in event data when the chunk has a start time
+    - Enables downstream tooling to use explicit temporal spans without deriving from duration
+    - `ts` remains insert time; `duration` is preserved; schema version stays v=3
+    - `Journal.ISOTimestamp(unixTime)` now accepts an optional Unix timestamp for formatting
+
 ## [0.6.20] - 2026-01-29
 
 ### Fixed

@@ -2,9 +2,9 @@
 {"v":3,"ts":"2026-01-20T14:00:15","seq":2,"type":"quest","data":{"action":"accepted","questID":8895,"title":"Delivery to the North Sanctum","zone":"Eversong Woods","subZone":null},"msg":"Accepted: Delivery to the North Sanctum (8895)"}
 {"v":3,"ts":"2026-01-20T14:00:32","seq":3,"type":"travel","data":{"action":"subzone_change","zone":"Eversong Woods","subZone":"North Sanctum","fromSubZone":null},"msg":"Entered North Sanctum (from Eversong Woods)."}
 {"v":3,"ts":"2026-01-20T14:00:34","seq":4,"type":"discovery","data":{"zone":"Eversong Woods","subZone":"North Sanctum","discoveredZone":"North Sanctum","xp":45},"msg":"Discovered: North Sanctum (45 XP)"}
-{"v":3,"ts":"2026-01-20T14:01:12","seq":5,"type":"activity","data":{"target":"Feral Dragonhawk Hatchling","count":3,"xp":225,"duration":45},"msg":"Killed: Feral Dragonhawk Hatchling x3 | Gained 225 XP | (over 45s)"}
-{"v":3,"ts":"2026-01-20T14:01:12","seq":5,"type":"loot","data":{"action":"loot","counts":{"Small Egg":2,"Rough Stone":1},"raw":["You receive loot: Small Egg x2","You receive loot: Rough Stone"],"duration":45},"msg":"Looted: Rough Stone x1, Small Egg x2 (over 45s)"}
-{"v":3,"ts":"2026-01-20T14:01:12","seq":5,"type":"money","data":{"copper":12},"msg":"Looted: 12c"}
+{"v":3,"ts":"2026-01-20T14:01:12","seq":5,"type":"activity","data":{"target":"Feral Dragonhawk Hatchling","count":3,"xp":225,"duration":45,"startTs":"2026-01-20T14:00:27","endTs":"2026-01-20T14:01:12"},"msg":"Killed: Feral Dragonhawk Hatchling x3 | Gained 225 XP | (over 45s)"}
+{"v":3,"ts":"2026-01-20T14:01:12","seq":5,"type":"loot","data":{"action":"loot","counts":{"Small Egg":2,"Rough Stone":1},"raw":["You receive loot: Small Egg x2","You receive loot: Rough Stone"],"duration":45,"startTs":"2026-01-20T14:00:27","endTs":"2026-01-20T14:01:12"},"msg":"Looted: Rough Stone x1, Small Egg x2 (over 45s)"}
+{"v":3,"ts":"2026-01-20T14:01:12","seq":5,"type":"money","data":{"copper":12,"duration":45,"startTs":"2026-01-20T14:00:27","endTs":"2026-01-20T14:01:12"},"msg":"Looted: 12c"}
 {"v":3,"ts":"2026-01-20T14:01:45","seq":6,"type":"profession","data":{"skill":"Wands","startLevel":16,"endLevel":22,"duration":19},"msg":"Wands skill increased from 16-22 (over 19s)"}
 {"v":3,"ts":"2026-01-20T14:02:03","seq":7,"type":"quest","data":{"action":"turned_in","questID":8895,"title":"Delivery to the North Sanctum","xp":140,"money":null,"zone":"Eversong Woods","subZone":"North Sanctum"},"msg":"Turned in: Delivery to the North Sanctum (8895)"}
 {"v":3,"ts":"2026-01-20T14:02:03","seq":8,"type":"reputation","data":{"changes":{"Silvermoon City":25}},"msg":"Reputation: Silvermoon City +25"}
@@ -17,15 +17,15 @@
 {"v":3,"ts":"2026-01-20T14:03:15","seq":15,"type":"reputation","data":{"changes":{"Silvermoon City":250}},"msg":"Reputation: Silvermoon City +250"}
 {"v":3,"ts":"2026-01-20T14:03:15","seq":16,"type":"xp","data":{"amount":450},"msg":"Gained 450 XP"}
 {"v":3,"ts":"2026-01-20T14:03:18","seq":17,"type":"quest","data":{"action":"accepted","questID":8486,"title":"Arcane Instability","zone":"Eversong Woods","subZone":"West Sanctum"},"msg":"Accepted: Arcane Instability (8486)"}
-{"v":3,"ts":"2026-01-20T14:03:42","seq":18,"type":"activity","data":{"target":"Darnassian Scout","count":1,"xp":75,"duration":5},"msg":"Killed: Darnassian Scout | Gained 75 XP | (over 5s)"}
-{"v":3,"ts":"2026-01-20T14:03:42","seq":18,"type":"loot","data":{"action":"loot","counts":{"Incriminating Documents":1},"raw":["You receive loot: Incriminating Documents"],"duration":5},"msg":"Looted: Incriminating Documents x1 (over 5s)"}
-{"v":3,"ts":"2026-01-20T14:03:42","seq":18,"type":"money","data":{"copper":3},"msg":"Looted: 3c"}
+{"v":3,"ts":"2026-01-20T14:03:42","seq":18,"type":"activity","data":{"target":"Darnassian Scout","count":1,"xp":75,"duration":5,"startTs":"2026-01-20T14:03:37","endTs":"2026-01-20T14:03:42"},"msg":"Killed: Darnassian Scout | Gained 75 XP | (over 5s)"}
+{"v":3,"ts":"2026-01-20T14:03:42","seq":18,"type":"loot","data":{"action":"loot","counts":{"Incriminating Documents":1},"raw":["You receive loot: Incriminating Documents"],"duration":5,"startTs":"2026-01-20T14:03:37","endTs":"2026-01-20T14:03:42"},"msg":"Looted: Incriminating Documents x1 (over 5s)"}
+{"v":3,"ts":"2026-01-20T14:03:42","seq":18,"type":"money","data":{"copper":3,"duration":5,"startTs":"2026-01-20T14:03:37","endTs":"2026-01-20T14:03:42"},"msg":"Looted: 3c"}
 {"v":3,"ts":"2026-01-20T14:03:42","seq":19,"type":"quest","data":{"action":"accepted","questID":8482,"title":"Incriminating Documents","zone":"Eversong Woods","subZone":"West Sanctum"},"msg":"Accepted: Incriminating Documents (8482)"}
 {"v":3,"ts":"2026-01-20T14:04:06","seq":20,"type":"profession","data":{"skill":"Wands","startLevel":23,"endLevel":26,"duration":15},"msg":"Wands skill increased from 23-26 (over 15s)"}
 {"v":3,"ts":"2026-01-20T14:04:25","seq":21,"type":"xp","data":{"amount":79},"msg":"Gained 79 XP"}
 {"v":3,"ts":"2026-01-20T14:04:32","seq":22,"type":"profession","data":{"skill":"Wands","startLevel":27,"endLevel":29,"duration":17},"msg":"Wands skill increased from 27-29 (over 17s)"}
-{"v":3,"ts":"2026-01-20T14:04:50","seq":23,"type":"activity","data":{"target":"Manawraith","count":1,"xp":135,"duration":24},"msg":"Killed: Manawraith | Gained 135 XP | (over 24s)"}
-{"v":3,"ts":"2026-01-20T14:04:50","seq":23,"type":"loot","data":{"action":"loot","counts":{"Mana Residue":7},"raw":["You receive loot: Mana Residue x4","You receive loot: Mana Residue x3"],"duration":24},"msg":"Looted: Mana Residue x7 (over 24s)"}
+{"v":3,"ts":"2026-01-20T14:04:50","seq":23,"type":"activity","data":{"target":"Manawraith","count":1,"xp":135,"duration":24,"startTs":"2026-01-20T14:04:26","endTs":"2026-01-20T14:04:50"},"msg":"Killed: Manawraith | Gained 135 XP | (over 24s)"}
+{"v":3,"ts":"2026-01-20T14:04:50","seq":23,"type":"loot","data":{"action":"loot","counts":{"Mana Residue":7},"raw":["You receive loot: Mana Residue x4","You receive loot: Mana Residue x3"],"duration":24,"startTs":"2026-01-20T14:04:26","endTs":"2026-01-20T14:04:50"},"msg":"Looted: Mana Residue x7 (over 24s)"}
 {"v":3,"ts":"2026-01-20T14:04:50","seq":24,"type":"level","data":{"level":7},"msg":"Leveled up to 7!"}
 {"v":3,"ts":"2026-01-20T14:04:52","seq":25,"type":"screenshot","data":{"action":"manual","filename":"WoWScrnShot_012026_140452.jpg","zone":"Eversong Woods","subZone":"West Sanctum"},"msg":"Screenshot: WoWScrnShot_012026_140452.jpg"}
 {"v":3,"ts":"2026-01-20T14:04:59","seq":27,"type":"profession","data":{"skill":"Wands","level":30},"msg":"Wands skill increased to 30"}

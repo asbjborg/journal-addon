@@ -76,6 +76,11 @@ function Journal:FlushActivityChunk()
   -- Capture a single timestamp for all entries flushed from this chunk
   -- This ensures kill, loot, money, and rep entries appear together in chronological order
   local flushTimestamp = Journal.ISOTimestamp()
+  local startTs = nil
+  local endTs = flushTimestamp
+  if self.activityChunk.startTime then
+    startTs = Journal.ISOTimestamp(self.activityChunk.startTime)
+  end
 
   local killCounts = self.activityChunk.kills
   local xpTotal = self.activityChunk.xp
@@ -100,6 +105,10 @@ function Journal:FlushActivityChunk()
       xp = xpTotal > 0 and xpTotal or nil,
       duration = duration,  -- Store raw duration in seconds for renderer to format
     }
+    if startTs then
+      eventData.startTs = startTs
+      eventData.endTs = endTs
+    end
 
     if targetCount == 1 then
       -- Single target type - use cleaner format
@@ -119,12 +128,17 @@ function Journal:FlushActivityChunk()
     if self.activityChunk.startTime then
       duration = time() - self.activityChunk.startTime
     end
-    local lootEvent = self:AddEventWithTimestamp("loot", {
+    local lootData = {
       action = self.activityChunk.loot.action or "loot",
       counts = Journal.CopyTable(self.activityChunk.loot.counts),
       raw = Journal.CopyTable(self.activityChunk.loot.raw),
       duration = duration,  -- Store raw duration in seconds for renderer to format
-    }, flushTimestamp)
+    }
+    if startTs then
+      lootData.startTs = startTs
+      lootData.endTs = endTs
+    end
+    local lootEvent = self:AddEventWithTimestamp("loot", lootData, flushTimestamp)
     -- Store reference to this loot entry for retroactive updates during hard flush window
     self.lastFlushedLootEntry = lootEvent
   else
@@ -137,17 +151,25 @@ function Journal:FlushActivityChunk()
     if self.activityChunk.startTime then
       duration = time() - self.activityChunk.startTime
     end
-    self:AddEventWithTimestamp("money", { 
+    local moneyData = {
       copper = money,
       duration = duration,  -- Store raw duration in seconds for renderer to format
-    }, flushTimestamp)
+    }
+    if startTs then
+      moneyData.startTs = startTs
+      moneyData.endTs = endTs
+    end
+    self:AddEventWithTimestamp("money", moneyData, flushTimestamp)
   end
 
   local reputation = self.activityChunk.reputation
   if reputation and next(reputation) then
-    self:AddEventWithTimestamp("reputation", {
-      changes = Journal.CopyTable(reputation),
-    }, flushTimestamp)
+    local repData = { changes = Journal.CopyTable(reputation) }
+    if startTs then
+      repData.startTs = startTs
+      repData.endTs = endTs
+    end
+    self:AddEventWithTimestamp("reputation", repData, flushTimestamp)
   end
 
   self:ResetActivityChunk()

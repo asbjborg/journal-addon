@@ -3,7 +3,11 @@ Journal = Journal or _G.Journal or {}
 Journal.Util = Journal.Util or {}
 
 -- ISO 8601 timestamp generator (using local time, not UTC, to avoid timezone issues)
-local function ISOTimestamp()
+-- Optional unixTime: when provided, format that time; otherwise current time
+local function ISOTimestamp(unixTime)
+  if unixTime then
+    return date("%Y-%m-%dT%H:%M:%S", unixTime)
+  end
   return date("%Y-%m-%dT%H:%M:%S")
 end
 
