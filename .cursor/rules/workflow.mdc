@@ -3,19 +3,21 @@ alwaysApply: true
 ---
 # Overview
 
-Agents must follow this workflow when working on issues: one issue per branch; one merge at a time. Steps (Implement, Deploy, Test, Commit, Close) apply per branch. Exception: working directly on main (see below).
+Agents must follow this workflow when working on issues: one issue per branch; one merge at a time. Steps (Verify, Implement, Deploy, Test, Commit, Close) apply per branch. Exception: working directly on main (see below).
 
-1. **Implement** - Create a branch from main (e.g. `issue-59-death-hardcut`). Implement on that branch.
+1. **Verify** - Check that the issue still exists (see work-on-issue command: check commits since issue creation and changelog). If already fixed, close the issue with a comment and stop.
+
+2. **Implement** - Create a branch from main (e.g. `issue-59-death-hardcut`). Implement on that branch.
 
    **If working on main** (hotfix, repo-level work, small test file, rule change, or any change that doesn't warrant a branch): no [TBD], no branch. If it's an **addon change** (JournalingAddon/), bump version and add a versioned section at the top of changes.md. If it's **repo-only** (rules, docs, CONTRIBUTING, .gitmessage, test files, etc.), no version bump or changelog unless you are documenting the change in changes.md.
 
-2. **Deploy** - Run `deploy.sh` after addon changes and when switching to a branch you want to test in-game. On the branch: add a **single** draft changelog section at the top with placeholder `## [TBD] – <branch-name>` (e.g. `## [TBD] – issue-59-death-hardcut`); set `.toc` **Version** to **dev-** plus the branch name (e.g. `dev-issue-59-death-hardcut`) so branch deployments are clearly marked in-game. (WoW .toc Version accepts any string.) Real version and date are **finalized at merge**, not when deploying.
+3. **Deploy** - Run `deploy.sh` after addon changes and when switching to a branch you want to test in-game. On the branch: add a **single** draft changelog section at the top with placeholder `## [TBD] – <branch-name>` (e.g. `## [TBD] – issue-59-death-hardcut`); set `.toc` **Version** to **dev-** plus the branch name (e.g. `dev-issue-59-death-hardcut`) so branch deployments are clearly marked in-game. (WoW .toc Version accepts any string.) Real version and date are **finalized at merge**, not when deploying.
 
-3. **Test** - Wait for user to test before proceeding.
+4. **Test** - Wait for user to test before proceeding.
 
-4. **Commit** - Only commit after successful testing and user approval.
+5. **Commit** - Only commit after successful testing and user approval.
 
-5. **Close** - Only close issue after commit is complete.
+6. **Close** - Only close issue after commit is complete.
 
 ## At merge
 
