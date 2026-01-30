@@ -3,24 +3,36 @@ alwaysApply: true
 ---
 # Overview
 
-Agents must follow this strict workflow when working on issues:
+Agents must follow this workflow when working on issues: one issue per branch; one merge at a time. Steps (Implement, Deploy, Test, Commit, Close) apply per branch. Exception: working directly on main (see below).
 
-1. **Implement** - Make code changes for ONE issue at a time
-2. **Deploy** - Run `deploy.sh` to deploy changes for testing
-   - **Bump version in `JournalingAddon/JournalingAddon.toc` FIRST** (before deploy)
-   - Update `changes.md` with the new changes when deploying
-   - Create a NEW version section at the top (never add to already-committed versions)
-   - Version in `.toc` must match the version in `changes.md`
-3. **Test** - Wait for user to test before proceeding
-4. **Commit** - Only commit after successful testing and user approval
-5. **Close** - Only close issue after commit is complete
+1. **Implement** - Create a branch from main (e.g. `issue-59-death-hardcut`). Implement on that branch.
+
+   **If working on main** (hotfix, repo-level work, small test file, rule change, or any change that doesn't warrant a branch): no [TBD], no branch. If it's an **addon change** (JournalingAddon/), bump version and add a versioned section at the top of changes.md. If it's **repo-only** (rules, docs, CONTRIBUTING, .gitmessage, test files, etc.), no version bump or changelog unless you are documenting the change in changes.md.
+
+2. **Deploy** - Run `deploy.sh` after addon changes and when switching to a branch you want to test in-game. On the branch: add a **single** draft changelog section at the top with placeholder `## [TBD] – <branch-name>` (e.g. `## [TBD] – issue-59-death-hardcut`); set `.toc` **Version** to **dev-** plus the branch name (e.g. `dev-issue-59-death-hardcut`) so branch deployments are clearly marked in-game. (WoW .toc Version accepts any string.) Real version and date are **finalized at merge**, not when deploying.
+
+3. **Test** - Wait for user to test before proceeding.
+
+4. **Commit** - Only commit after successful testing and user approval.
+
+5. **Close** - Only close issue after commit is complete.
+
+## At merge
+
+When your branch is ready to merge to main:
+
+- Rebase on main: `git fetch origin && git rebase origin/main`.
+- Set **final version** = top version in `changes.md` on main + 1 (e.g. main has 0.6.22 → use 0.6.23).
+- In `changes.md`: replace the branch's single `## [TBD]` section with `## [X.Y.Z] - YYYY-MM-DD` where the date is the **release date** (date of merge / today when merging), not the first commit date. When merging, only the current branch's [TBD] is converted (one merge at a time); if another branch was merged first, rebase so your branch has only your [TBD].
+- In `JournalingAddon/JournalingAddon.toc`: set `## Version: X.Y.Z` to that final version.
+- Merge to main (direct merge; PRs optional). Use a **merge that preserves commits** (no squash), so every commit and its message are kept on main.
 
 ## Critical Rules
 
-- **ONE issue at a time** - Never work on multiple issues simultaneously unless explicitly asked
-- **Deploy before commit** - Always deploy and test before committing
-- **No premature commits** - Never commit or close issues before deployment and testing
-- **Wait for approval** - Wait for user confirmation after each step before proceeding
+- **One issue per branch** - Work on multiple issues by using separate branches; only one merge at a time (version = main's top + 1 at merge).
+- **Deploy before commit** - Deploy and test before committing.
+- **No premature commits** - Never commit or close issues before deployment and testing.
+- **Wait for approval** - Wait for user confirmation after each step before proceeding.
 
 ## Workflow Exception
 

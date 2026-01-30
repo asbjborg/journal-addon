@@ -3,14 +3,21 @@ alwaysApply: true
 ---
 # Overview
 
-Agents must always run `deploy.sh` after making any changes to the addon inside the JournalingAddon folder. This ensures all updates are correctly synchronized to the World of Warcraft AddOns folder for testing and use. No change to the addon is considered deployed until `deploy.sh` has been executed successfully.
+Agents must always run `deploy.sh` after making any changes to the addon inside the JournalingAddon folder. This ensures all updates are correctly synchronized to the World of Warcraft AddOns folder for testing and use. No change to the addon is considered deployed until `deploy.sh` has been executed successfully. Run `deploy.sh` when you switch to a branch you are about to test in-game, so WoW runs that branch's code.
 
 ## Workflow
 
-**Before deploying:**
-1. **Bump version in `JournalingAddon/JournalingAddon.toc`** - Update version number to match the new version in `changes.md`
-2. **Update `changes.md`** - Add new version section at the top with changes
-3. **Then deploy** - Run `deploy.sh` to deploy changes for testing
+**On main (no branch):** If the change is in JournalingAddon/, use a versioned section at the top of changes.md and bump .toc (no [TBD]). If the change is repo-only (rules, docs, CONTRIBUTING, etc.), no version bump or changelog unless you are documenting in changes.md. Run `deploy.sh` only when addon files changed.
+
+**On a feature branch (before merge):**
+
+- Add or update the **single** draft changelog section at the top: `## [TBD] – <branch-name>` (e.g. `## [TBD] – issue-59-death-hardcut`) with the change description; no version or date yet.
+- Set `JournalingAddon/JournalingAddon.toc` **Version** to **dev-** plus the branch name (e.g. `dev-issue-59-death-hardcut`) so branch deployments are clearly marked in-game.
+- Run `deploy.sh`. No requirement that .toc and a versioned changelog heading match until merge.
+
+**At merge (final deploy):**
+
+- Version in `.toc` and the changelog heading in `changes.md` must match the final release (main's top version + 1). Replace `[TBD]` with `[X.Y.Z] - <release date>` (release date = date of merge).
 
 **Deploy BEFORE commit and close** - Always deploy changes first and wait for user testing before committing or closing issues. See `.cursor/rules/workflow.mdc` for complete workflow guidelines.
 

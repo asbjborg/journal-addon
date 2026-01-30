@@ -1,4 +1,7 @@
-vX.Y.Z [bug|feature]: <description>
+vX.Y.Z [fix|feature]: <description> (#issue)
 
+# On a branch (before merge), commits can use a descriptive line without the version, e.g.:
+#   fix: <description> (#issue)
+#   feat: <description> (#issue)
 # Optional body: what/why, references, notes.
 # Keep the first line short and specific.
