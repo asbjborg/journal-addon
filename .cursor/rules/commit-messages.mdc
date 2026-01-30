@@ -18,3 +18,11 @@ Notes:
 - Add a matching entry in `changes.md` for every change - **create a NEW version section** at the top (never add to already-committed versions).
 - Always include the issue number `(#N)` at the end - this links the commit to the issue on GitHub.
 - Use `closes #N` or `fixes #N` instead if the issue should auto-close when pushed.
+
+**On a branch (before merge):** Commits on the branch do **not** need `vX.Y.Z` in the message. Use a descriptive first line (e.g. `fix: death as hard cut (#59)` or `feat: party event logging (#51)`). The versioned format `vX.Y.Z [fix|feature]: … (#N)` is only for the **merge** or the commit that sets the final version.
+
+**When merging a branch:** The version in the commit message is the **final** version assigned at merge (main's top version in `changes.md` + 1). Use that same version in `.toc` and in the `## [X.Y.Z]` heading in `changes.md`.
+
+Example for a merge-time commit:
+
+- `v0.6.23 [fix]: treat death as hard cut so activity chunk before death (#59)`

@@ -1,0 +1,14 @@
+---
+alwaysApply: true
+---
+# Update rules when human corrects
+
+When the human corrects you, disagrees with your behavior, or says it's okay (or preferred) to do something differently than the rules say: treat that as a signal that the rules may be wrong or outdated.
+
+Do **not** keep following the old rule and wait for the human to repeat themselves. Instead: **proactively ask** whether you should update the relevant rule(s) so future behavior matches the human's preference. For example: "Should I update the workflow rule so we do X instead of Y from now on?"
+
+If the human says yes (or agrees), update the rule file(s) so the written rule reflects the new preference. That way the next agent (or you later) will do the right thing without the human having to correct again.
+
+This applies whether the human corrects once or many times: the first time they express a different preference, offer to change the rule.
+
+**Rationale:** Humans assume "if I say do it differently, you'll remember." Agents tend to rigidly follow the rule text and ignore or forget one-off overrides. Making "offer to update the rule" the default response to correction keeps the rules in sync with the human's intent and reduces repeated corrections.

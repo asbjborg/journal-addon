@@ -4,14 +4,18 @@ alwaysApply: false
 ---
 # Overview
 
-Agents must always follow proper versioning and documentation practices when committing and pushing to git. Every change to the codebase must be accompanied by a version bump following semantic versioning principles, and an entry must be added to `changes.md` describing the change. No ad hoc or undocumented changes are permitted; all updates must be reflected with both a new version and a clear changelog note.
+Agents must always follow proper versioning and documentation practices when committing and pushing to git. Every change to the codebase must be accompanied by a version bump following semantic versioning principles, and an entry must be added to `changes.md` describing the change. No ad hoc or undocumented changes are permitted; all updates must be reflected with both a new version and a clear changelog note. Work-in-progress on a branch may use a **placeholder** section at the top (see Changelog structure below).
 
 ## Changelog Structure
 
-**CRITICAL: Never add changes to an already-released version**
+### Critical: Never add changes to an already-released version
 
 - **Always create a NEW version section** at the top of `changes.md` for uncommitted changes
 - **Never modify** changelog entries for versions that have already been committed/released
 - New changes go into a new `## [X.Y.Z]` section at the top of the file
 - The version number must match the version bump in `JournalingAddon.toc`
 - Only add changes to a version section if that version hasn't been committed yet
+
+**On a branch:** There must be **exactly one** [TBD] section at the top. All changes for that branch append to that section. When merging, replace it with `## [X.Y.Z] - YYYY-MM-DD` where X.Y.Z = main's top version + 1 and the date is the **release date** (date of merge), not the first commit date.
+
+**Placeholder heading:** Use `## [TBD]` or `## [TBD] – #N` or `## [TBD] – <branch-name>` (e.g. `## [TBD] – issue-59-death-hardcut`); no version or date until merge. Using the branch name improves clarity when scanning history.
