@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.6.23] - 2026-01-30
+
+### Added
+
+- **Party event logging** (#51)
+    - Logs party-related events: invited to party (by whom), accepted party invite, left party, removed from party, disbanded party, removed member from party, party member joined, party member left
+    - Uses `PARTY_INVITE_REQUEST` and `PARTY_MEMBERS_CHANGED` (TBC 20505); `CHAT_MSG_SYSTEM` for "You have invited", "You leave the group", "You have been removed from the group", "Your group has been disbanded", "You have removed [name] from the group"
+    - New feature module `features/Party.lua` with renderer; follows same pattern as Quest.lua and Travel.lua
+
+## [0.6.22] - 2026-01-29
+
+### Fixed
+
+- **Activity chunk before death in timeline** (#59)
+    - Death is now a hard cut event: the activity chunk (kills, loot, XP from the combat before death) is flushed before the death event is added, so the timeline shows the activity chunk before "Died to ..." instead of after
+
 ## [0.6.21] - 2026-01-29
 
 ### Changed

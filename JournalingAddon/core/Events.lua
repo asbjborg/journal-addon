@@ -31,6 +31,9 @@ local events = {
   "CHAT_MSG_COMBAT_FACTION_CHANGE",
   "CHAT_MSG_SKILL",
   "CHAT_MSG_COMBAT_XP_GAIN",
+  -- Party (TBC anniversary 20505 only; do not add GROUP_ROSTER_UPDATE or other-client events)
+  "PARTY_INVITE_REQUEST",
+  "PARTY_MEMBERS_CHANGED",
 }
 
 for _, eventName in ipairs(events) do
