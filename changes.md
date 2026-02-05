@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] - codex-issue-50-60-quick-fixes
+## [0.6.24] - 2026-02-05
 
 ### Changed
 
