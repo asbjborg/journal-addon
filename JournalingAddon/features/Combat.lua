@@ -100,6 +100,10 @@ function Journal:FlushActivityChunk()
     if self.activityChunk.startTime then
       duration = time() - self.activityChunk.startTime
     end
+    -- Omit duration for single-kill entries
+    if targetCount == 1 and singleCount == 1 then
+      duration = nil
+    end
 
     local eventData = {
       xp = xpTotal > 0 and xpTotal or nil,
@@ -124,9 +128,20 @@ function Journal:FlushActivityChunk()
 
   local lootCounts = self.activityChunk.loot.counts
   if next(lootCounts) then
+    local itemTypeCount = 0
+    local singleItemCount = 0
+    for _, count in pairs(lootCounts) do
+      itemTypeCount = itemTypeCount + 1
+      singleItemCount = count
+    end
+
     local duration = nil
     if self.activityChunk.startTime then
       duration = time() - self.activityChunk.startTime
+    end
+    -- Omit duration for single-item loot entries
+    if itemTypeCount == 1 and singleItemCount == 1 then
+      duration = nil
     end
     local lootData = {
       action = self.activityChunk.loot.action or "loot",

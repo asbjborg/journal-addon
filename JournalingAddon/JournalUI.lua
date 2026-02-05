@@ -427,6 +427,20 @@ SlashCmdList["JOURNAL"] = function(msg)
   elseif arg == "clear" then
     -- Clear current session entries
     local count = Journal:ClearCurrentSession()
+    -- Reset any in-flight activity chunk to avoid re-flushing cleared entries
+    if Journal.idleTimer then
+      Journal.idleTimer:Cancel()
+      Journal.idleTimer = nil
+    end
+    if Journal.hardCapTimer then
+      Journal.hardCapTimer:Cancel()
+      Journal.hardCapTimer = nil
+    end
+    if Journal.ResetActivityChunk then
+      Journal:ResetActivityChunk()
+    end
+    -- Add a system marker entry after clear
+    Journal:AddEvent("system", { message = "Entries cleared. Starting new session." })
     if DEFAULT_CHAT_FRAME then
       DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r Cleared " .. count .. " entries from current session.")
     end
@@ -436,7 +450,11 @@ SlashCmdList["JOURNAL"] = function(msg)
     return
   elseif arg == "reset" then
     -- Start fresh session (ends current, starts new)
-    Journal:StartNewSession("Session started (manual reset).")
+    Journal:StartNewSession("Entries cleared. Starting new session.")
+    if Journal.uiFrame then
+      local sessions = Journal.db and Journal.db.sessions or {}
+      Journal.uiFrame.selectedSessionIndex = #sessions
+    end
     if DEFAULT_CHAT_FRAME then
       DEFAULT_CHAT_FRAME:AddMessage("|cffffd200Journal:|r New session started.")
     end

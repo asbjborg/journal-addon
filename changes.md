@@ -1,5 +1,15 @@
 # Changelog
 
+## [TBD] - codex-issue-50-60-quick-fixes
+
+### Changed
+
+- **Clear/reset and singleton chunk polish** (#60, #50)
+    - `/journal clear` now resets any in-flight activity chunk/timers and adds a system marker entry: `Entries cleared. Starting new session.`
+    - `/journal reset` now starts the new session with the same `Entries cleared. Starting new session.` marker message
+    - Single-kill activity chunks no longer show duration text
+    - Single-item loot chunks (one item type, count 1) no longer show duration text
+
 ## [0.6.23] - 2026-01-30
 
 ### Added
