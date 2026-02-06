@@ -2,7 +2,7 @@
 ## Title: JournalingAddon
 ## Notes: Session-based journal log.
 ## Author: asbjborg
-## Version: 0.6.25
+## Version: dev-issue-4-afk-logging
 ## SavedVariables: JournalDB
 
 core/Namespace.lua
@@ -13,6 +13,7 @@ core/Events.lua
 features/Combat.lua
 features/Quest.lua
 features/Party.lua
+features/Afk.lua
 features/Travel.lua
 features/Reputation.lua
 features/Screenshots.lua
