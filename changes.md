@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] – issue-4-afk-logging
+## [0.6.26] - 2026-02-06
 
 ### Added
 
