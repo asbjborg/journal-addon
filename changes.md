@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.25] - 2026-02-06
+
+### Added
+
+- **Login/logout system events** (#34)
+    - Logs `Logged in.` on `PLAYER_LOGIN`
+    - Logs `Logged out.` on `PLAYER_LOGOUT`
+    - Keeps timeline/session gaps explicit without relying on heuristics
+
 ## [0.6.24] - 2026-02-05
 
 ### Changed
