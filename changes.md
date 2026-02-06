@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.26] - 2026-02-06
+
+### Added
+
+- **AFK status logging** (#4)
+    - Logs `AFK.` when the player goes AFK (`/afk` or inactivity)
+    - Logs `Back.` when the player returns (moving or typing)
+    - Uses `CHAT_MSG_SYSTEM` to detect system messages; treats AFK/Back as system hard cut events
+- **Show addon version in UI title** (#4)
+    - Journal window title displays `Journal (v.X.Y.Z)`
+
 ## [0.6.25] - 2026-02-06
 
 ### Added

@@ -76,7 +76,27 @@ function Journal:InitUI()
 
   frame.title = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   frame.title:SetPoint("LEFT", frame.TitleBg, "LEFT", 6, 0)
-  frame.title:SetText("Journal")
+  local function getAddonVersion()
+    local name = addonName or "JournalingAddon"
+    local cAddOns = rawget(_G, "C_AddOns")
+    local cGetMeta = cAddOns and cAddOns.GetAddOnMetadata
+    local version = cGetMeta and cGetMeta(name, "Version") or nil
+    if not version or version == "" then
+      local legacyGetMeta = rawget(_G, "GetAddOnMetadata")
+      version = legacyGetMeta and legacyGetMeta(name, "Version") or nil
+    end
+    if (not version or version == "") and name ~= "JournalingAddon" then
+      local legacyGetMeta = rawget(_G, "GetAddOnMetadata")
+      version = legacyGetMeta and legacyGetMeta("JournalingAddon", "Version") or version
+    end
+    return version
+  end
+  local version = getAddonVersion()
+  local titleText = "Journal"
+  if version and version ~= "" then
+    titleText = "Journal (v." .. version .. ")"
+  end
+  frame.title:SetText(titleText)
 
   local dropdown = CreateFrame("Frame", "JournalSessionDropdown", frame, "UIDropDownMenuTemplate")
   dropdown:SetPoint("TOPLEFT", frame, "TOPLEFT", -6, -28)
