@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] - codex/issue-34-login-logout-events
+## [0.6.25] - 2026-02-06
 
 ### Added
 

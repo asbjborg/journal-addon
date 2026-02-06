@@ -2,7 +2,7 @@
 ## Title: JournalingAddon
 ## Notes: Session-based journal log.
 ## Author: asbjborg
-## Version: dev-codex-issue-34-login-logout-events
+## Version: 0.6.25
 ## SavedVariables: JournalDB
 
 core/Namespace.lua
