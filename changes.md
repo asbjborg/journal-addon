@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] – issue-61-reload-login
+## [0.6.27] - 2026-02-06
 
 ### Fixed
 
