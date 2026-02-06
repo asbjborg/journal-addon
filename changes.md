@@ -1,5 +1,13 @@
 # Changelog
 
+## [TBD] – issue-61-reload-login
+
+### Fixed
+
+- **Suppress login/logout entries on UI reload** (#61)
+    - `/reload` no longer logs `Logged out.` / `Logged in.` entries
+    - Only real logins/logouts are recorded
+
 ## [0.6.26] - 2026-02-06
 
 ### Added

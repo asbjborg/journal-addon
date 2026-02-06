@@ -27,7 +27,33 @@ function Journal:InitDB()
     JournalDB.sessions = JournalDB.sessions or {}
     self.db = JournalDB
   end
+  if self.reloadPending and self.db and not self.db.reloadPending then
+    self.db.reloadPending = true
+  end
 end
+
+function Journal:MarkReloadPending()
+  self.isReloading = true
+  self.reloadPending = true
+  if JournalDB then
+    JournalDB.reloadPending = true
+  end
+end
+
+local function HookReloadUI()
+  if Journal.reloadHooked then
+    return
+  end
+  local reloadUI = rawget(_G, "ReloadUI")
+  if hooksecurefunc and reloadUI then
+    hooksecurefunc("ReloadUI", function()
+      Journal:MarkReloadPending()
+    end)
+    Journal.reloadHooked = true
+  end
+end
+
+HookReloadUI()
 
 function Journal:InitState()
   self.agg = {
@@ -57,6 +83,7 @@ function Journal:InitState()
   self.recentDiscoveryXP = {}  -- Track recent discovery XP amounts to suppress duplicate PLAYER_XP_UPDATE
   self.lastHardFlushTime = nil  -- Unix time when last hard flush occurred (prevents new chunks during window)
   self.lastFlushedLootEntry = nil  -- Reference to last loot entry from flushed chunk (for retroactive updates)
+  self.isReloading = false
   self.flightState = {
     onTaxi = false,
     originZone = nil,
@@ -296,7 +323,14 @@ Journal.On("PLAYER_LOGIN", function()
   Journal:InitDB()
   Journal:InitState()
   Journal:StartSession()
-  Journal:AddEvent("system", { message = "Logged in." })
+  local wasReload = Journal.db and Journal.db.reloadPending or false
+  if Journal.db then
+    Journal.db.reloadPending = nil
+  end
+  Journal.reloadPending = nil
+  if not wasReload then
+    Journal:AddEvent("system", { message = "Logged in." })
+  end
   Journal.agg.xp.lastXP = UnitXP("player")
   Journal.agg.xp.lastMaxXP = UnitXPMax("player")
   if Journal.InitUI then
@@ -305,6 +339,9 @@ Journal.On("PLAYER_LOGIN", function()
 end)
 
 Journal.On("PLAYER_LOGOUT", function()
+  if Journal.isReloading or (Journal.db and Journal.db.reloadPending) then
+    return
+  end
   Journal:AddEvent("system", { message = "Logged out." })
   Journal:EndSession()
 end)
