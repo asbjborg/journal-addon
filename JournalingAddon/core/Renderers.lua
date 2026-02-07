@@ -19,5 +19,9 @@ function Journal:RenderMessage(eventType, data)
 end
 
 Journal:RegisterRenderer("system", function(data)
-  return data.message or "System event"
+  local text = data.message or "System event"
+  if data.note and data.note ~= "" then
+    text = text .. " [note: \"" .. data.note .. "\"]"
+  end
+  return text
 end)

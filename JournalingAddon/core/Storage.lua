@@ -27,9 +27,23 @@ function Journal:InitDB()
     JournalDB.sessions = JournalDB.sessions or {}
     self.db = JournalDB
   end
+  JournalDB.settings = JournalDB.settings or {}
+  if JournalDB.settings.afkNoteMinutes == nil then
+    JournalDB.settings.afkNoteMinutes = 10
+  end
+  if JournalDB.settings.loginNoteMinutes == nil then
+    JournalDB.settings.loginNoteMinutes = 30
+  end
   if self.reloadPending and self.db and not self.db.reloadPending then
     self.db.reloadPending = true
   end
+end
+
+function Journal:GetSetting(name, defaultValue)
+  if JournalDB and JournalDB.settings and JournalDB.settings[name] ~= nil then
+    return JournalDB.settings[name]
+  end
+  return defaultValue
 end
 
 function Journal:MarkReloadPending()
@@ -324,23 +338,37 @@ Journal.On("PLAYER_LOGIN", function()
   Journal:InitState()
   Journal:StartSession()
   local wasReload = Journal.db and Journal.db.reloadPending or false
+  local lastLogoutAt = JournalDB and JournalDB.lastLogoutAt or nil
   if Journal.db then
     Journal.db.reloadPending = nil
   end
   Journal.reloadPending = nil
+  local loginEvent = nil
   if not wasReload then
     Journal:AddEvent("system", { message = "Logged in." })
+    if Journal.currentSession and Journal.currentSession.entries then
+      loginEvent = Journal.currentSession.entries[#Journal.currentSession.entries]
+    end
   end
   Journal.agg.xp.lastXP = UnitXP("player")
   Journal.agg.xp.lastMaxXP = UnitXPMax("player")
   if Journal.InitUI then
     Journal:InitUI()
   end
+  if loginEvent and lastLogoutAt and Journal.MaybePromptAwayNote then
+    local idleSeconds = time() - lastLogoutAt
+    if idleSeconds and idleSeconds > 0 then
+      Journal:MaybePromptAwayNote(loginEvent, "login", idleSeconds)
+    end
+  end
 end)
 
 Journal.On("PLAYER_LOGOUT", function()
   if Journal.isReloading or (Journal.db and Journal.db.reloadPending) then
     return
+  end
+  if JournalDB then
+    JournalDB.lastLogoutAt = time()
   end
   Journal:AddEvent("system", { message = "Logged out." })
   Journal:EndSession()
