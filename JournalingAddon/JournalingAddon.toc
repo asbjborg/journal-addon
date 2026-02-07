@@ -2,7 +2,7 @@
 ## Title: JournalingAddon
 ## Notes: Session-based journal log.
 ## Author: asbjborg
-## Version: dev-issue-35-afk-login-notes
+## Version: 0.6.28
 ## SavedVariables: JournalDB
 
 core/Namespace.lua

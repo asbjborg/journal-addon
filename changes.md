@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] – issue-35-afk-login-notes
+## [0.6.28] - 2026-02-07
 
 ### Added
 
