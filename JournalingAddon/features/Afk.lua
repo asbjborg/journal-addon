@@ -13,8 +13,18 @@ Journal.On("CHAT_MSG_SYSTEM", function(msg)
   if not msg or msg == "" then return end
   local cleaned = cleanMsg(msg):lower()
   if cleaned:find("no longer afk") then
+    local duration = nil
+    if Journal.afkStartAt then
+      duration = time() - Journal.afkStartAt
+    end
+    Journal.afkStartAt = nil
     Journal:AddEvent("system", { message = "Back." })
+    local event = Journal.currentSession and Journal.currentSession.entries and Journal.currentSession.entries[#Journal.currentSession.entries] or nil
+    if event and duration and Journal.MaybePromptAwayNote then
+      Journal:MaybePromptAwayNote(event, "back", duration)
+    end
   elseif cleaned:find("now afk") or cleaned:find("are now afk") then
+    Journal.afkStartAt = time()
     Journal:AddEvent("system", { message = "AFK." })
   end
 end)

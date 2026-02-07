@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.28] - 2026-02-07
+
+### Added
+
+- **Optional note prompt after AFK/back and login** (#35)
+    - Prompts after long AFK or long logout with a one-click skip
+    - Notes are attached to the `Back.` or `Logged in.` system entry
+    - Thresholds configurable via `JournalDB.settings` (minutes)
+
 ## [0.6.27] - 2026-02-06
 
 ### Fixed
