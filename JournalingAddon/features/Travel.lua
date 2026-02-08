@@ -224,6 +224,7 @@ function Journal:HandleZoneChanged()
       if isHearth then
         self.lastHearthCastAt = nil
         self.lastHearthFrom = nil
+        self.pendingHearthCheck = nil
       end
     end
   end
@@ -490,21 +491,74 @@ Journal.On("ZONE_CHANGED", function()
   Journal:HandleSubZoneChanged()
 end)
 
-Journal.On("UNIT_SPELLCAST_SUCCEEDED", function(unit, spellName)
+Journal.On("PLAYER_ENTERING_WORLD", function()
+  if Journal.pendingHearthCheck then
+    if C_Timer and C_Timer.After then
+      C_Timer.After(0.5, function()
+        if Journal.pendingHearthCheck then
+          Journal:HandleZoneChanged()
+          Journal.pendingHearthCheck = nil
+        end
+      end)
+    else
+      Journal:HandleZoneChanged()
+      Journal.pendingHearthCheck = nil
+    end
+  end
+end)
+
+function Journal:IsHearthSpell(spellName, spellId)
+  if not spellName or spellName == "" then
+    return false
+  end
+  local getSpellInfo = rawget(_G, "GetSpellInfo")
+  local hearthIds = { 8690, 556 }
+  for _, id in ipairs(hearthIds) do
+    local name = getSpellInfo and getSpellInfo(id)
+    if name and spellName == name then
+      return true
+    end
+    if spellId and spellId == id then
+      return true
+    end
+  end
+  local hearthNames = {
+    "Hearthstone",
+    "Innkeeper's Daughter",
+    "Astral Recall",
+    "Home",
+  }
+  for _, name in ipairs(hearthNames) do
+    if spellName:find(name, 1, true) then
+      return true
+    end
+  end
+  return false
+end
+
+Journal.On("UNIT_SPELLCAST_SUCCEEDED", function(unit, spellName, ...)
   if unit == "player" and spellName then
-    local hearthNames = {
-      "Hearthstone",
-      "Innkeeper's Daughter",
-      "Astral Recall",
-      "Home",
-    }
-    for _, name in ipairs(hearthNames) do
-      if spellName:find(name, 1, true) then
-        Journal.lastHearthCastAt = time()
-        local zone = GetRealZoneText()
-        local subZone = GetSubZoneText()
-        Journal.lastHearthFrom = (subZone and subZone ~= "" and (zone .. " - " .. subZone)) or zone
+    local spellId = nil
+    for i = 1, select("#", ...) do
+      local v = select(i, ...)
+      if type(v) == "number" then
+        spellId = v
         break
+      end
+    end
+    if Journal:IsHearthSpell(spellName, spellId) then
+      Journal.lastHearthCastAt = time()
+      local zone = GetRealZoneText()
+      local subZone = GetSubZoneText()
+      Journal.lastHearthFrom = (subZone and subZone ~= "" and (zone .. " - " .. subZone)) or zone
+      Journal.pendingHearthCheck = true
+      if C_Timer and C_Timer.After then
+        C_Timer.After(2.0, function()
+          if Journal.pendingHearthCheck then
+            Journal:HandleZoneChanged()
+            Journal.pendingHearthCheck = nil
+          end
+        end)
       end
     end
   end

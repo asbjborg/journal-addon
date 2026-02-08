@@ -1,5 +1,13 @@
 # Changelog
 
+## [TBD] – issue-62-hearth-use
+
+### Fixed
+
+- **Hearthstone usage logs as hearth entry** (#62)
+    - Hearth casts are detected via localized spell IDs/names
+    - Zone change after hearth now renders `Hearth to ...` instead of generic travel
+
 ## [0.6.28] - 2026-02-07
 
 ### Added
