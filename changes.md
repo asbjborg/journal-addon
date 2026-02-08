@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.31] - 2026-02-08
+
+### Added
+
+- **Item equip logging** (#3)
+    - Logs `Equipped: <item>` with slot name
+    - Includes replaced item when applicable
+
 ## [0.6.30] - 2026-02-08
 
 ### Changed
