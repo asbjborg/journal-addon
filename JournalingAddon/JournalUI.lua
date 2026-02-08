@@ -186,7 +186,18 @@ function Journal:RefreshUI()
   end
 
   if not self.uiFrame.selectedSessionIndex or self.uiFrame.selectedSessionIndex > #sessions then
-    self.uiFrame.selectedSessionIndex = #sessions
+    local currentSession = self.currentSession
+    if currentSession then
+      for i, session in ipairs(sessions) do
+        if session == currentSession then
+          self.uiFrame.selectedSessionIndex = i
+          break
+        end
+      end
+    end
+    if not self.uiFrame.selectedSessionIndex or self.uiFrame.selectedSessionIndex > #sessions then
+      self.uiFrame.selectedSessionIndex = #sessions
+    end
   end
 
   self:UpdateSessionDropdown()
