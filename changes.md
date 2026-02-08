@@ -1,5 +1,13 @@
 # Changelog
 
+## [TBD] – issue-63-session-autoselect
+
+### Changed
+
+- **Default session selection prefers current character** (#63)
+    - Journal dropdown highlights the active character’s session on login
+    - Falls back to last session if current session is unavailable
+
 ## [0.6.29] - 2026-02-08
 
 ### Fixed
