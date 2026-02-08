@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] – issue-3-equip-logging
+## [0.6.31] - 2026-02-08
 
 ### Added
 
