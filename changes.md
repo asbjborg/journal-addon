@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] – issue-62-hearth-use
+## [0.6.29] - 2026-02-08
 
 ### Fixed
 
