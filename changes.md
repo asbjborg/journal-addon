@@ -1,6 +1,6 @@
 # Changelog
 
-## [TBD] – issue-63-session-autoselect
+## [0.6.30] - 2026-02-08
 
 ### Changed
 
